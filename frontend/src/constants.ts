@@ -1,5 +1,4 @@
-// src/constants.ts
-const BASE_URL = "http://192.168.1.51:3000";
+export const BASE_URL = process.env.EXPO_PUBLIC_API_URL!;
 
 export const API_ROUTES = {
   // Auth
