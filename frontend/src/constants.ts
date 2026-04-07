@@ -1,4 +1,4 @@
-export const BASE_URL = process.env.EXPO_PUBLIC_API_URL!;
+export const BASE_URL = "http://192.168.1.51:3000";
 
 export const API_ROUTES = {
   // Auth
@@ -14,4 +14,7 @@ export const API_ROUTES = {
 
   // Ranking
   ranking: `${BASE_URL}/ranking`,
+
+  // Home
+  home: `${BASE_URL}/home`,
 };
