@@ -13,11 +13,13 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// routes
+// public routes
 app.use("/auth", authRoutes);
 app.use("/home", homeRoutes);
-app.use("/matches", matchRoutes);
 app.use("/predictions", predictionRoutes);
 app.use("/ranking", rankingRoutes);
+
+// private routes
+app.use("/matches", matchRoutes);
 
 export default app;

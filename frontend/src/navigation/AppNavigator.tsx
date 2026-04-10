@@ -6,7 +6,7 @@ import { useAuthStore } from "../store/authStore";
 // Screens
 import Login from "../screens/Login";
 import Register from "../screens/Register";
-import Home from "../screens/Home";
+import Home from "../screens/Home/Home";
 import Profile from "../screens/Profile";
 
 const Stack = createNativeStackNavigator();
@@ -24,7 +24,7 @@ function AuthStack() {
 // Pantallas para usuarios logueados (con token)
 function AppStack() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: true }}>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="Profile" component={Profile} />
     </Stack.Navigator>
