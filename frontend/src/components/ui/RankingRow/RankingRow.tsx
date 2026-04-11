@@ -1,21 +1,21 @@
 import { View, Text } from "react-native";
 import { styles } from "./RankingRow.styles";
 
-// Types
-import { RankingEntry } from "../../../types/home.types";
-
 // Components
 import { Avatar } from "../Avatar/Avatar";
+
+// Types
+import type { RankingEntry } from "../../../types/home.types";
 
 // Utils
 import { getInitials } from "../../../utils/getInitials";
 
-interface Props {
+interface RankingRowProps {
   ranking: RankingEntry;
   isMe?: boolean;
 }
 
-export function RankingRow({ ranking, isMe }: Props) {
+export function RankingRow({ ranking, isMe }: RankingRowProps) {
   const initials = getInitials(ranking.name);
 
   return (

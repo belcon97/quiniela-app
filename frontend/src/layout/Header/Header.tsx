@@ -11,28 +11,26 @@ import { useAuthStore } from "../../store/authStore";
 // Utils
 import { getInitials } from "../../utils/getInitials";
 
-interface Props {
+interface HeaderProps {
   onMenuPress: () => void;
 }
 
-export function Header({ onMenuPress }: Props) {
+export function Header({ onMenuPress }: HeaderProps) {
   const { user } = useAuthStore();
 
   const initials = getInitials(user?.name ?? "Usuario");
   return (
-    <>
-      <View style={styles.container}>
-        {/* Menu */}
-        <TouchableOpacity onPress={onMenuPress}>
-          <Ionicons name="menu" size={28} color="#000" />
-        </TouchableOpacity>
+    <View style={styles.container}>
+      {/* Menu */}
+      <TouchableOpacity onPress={onMenuPress}>
+        <Ionicons name="menu" size={28} color="#000" />
+      </TouchableOpacity>
 
-        {/* Username */}
-        <Text style={styles.title}>Hola, {user?.username}</Text>
+      {/* Username */}
+      <Text style={styles.title}>Hola, {user?.username}</Text>
 
-        {/* Avatar */}
-        <Avatar initials={initials} />
-      </View>
-    </>
+      {/* Avatar */}
+      <Avatar initials={initials} />
+    </View>
   );
 }

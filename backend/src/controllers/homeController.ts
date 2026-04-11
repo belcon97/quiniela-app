@@ -6,7 +6,7 @@ export const getHome = async (req: Request, res: Response) => {
     const userId = (req as any).userId as string;
 
     const homeData = await getHomeService(userId);
-    res.status(200).json({ homeData });
+    res.status(200).json(homeData);
   } catch (error: any) {
     const status = error.status || 500;
     res.status(status).json({ message: error.message });

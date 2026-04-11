@@ -1,4 +1,4 @@
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView } from "react-native";
 // Components
 import { Layout } from "../../layout/Layout";
 import { UpcomingMatches } from "../../components/UpcomingMatches/UpcomingMatches";
@@ -17,13 +17,10 @@ export default function Home() {
           matches={data?.upcomingMatches ?? []}
           loading={loading}
         />
-        <View style={{ height: 250 }}>
-          <Text>Home</Text>
-        </View>
         <RankingList
           ranking={data?.fullRanking ?? []}
           loading={loading}
-          myRanking={data?.myRanking}
+          myPosition={data?.myPosition ?? null}
         />
       </ScrollView>
     </Layout>

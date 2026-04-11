@@ -3,15 +3,15 @@ import { styles } from "./MatchCard.styles";
 import { Ionicons } from "@expo/vector-icons";
 
 // Types
-import { UpcomingMatch } from "../../../types/home.types";
+import type { UpcomingMatch } from "../../../types/home.types";
 // Utils
 import { formatDate } from "../../../utils/formatDate";
 
-interface Props {
+interface MatchCardProps {
   match: UpcomingMatch;
 }
 
-export function MatchCard({ match }: Props) {
+export function MatchCard({ match }: MatchCardProps) {
   return (
     <View style={styles.card}>
       {/* Estadio */}

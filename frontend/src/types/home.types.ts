@@ -1,23 +1,16 @@
-export interface UpcomingMatch {
-  id: string;
-  homeTeam: string;
-  awayTeam: string;
-  homeFlag: string;
-  awayFlag: string;
-  stadium: string;
-  date: string;
-  status: string;
-}
+import type { Match } from "./shared.types";
 
 export interface RankingEntry {
-  position: number;
+  id: string;
+  position: number | null;
   username: string;
   name: string;
   totalPoints: number;
 }
 
 export interface HomeData {
-  upcomingMatches: UpcomingMatch[];
+  position: number | null;
+  totalPoints: number;
+  upcomingMatches: Match[];
   fullRanking: RankingEntry[];
-  myRanking: RankingEntry | undefined;
 }

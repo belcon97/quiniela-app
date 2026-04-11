@@ -21,11 +21,3 @@ export const getUpcomingMatchesRepository = async () => {
     },
   });
 };
-
-// Traer los ususarios por id
-export const getUsersByIdsRepository = async (userIds: string[]) => {
-  return prisma.user.findMany({
-    where: { id: { in: userIds } },
-    select: { id: true, username: true, name: true },
-  });
-};

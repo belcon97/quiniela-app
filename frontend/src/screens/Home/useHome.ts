@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { useAuthStore } from "../../store/authStore";
 
 // Types
-import { HomeData } from "../../types/home.types";
+import type { HomeData } from "../../types/home.types";
 // Services
-import { homeApi } from "../../services/homeApi";
+import { homeService } from "../../services/homeService";
 
 export function useHome() {
   const { token } = useAuthStore();
@@ -18,10 +18,12 @@ export function useHome() {
         setLoading(true);
 
         if (!token) return;
-        const response = await homeApi.getHomeData(token);
-        setHomeData(response.homeData);
-      } catch (error: any) {
-        console.log(error.message);
+        const response = await homeService.getHomeData(token);
+        setHomeData(response);
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(error.message);
+        }
       } finally {
         setLoading(false);
       }

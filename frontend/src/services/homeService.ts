@@ -1,8 +1,9 @@
 import { API_ROUTES } from "../constants";
+import type { HomeData } from "../types/home.types";
 
-export const homeApi = {
-  getHomeData: async (token: string) => {
-    const response = await fetch(`${API_ROUTES.home}`, {
+export const homeService = {
+  getHomeData: async (token: string): Promise<HomeData> => {
+    const response = await fetch(API_ROUTES.home, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -12,6 +13,6 @@ export const homeApi = {
       const error = await response.json();
       throw new Error(error.message);
     }
-    return response.json();
+    return response.json() as Promise<HomeData>;
   },
 };

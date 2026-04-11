@@ -1,30 +1,40 @@
 import { View, Text, ActivityIndicator } from "react-native";
 
-// Types
-import { RankingEntry } from "../../types/home.types";
-
 // Components
 import { RankingRow } from "../ui/RankingRow/RankingRow";
 
-interface Props {
+// Types
+import type { RankingEntry } from "../../types/home.types";
+
+// Store
+import { useAuthStore } from "../../store/authStore";
+
+interface RankingListProps {
   loading: boolean;
   ranking: RankingEntry[];
-  myRanking: RankingEntry | undefined;
+  myPosition: number | null;
 }
 
-export function RankingList({ ranking, loading, myRanking }: Props) {
+export function RankingList({
+  ranking,
+  loading,
+  myPosition,
+}: RankingListProps) {
+  const { user } = useAuthStore();
+
   if (loading) return <ActivityIndicator />;
 
   const top5 = ranking.slice(0, 5);
 
-  const isMeInTop5 = top5.some(
-    (position) => position.position === myRanking?.position,
+  const isMeInTop5 = top5.some((item) => item.username === user?.username);
+  const myRankingEntry = ranking.find(
+    (item) => item.username === user?.username,
   );
 
   return (
     <View>
       <View>
-        <Text> RANKING GENERAL </Text>
+        <Text>RANKING GENERAL</Text>
       </View>
 
       <View>
@@ -32,16 +42,18 @@ export function RankingList({ ranking, loading, myRanking }: Props) {
           <RankingRow
             key={item.username}
             ranking={item}
-            isMe={item.username === myRanking?.username}
+            isMe={item.username === user?.username}
           />
         ))}
       </View>
 
-      {!isMeInTop5 && myRanking ? (
-        <RankingRow ranking={myRanking} isMe />
+      {!isMeInTop5 && myRankingEntry ? (
+        <RankingRow ranking={myRankingEntry} isMe />
       ) : null}
 
-      {!myRanking ? <Text>No has ingresado tus resultados</Text> : null}
+      {myPosition === null ? (
+        <Text>No has ingresado tus resultados</Text>
+      ) : null}
     </View>
   );
 }

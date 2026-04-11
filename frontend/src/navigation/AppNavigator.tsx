@@ -4,14 +4,14 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useAuthStore } from "../store/authStore";
 
 // Screens
-import Login from "../screens/Login";
-import Register from "../screens/Register";
+import Login from "../screens/Login/Login";
+import Register from "../screens/Register/Register";
 import Home from "../screens/Home/Home";
 import Profile from "../screens/Profile";
 
 const Stack = createNativeStackNavigator();
 
-// Pantallas para usuarios no logueados (sin token)
+// Pantallas para usuarios no logueados
 function AuthStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -21,7 +21,7 @@ function AuthStack() {
   );
 }
 
-// Pantallas para usuarios logueados (con token)
+// Pantallas para usuarios logueados
 function AppStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>

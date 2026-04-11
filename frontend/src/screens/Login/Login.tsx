@@ -2,64 +2,80 @@ import { useState } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
 } from "react-native";
-// Styles
-import { colors, spacing, typography } from "../styles/theme";
+import { styles } from "./Login.styles";
 import Feather from "@expo/vector-icons/Feather";
-// Components
-import Button from "../components/ui/Button";
-import Input from "../components/ui/Input";
-// Services
-import { authApi } from "../services/authApi";
-// Store
-import { useAuthStore } from "../store/authStore";
-// Types
-import { LoginData } from "../types/types";
 
-export default function Login({ navigation }: any) {
+// Components
+import Button from "../../components/ui/Button";
+import Input from "../../components/ui/Input";
+
+// Services
+import { authService } from "../../services/authService";
+
+// Store
+import { useAuthStore } from "../../store/authStore";
+
+// Types
+import type { LoginRequest } from "../../types/auth.types";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { AuthStackParams } from "../../navigation/navigation.types";
+
+type LoginNavigationProp = NativeStackNavigationProp<AuthStackParams, "Login">;
+
+export default function Login({
+  navigation,
+}: {
+  navigation: LoginNavigationProp;
+}) {
   const { saveLogin } = useAuthStore();
 
-  const [loginData, setLoginData] = useState<LoginData>({
+  const [loginData, setLoginData] = useState<LoginRequest>({
     username: "",
     password: "",
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({ username: "", password: "" });
 
-  const handleLogin = async () => {
-    // Validaciones
+  const validateForm = () => {
     if (!loginData.username.trim()) {
       setErrors({
         ...errors,
         username: "El nombre de usuario es obligatorio*",
       });
-      return;
+      return false;
     }
     if (!loginData.password.trim()) {
       setErrors({ ...errors, password: "La contraseña es obligatoria*" });
-      return;
+      return false;
     }
     if (loginData.password.length < 6) {
       setErrors({
         ...errors,
         password: "La contraseña debe tener al menos 6 caracteres*",
       });
-      return;
+      return false;
     }
+
+    return true;
+  };
+
+  const handleLogin = async () => {
+    if (!validateForm()) return;
 
     try {
       setLoading(true);
-      const response = await authApi.login(loginData);
+      const response = await authService.login(loginData);
 
-      // Guardar token y usuario en el store
-      saveLogin(response.token, response.user);
-    } catch (error: any) {
-      Alert.alert("Ups!", error.message);
+      await saveLogin(response.token, response.user);
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert("Ups!", error.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -130,38 +146,3 @@ export default function Login({ navigation }: any) {
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: spacing.lg,
-    justifyContent: "center",
-    backgroundColor: colors.white,
-  },
-  title: {
-    fontSize: typography.h1,
-    fontWeight: "bold",
-    fontFamily: "Inter_700Bold",
-  },
-  subtitle: {
-    fontSize: typography.body,
-    color: colors.secondary,
-    fontFamily: "Inter_400Regular",
-    marginBottom: spacing.xl,
-  },
-  registerText: {
-    marginTop: spacing.md,
-    textAlign: "left",
-    color: colors.secondary,
-    fontFamily: "Inter_400Regular",
-  },
-  link: {
-    color: colors.primary,
-    fontWeight: "bold",
-    fontFamily: "Inter_700Bold",
-    textDecorationLine: "underline",
-  },
-  form: {
-    marginBottom: spacing.lg,
-  },
-});

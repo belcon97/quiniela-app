@@ -17,5 +17,9 @@ export const getHomeService = async (userId: string) => {
   // Mi posicion
   const myRanking = await getUserRankingService(userId);
 
-  return { upcomingMatches, fullRanking, myRanking };
+  return {
+    myPosition: myRanking.position,
+    upcomingMatches,
+    fullRanking,
+  };
 };

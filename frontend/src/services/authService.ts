@@ -1,11 +1,14 @@
 import { API_ROUTES } from "../constants";
+import type {
+  RegisterRequest,
+  LoginRequest,
+  AuthResponse,
+} from "../types/auth.types";
 
-import type { RegisterData, LoginData } from "../types/types";
-
-export const authApi = {
+export const authService = {
   // Registrar usuarios
-  register: async (user: RegisterData) => {
-    const response = await fetch(`${API_ROUTES.register}`, {
+  register: async (user: RegisterRequest): Promise<AuthResponse> => {
+    const response = await fetch(API_ROUTES.register, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -16,12 +19,12 @@ export const authApi = {
       const error = await response.json();
       throw new Error(error.message);
     }
-    return response.json();
+    return response.json() as Promise<AuthResponse>;
   },
 
   // Iniciar sesion
-  login: async (user: LoginData) => {
-    const response = await fetch(`${API_ROUTES.login}`, {
+  login: async (user: LoginRequest): Promise<AuthResponse> => {
+    const response = await fetch(API_ROUTES.login, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -32,6 +35,6 @@ export const authApi = {
       const error = await response.json();
       throw new Error(error.message);
     }
-    return response.json();
+    return response.json() as Promise<AuthResponse>;
   },
 };

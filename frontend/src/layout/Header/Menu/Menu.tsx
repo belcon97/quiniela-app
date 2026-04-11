@@ -23,12 +23,12 @@ import { useAuthStore } from "../../../store/authStore";
 // Utils
 import { getInitials } from "../../../utils/getInitials";
 
-interface Props {
+interface MenuProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export function Menu({ isOpen, onClose }: Props) {
+export function Menu({ isOpen, onClose }: MenuProps) {
   const { user, logout } = useAuthStore();
   const initials = user?.name ? getInitials(user.name) : "";
 
@@ -55,7 +55,7 @@ export function Menu({ isOpen, onClose }: Props) {
         useNativeDriver: true,
       }).start(() => setVisible(false));
     }
-  }, [isOpen]);
+  }, [isOpen, translateX]);
 
   if (!visible) return null;
 

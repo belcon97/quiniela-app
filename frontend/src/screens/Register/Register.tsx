@@ -2,22 +2,41 @@ import { useState } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
 } from "react-native";
-import { colors, spacing, typography } from "../styles/theme";
-import Button from "../components/ui/Button";
-import Input from "../components/ui/Input";
-import { authApi } from "../services/authApi";
-import { useAuthStore } from "../store/authStore";
-import type { RegisterData } from "../types/types";
+import { styles } from "./Register.styles";
 
-export default function Register({ navigation }: any) {
+// Components
+import Button from "../../components/ui/Button";
+import Input from "../../components/ui/Input";
+
+// Services
+import { authService } from "../../services/authService";
+
+// Store
+import { useAuthStore } from "../../store/authStore";
+
+// Types
+import type { RegisterRequest } from "../../types/auth.types";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { AuthStackParams } from "../../navigation/navigation.types";
+
+type RegisterNavigationProp = NativeStackNavigationProp<
+  AuthStackParams,
+  "Register"
+>;
+
+export default function Register({
+  navigation,
+}: {
+  navigation: RegisterNavigationProp;
+}) {
   const { saveLogin } = useAuthStore();
-  const [registerData, setRegisterData] = useState<RegisterData>({
+
+  const [registerData, setRegisterData] = useState<RegisterRequest>({
     name: "",
     username: "",
     email: "",
@@ -31,40 +50,47 @@ export default function Register({ navigation }: any) {
     password: "",
   });
 
-  const handleRegister = async () => {
-    // Validaciones
+  const validateForm = () => {
     if (!registerData.name.trim()) {
       setErrors({ ...errors, name: "El nombre es obligatorio*" });
-      return;
+      return false;
     }
     if (!registerData.username.trim()) {
       setErrors({
         ...errors,
         username: "El nombre de usuario es obligatorio*",
       });
-      return;
+      return false;
     }
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(registerData.email)) {
       setErrors({ ...errors, email: "El email no es válido*" });
-      return;
+      return false;
     }
     if (registerData.password.length < 6) {
       setErrors({
         ...errors,
         password: "La contraseña debe tener al menos 6 caracteres*",
       });
-      return;
+      return false;
     }
+
+    return true;
+  };
+
+  const handleRegister = async () => {
+    if (!validateForm()) return;
 
     try {
       setLoading(true);
-      const response = await authApi.register(registerData);
+      const response = await authService.register(registerData);
 
-      // Guardar token y usuario en el store
-      saveLogin(response.token, response.user);
-    } catch (error: any) {
-      Alert.alert("Ups!", error.message);
+      await saveLogin(response.token, response.user);
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert("Ups!", error.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -149,38 +175,3 @@ export default function Register({ navigation }: any) {
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: spacing.lg,
-    justifyContent: "center",
-    backgroundColor: colors.white,
-  },
-  title: {
-    fontSize: typography.h1, // ✅
-    fontWeight: "bold",
-    fontFamily: "Inter_700Bold",
-  },
-  subtitle: {
-    fontSize: typography.body,
-    color: colors.secondary,
-    fontFamily: "Inter_400Regular",
-    marginBottom: spacing.lg,
-  },
-  registerText: {
-    marginVertical: spacing.md,
-    textAlign: "center",
-    color: colors.secondary,
-    fontFamily: "Inter_400Regular",
-  },
-  link: {
-    color: colors.primary,
-    fontWeight: "bold",
-    fontFamily: "Inter_700Bold",
-    textDecorationLine: "underline",
-  },
-  form: {
-    marginBottom: spacing.md,
-  },
-});

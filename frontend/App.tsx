@@ -18,7 +18,7 @@ export default function App() {
 
   useEffect(() => {
     hydrateStore();
-  }, [hydrateStore]);
+  }, []);
 
   const [fontsLoaded] = useFonts({
     Inter_400Regular,
@@ -29,6 +29,7 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
+      {/* Espera fonts e hidratacion del store */}
       {!fontsLoaded || !isHydrated ? (
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}

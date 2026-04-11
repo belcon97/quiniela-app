@@ -45,8 +45,6 @@ export const getUserPrivateProfileService = async (userId: string) => {
   const matchesWithoutPredictions =
     await getMatchesWithoutPredictionsRepository(userId);
   return {
-    username: user?.username,
-    name: user?.name,
     position: userRanking.position,
     totalPoints: userRanking.totalPoints,
     predictionsHistory,
