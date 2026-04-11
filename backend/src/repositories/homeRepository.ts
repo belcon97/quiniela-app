@@ -22,15 +22,6 @@ export const getUpcomingMatchesRepository = async () => {
   });
 };
 
-// Traer el ranking general
-export const getHomeRankingRepository = async () => {
-  return prisma.prediction.groupBy({
-    by: ["userId"],
-    _sum: { points: true },
-    orderBy: { _sum: { points: "desc" } },
-  });
-};
-
 // Traer los ususarios por id
 export const getUsersByIdsRepository = async (userIds: string[]) => {
   return prisma.user.findMany({

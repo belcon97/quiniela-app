@@ -4,8 +4,8 @@ import cors from "cors";
 import authRoutes from "./routes/auth";
 import matchRoutes from "./routes/matches";
 import predictionRoutes from "./routes/predictions";
-import rankingRoutes from "./routes/ranking";
 import homeRoutes from "./routes/home";
+import profileRoutes from "./routes/profile";
 
 const app = express();
 
@@ -17,7 +17,7 @@ app.use(cors());
 app.use("/auth", authRoutes);
 app.use("/home", homeRoutes);
 app.use("/predictions", predictionRoutes);
-app.use("/ranking", rankingRoutes);
+app.use("/profile", profileRoutes);
 
 // private routes
 app.use("/matches", matchRoutes);
