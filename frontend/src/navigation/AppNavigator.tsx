@@ -3,31 +3,34 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import { useAuthStore } from "../store/authStore";
 
+import type { AuthStackParams, AppStackParams } from "./navigation.types";
+
 // Screens
 import Login from "../screens/Login/Login";
 import Register from "../screens/Register/Register";
 import Home from "../screens/Home/Home";
-import Profile from "../screens/Profile";
+import Profile from "../screens/Profile/Profile";
 
-const Stack = createNativeStackNavigator();
+const AuthStack = createNativeStackNavigator<AuthStackParams>();
+const AppStack = createNativeStackNavigator<AppStackParams>();
 
 // Pantallas para usuarios no logueados
-function AuthStack() {
+function AuthStackScreen() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Login" component={Login} />
-      <Stack.Screen name="Register" component={Register} />
-    </Stack.Navigator>
+    <AuthStack.Navigator screenOptions={{ headerShown: false }}>
+      <AuthStack.Screen name="Login" component={Login} />
+      <AuthStack.Screen name="Register" component={Register} />
+    </AuthStack.Navigator>
   );
 }
 
 // Pantallas para usuarios logueados
-function AppStack() {
+function AppStackScreen() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Home" component={Home} />
-      <Stack.Screen name="Profile" component={Profile} />
-    </Stack.Navigator>
+    <AppStack.Navigator screenOptions={{ headerShown: false }}>
+      <AppStack.Screen name="Home" component={Home} />
+      <AppStack.Screen name="Profile" component={Profile} />
+    </AppStack.Navigator>
   );
 }
 
@@ -35,7 +38,7 @@ export default function AppNavigator() {
   const { isAuthenticated } = useAuthStore();
   return (
     <NavigationContainer>
-      {isAuthenticated ? <AppStack /> : <AuthStack />}
+      {isAuthenticated ? <AuthStackScreen /> : <AppStackScreen />}
     </NavigationContainer>
   );
 }

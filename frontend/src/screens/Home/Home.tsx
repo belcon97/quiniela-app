@@ -1,11 +1,11 @@
 import { ScrollView } from "react-native";
 // Components
 import { Layout } from "../../layout/Layout";
-import { UpcomingMatches } from "../../components/UpcomingMatches/UpcomingMatches";
-import { RankingList } from "../../components/RankingList/RankingList";
+import { UpcomingMatches } from "../../features/home/components/UpcomingMatches/UpcomingMatches";
+import { RankingList } from "../../features/home/components/RankingList/RankingList";
 
 // Hooks
-import { useHome } from "./useHome";
+import { useHome } from "../../features/home/hooks/useHome";
 
 export default function Home() {
   const { data, loading } = useHome();

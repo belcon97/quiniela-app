@@ -3,7 +3,7 @@ import { Platform } from "react-native";
 import { create } from "zustand";
 import * as SecureStore from "expo-secure-store";
 
-import type { AuthUser } from "../types/shared.types";
+import type { AuthUser } from "../shared/types/shared.types";
 
 interface AuthState {
   token: string | null;

@@ -1,22 +1,16 @@
-import Constants from 'expo-constants';
+import Constants from "expo-constants";
 
-export const BASE_URL = Constants.expoConfig?.extra?.apiUrl ?? "http://localhost:3000";
+export const BASE_URL =
+  Constants.expoConfig?.extra?.apiUrl ?? "http://localhost:3000";
 
 export const API_ROUTES = {
   // Auth
   register: `${BASE_URL}/auth/register`,
   login: `${BASE_URL}/auth/login`,
 
-  // Matches
-  matches: `${BASE_URL}/matches`,
-
-  // Predictions
-  predictions: `${BASE_URL}/predictions`,
-  myPredictions: `${BASE_URL}/predictions/me`,
-
-  // Ranking
-  ranking: `${BASE_URL}/ranking`,
-
   // Home
   home: `${BASE_URL}/home`,
+
+  // Profile
+  profile: `${BASE_URL}/profile`,
 };

@@ -11,17 +11,17 @@ import { styles } from "./Login.styles";
 import Feather from "@expo/vector-icons/Feather";
 
 // Components
-import Button from "../../components/ui/Button";
-import Input from "../../components/ui/Input";
+import Button from "../../ui/Button/Button";
+import Input from "../../ui/Input/Input";
 
 // Services
-import { authService } from "../../services/authService";
+import { authService } from "../../features/auth/services/authService";
 
 // Store
 import { useAuthStore } from "../../store/authStore";
 
 // Types
-import type { LoginRequest } from "../../types/auth.types";
+import type { LoginRequest } from "../../features/auth/types/auth.types";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { AuthStackParams } from "../../navigation/navigation.types";
 

@@ -5,5 +5,5 @@ export type AuthStackParams = {
 
 export type AppStackParams = {
   Home: undefined;
-  Profile: undefined;
+  Profile: { username: string } | undefined;
 };

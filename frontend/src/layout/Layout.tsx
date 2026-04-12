@@ -4,8 +4,8 @@ import { useState } from "react";
 import { styles } from "./Layout.styles";
 
 // Components
-import { Header } from "./Header/Header";
-import { Menu } from "./Header/Menu/Menu";
+import { Header } from "./components/Header/Header";
+import { Menu } from "./components/Menu/Menu";
 
 interface LayoutProps {
   children: React.ReactNode;
