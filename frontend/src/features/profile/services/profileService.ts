@@ -1,4 +1,4 @@
-import { API_ROUTES } from "../../../constants";
+import { API_ROUTES } from "@/constants";
 import type {
   PrivateProfileData,
   PublicProfileData,

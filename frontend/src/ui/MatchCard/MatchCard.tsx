@@ -3,9 +3,9 @@ import { styles } from "./MatchCard.styles";
 import { Ionicons } from "@expo/vector-icons";
 
 // Types
-import type { Match } from "../../shared/types/shared.types";
+import type { Match } from "@/shared/types/shared.types";
 // Utils
-import { formatDate } from "../../utils/formatDate";
+import { formatDate } from "@/utils/formatDate";
 
 interface MatchCardProps {
   match: Match;

@@ -35,10 +35,10 @@ function AppStackScreen() {
 }
 
 export default function AppNavigator() {
-  const { isAuthenticated } = useAuthStore();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   return (
     <NavigationContainer>
-      {isAuthenticated ? <AuthStackScreen /> : <AppStackScreen />}
+      {isAuthenticated ? <AppStackScreen /> : <AuthStackScreen />}
     </NavigationContainer>
   );
 }

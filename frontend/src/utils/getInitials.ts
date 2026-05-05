@@ -1,4 +1,4 @@
-// Sacar solo las iniciales del name ej:Juan Belandria -> JB
+// Sacar solo las iniciales del nombre
 export const getInitials = (name: string) => {
   return name
     .split(" ")

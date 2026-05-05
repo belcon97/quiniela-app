@@ -7,22 +7,23 @@ import {
   Platform,
   ScrollView,
 } from "react-native";
+import Feather from "@expo/vector-icons/Feather";
 import { styles } from "./Register.styles";
 
 // Components
-import Button from "../../ui/Button/Button";
-import Input from "../../ui/Input/Input";
+import Button from "@/ui/Button/Button";
+import Input from "@/ui/Input/Input";
 
 // Services
-import { authService } from "../../features/auth/services/authService";
+import { authService } from "@/features/auth/services/authService";
 
 // Store
-import { useAuthStore } from "../../store/authStore";
+import { useAuthStore } from "@/store/authStore";
 
 // Types
-import type { RegisterRequest } from "../../features/auth/types/auth.types";
+import type { RegisterRequest } from "@/features/auth/types/auth.types";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import type { AuthStackParams } from "../../navigation/navigation.types";
+import type { AuthStackParams } from "@/navigation/navigation.types";
 
 type RegisterNavigationProp = NativeStackNavigationProp<
   AuthStackParams,
@@ -50,33 +51,51 @@ export default function Register({
     password: "",
   });
 
+  const handleNameChange = (text: string) => {
+    setRegisterData((prev) => ({ ...prev, name: text }));
+    setErrors((prev) => ({ ...prev, name: "" }));
+  };
+
+  const handleUsernameChange = (text: string) => {
+    setRegisterData((prev) => ({ ...prev, username: text }));
+    setErrors((prev) => ({ ...prev, username: "" }));
+  };
+
+  const handleEmailChange = (text: string) => {
+    setRegisterData((prev) => ({ ...prev, email: text }));
+    setErrors((prev) => ({ ...prev, email: "" }));
+  };
+
+  const handlePasswordChange = (text: string) => {
+    setRegisterData((prev) => ({ ...prev, password: text }));
+    setErrors((prev) => ({ ...prev, password: "" }));
+  };
+
   const validateForm = () => {
+    const newErrors = { name: "", username: "", email: "", password: "" };
+
     if (!registerData.name.trim()) {
-      setErrors({ ...errors, name: "El nombre es obligatorio*" });
-      return false;
+      newErrors.name = "El nombre es obligatorio*";
     }
     if (!registerData.username.trim()) {
-      setErrors({
-        ...errors,
-        username: "El nombre de usuario es obligatorio*",
-      });
-      return false;
+      newErrors.username = "El nombre de usuario es obligatorio*";
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(registerData.email)) {
-      setErrors({ ...errors, email: "El email no es válido*" });
-      return false;
+      newErrors.email = "El email no es válido*";
     }
     if (registerData.password.length < 6) {
-      setErrors({
-        ...errors,
-        password: "La contraseña debe tener al menos 6 caracteres*",
-      });
-      return false;
+      newErrors.password = "La contraseña debe tener al menos 6 caracteres*";
     }
 
-    return true;
+    setErrors(newErrors);
+    return (
+      !newErrors.name &&
+      !newErrors.username &&
+      !newErrors.email &&
+      !newErrors.password
+    );
   };
 
   const handleRegister = async () => {
@@ -85,91 +104,109 @@ export default function Register({
     try {
       setLoading(true);
       const response = await authService.register(registerData);
-
       await saveLogin(response.token, response.user);
     } catch (error) {
-      if (error instanceof Error) {
-        Alert.alert("Ups!", error.message);
-      }
+      const message =
+        error instanceof Error ? error.message : "Ocurrió un error inesperado";
+      Alert.alert("Ups!", message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
+    // behavior difiere por OS: iOS necesita "padding", Android "height"
     <KeyboardAvoidingView
-      style={{ flex: 1 }}
+      style={styles.register__keyboard}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerStyle={styles.register__scroll}
         keyboardShouldPersistTaps="handled"
       >
-        <View style={styles.container}>
-          <View>
-            <Text style={styles.title}>Crea tu cuenta</Text>
-            <Text style={styles.subtitle}>
+        <View style={styles.register}>
+          <View style={styles.register__header}>
+            <Text style={styles.register__title}>Crea tu cuenta</Text>
+            <Text style={styles.register__subtitle}>
               Únete y comenzá a predecir resultados.
             </Text>
           </View>
 
-          <View style={styles.form}>
-            <Input
-              label="Nombre"
-              placeholder="Tu nombre"
-              value={registerData.name}
-              error={errors.name}
-              onChangeText={(text) => {
-                setRegisterData({ ...registerData, name: text });
-                setErrors({ ...errors, name: "" });
-              }}
-            />
-            <Input
-              label="Nombre de usuario"
-              placeholder="nombre123"
-              value={registerData.username}
-              error={errors.username}
-              onChangeText={(text) => {
-                setRegisterData({ ...registerData, username: text });
-                setErrors({ ...errors, username: "" });
-              }}
-            />
-            <Input
-              label="Correo electrónico"
-              placeholder="nombre@ejemplo.com"
-              value={registerData.email}
-              error={errors.email}
-              onChangeText={(text) => {
-                setRegisterData({ ...registerData, email: text });
-                setErrors({ ...errors, email: "" });
-              }}
-            />
-            <Input
-              label="Contraseña"
-              placeholder="mínimo 6 caracteres"
-              value={registerData.password}
-              error={errors.password}
-              onChangeText={(text) => {
-                setRegisterData({ ...registerData, password: text });
-                setErrors({ ...errors, password: "" });
-              }}
-              secureTextEntry
-            />
+          <View style={styles.register__form}>
+            <View style={styles.register__field}>
+              <Text style={styles.register__label}>Nombre</Text>
+              <Input
+                placeholder="Tu nombre"
+                value={registerData.name}
+                hasError={!!errors.name}
+                onChangeText={handleNameChange}
+              />
+              {errors.name && (
+                <Text style={styles.register__error}>{errors.name}</Text>
+              )}
+            </View>
+
+            <View style={styles.register__field}>
+              <Text style={styles.register__label}>Nombre de usuario</Text>
+              <Input
+                placeholder="nombre123"
+                value={registerData.username}
+                hasError={!!errors.username}
+                onChangeText={handleUsernameChange}
+              />
+              {errors.username && (
+                <Text style={styles.register__error}>{errors.username}</Text>
+              )}
+            </View>
+
+            <View style={styles.register__field}>
+              <Text style={styles.register__label}>Correo electrónico</Text>
+              <Input
+                placeholder="nombre@ejemplo.com"
+                value={registerData.email}
+                hasError={!!errors.email}
+                onChangeText={handleEmailChange}
+              />
+              {errors.email && (
+                <Text style={styles.register__error}>{errors.email}</Text>
+              )}
+            </View>
+
+            <View style={styles.register__field}>
+              <Text style={styles.register__label}>Contraseña</Text>
+              <Input
+                placeholder="mínimo 6 caracteres"
+                value={registerData.password}
+                hasError={!!errors.password}
+                onChangeText={handlePasswordChange}
+                secureTextEntry
+              />
+              {errors.password && (
+                <Text style={styles.register__error}>{errors.password}</Text>
+              )}
+            </View>
           </View>
 
-          <Button onPress={handleRegister} variant="primary" disabled={loading}>
+          <Button
+            onPress={handleRegister}
+            variant="primary"
+            disabled={loading}
+            icon={<Feather name="arrow-right" size={14} color="white" />}
+          >
             {loading ? "Cargando..." : "Regístrate"}
           </Button>
 
-          <Text style={styles.registerText}>
-            ¿Ya tenés una cuenta?{" "}
-            <Text
-              style={styles.link}
-              onPress={() => navigation.navigate("Login")}
-            >
-              Inicia sesión
+          <View style={styles.register__footer}>
+            <Text style={styles.register__footer_text}>
+              ¿Ya tenés una cuenta?{" "}
+              <Text
+                style={styles.register__footer_link}
+                onPress={() => navigation.navigate("Login")}
+              >
+                Inicia sesión
+              </Text>
             </Text>
-          </Text>
+          </View>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

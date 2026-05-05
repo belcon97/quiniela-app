@@ -1,5 +1,6 @@
-import { TouchableOpacity, Text, View } from "react-native";
-import { buttonStyles } from "../../styles/ui";
+import { useRef } from "react";
+import { Pressable, Text, Animated } from "react-native";
+import { styles, buttonTextStyles } from "./Button.styles";
 
 type ButtonVariant = "primary" | "secondary" | "outlined";
 
@@ -18,28 +19,41 @@ export default function Button({
   icon,
   disabled,
 }: ButtonProps) {
+  const scale = useRef(new Animated.Value(1)).current;
+
+  const handlePressIn = () => {
+    Animated.spring(scale, { toValue: 0.95, useNativeDriver: true }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scale, { toValue: 1, useNativeDriver: true }).start();
+  };
+
   return (
-    <TouchableOpacity
-      style={[
-        buttonStyles.base,
-        buttonStyles[variant],
-        disabled && { opacity: 0.4 },
-      ]}
+    <Pressable
       onPress={onPress}
-      activeOpacity={0.8}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
       disabled={disabled}
     >
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+      <Animated.View
+        style={[
+          styles.button__base,
+          styles[`button__${variant}`],
+          disabled && { opacity: 0.4 },
+          { transform: [{ scale }] },
+        ]}
+      >
         <Text
           style={[
-            buttonStyles.baseText,
-            buttonStyles[`${variant}Text` as keyof typeof buttonStyles],
+            buttonTextStyles.button__text_base,
+            buttonTextStyles[`button__text_${variant}`],
           ]}
         >
           {children}
         </Text>
-        {icon && icon}
-      </View>
-    </TouchableOpacity>
+        {icon}
+      </Animated.View>
+    </Pressable>
   );
 }

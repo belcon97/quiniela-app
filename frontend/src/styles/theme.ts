@@ -1,25 +1,38 @@
 export const colors = {
-  primary: "#000000",
-  secondary: "#616161",
-  tertiary: "#212121",
-  neutral: "#F5F5F5",
-  white: "#ffffff",
-  border: "#E0E0E0",
-  error: "#D32F2F",
+  primary: "#001F5B",
+  secondary: "#00A651",
+  tertiary: "#ED1C24",
+
+  // Neutral
+  neutral100: "#F2F4F7",
+  neutral200: "#E4E7EC",
+  neutral400: "#98A2B3",
+  neutral600: "#475467",
+  neutral900: "#101828",
+
+  // Semánticos
+  background: "#FFFFFF",
+  text: "#101828",
+  textMuted: "#475467",
+  textPlaceholder: "#98A2B3",
+  inputBg: "#F2F4F7",
+  error: "#ED1C24",
 };
 
 export const typography = {
-  fontFamily: {
-    regular: "Inter_400Regular",
-    medium: "Inter_500Medium",
-    bold: "Inter_700Bold",
-  },
-  h1: 58,
-  title: 32,
-  subtitle: 20,
-  body: 16,
-  label: 12,
-  small: 12,
+  regular: "Inter_400Regular",
+  medium: "Inter_500Medium",
+  semiBold: "Inter_600SemiBold",
+  bold: "Inter_700Bold",
+  headline: "PlusJakartaSans_700Bold",
+  subheadline: "PlusJakartaSans_400Regular",
+
+  xs: 12,
+  sm: 14,
+  md: 16,
+  lg: 20,
+  xl: 28,
+  xxl: 36,
 };
 
 export const spacing = {
@@ -28,12 +41,12 @@ export const spacing = {
   md: 16,
   lg: 24,
   xl: 32,
+  xxl: 48,
 };
 
-export const borderRadius = {
-  sm: 4,
-  md: 8,
-  lg: 10,
-  xl: 16,
+export const radius = {
+  sm: 8,
+  md: 12,
+  lg: 16,
   full: 999,
 };

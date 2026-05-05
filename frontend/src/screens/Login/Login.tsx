@@ -7,24 +7,24 @@ import {
   Platform,
   ScrollView,
 } from "react-native";
-import { styles } from "./Login.styles";
+
 import Feather from "@expo/vector-icons/Feather";
+import { styles } from "./Login.styles";
 
 // Components
-import Button from "../../ui/Button/Button";
-import Input from "../../ui/Input/Input";
+import Button from "@/ui/Button/Button";
+import Input from "@/ui/Input/Input";
 
 // Services
-import { authService } from "../../features/auth/services/authService";
+import { authService } from "@/features/auth/services/authService";
 
 // Store
-import { useAuthStore } from "../../store/authStore";
+import { useAuthStore } from "@/store/authStore";
 
 // Types
-import type { LoginRequest } from "../../features/auth/types/auth.types";
+import type { LoginRequest } from "@/features/auth/types/auth.types";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import type { AuthStackParams } from "../../navigation/navigation.types";
-
+import type { AuthStackParams } from "@/navigation/navigation.types";
 type LoginNavigationProp = NativeStackNavigationProp<AuthStackParams, "Login">;
 
 export default function Login({
@@ -32,7 +32,7 @@ export default function Login({
 }: {
   navigation: LoginNavigationProp;
 }) {
-  const { saveLogin } = useAuthStore();
+  const saveLogin = useAuthStore((state) => state.saveLogin);
 
   const [loginData, setLoginData] = useState<LoginRequest>({
     username: "",
@@ -41,27 +41,31 @@ export default function Login({
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({ username: "", password: "" });
 
+  // Maneja cambios en campos de formulario
+  const handleUsernameChange = (text: string) => {
+    setLoginData((prev) => ({ ...prev, username: text }));
+    setErrors((prev) => ({ ...prev, username: "" }));
+  };
+
+  const handlePasswordChange = (text: string) => {
+    setLoginData((prev) => ({ ...prev, password: text }));
+    setErrors((prev) => ({ ...prev, password: "" }));
+  };
+
   const validateForm = () => {
+    const newErrors = { username: "", password: "" };
+
     if (!loginData.username.trim()) {
-      setErrors({
-        ...errors,
-        username: "El nombre de usuario es obligatorio*",
-      });
-      return false;
+      newErrors.username = "El nombre de usuario es obligatorio*";
     }
     if (!loginData.password.trim()) {
-      setErrors({ ...errors, password: "La contraseña es obligatoria*" });
-      return false;
-    }
-    if (loginData.password.length < 6) {
-      setErrors({
-        ...errors,
-        password: "La contraseña debe tener al menos 6 caracteres*",
-      });
-      return false;
+      newErrors.password = "La contraseña es obligatoria*";
+    } else if (loginData.password.length < 6) {
+      newErrors.password = "La contraseña debe tener al menos 6 caracteres*";
     }
 
-    return true;
+    setErrors(newErrors);
+    return !newErrors.username && !newErrors.password;
   };
 
   const handleLogin = async () => {
@@ -82,47 +86,52 @@ export default function Login({
   };
 
   return (
+    // KeyboardAvoidingView -> Empuja el contenido cuando aparece el teclado
     <KeyboardAvoidingView
-      style={{ flex: 1 }}
+      style={styles.login__keyboard}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerStyle={styles.login__scroll}
         keyboardShouldPersistTaps="handled"
       >
-        <View style={styles.container}>
-          {/* header */}
-          <View>
-            <Text style={styles.title}>Bienvenido</Text>
-            <Text style={styles.subtitle}>Inicia sesión para continuar.</Text>
+        <View style={styles.login}>
+          <View style={styles.login__header}>
+            <Text style={styles.login__title}>Bienvenido</Text>
+            <Text style={styles.login__subtitle}>
+              Inicia sesión para continuar.
+            </Text>
           </View>
 
-          {/* inputs form */}
+          <View style={styles.login__form}>
+            <View style={styles.login__field}>
+              <Text style={styles.login__label}>Nombre de usuario</Text>
+              <Input
+                placeholder="nombre123"
+                hasError={errors.username !== ""}
+                value={loginData.username}
+                onChangeText={handleUsernameChange}
+              />
+              {errors.username && (
+                <Text style={styles.login__error}>{errors.username}</Text>
+              )}
+            </View>
 
-          <View style={styles.form}>
-            <Input
-              label="Nombre de usuario"
-              placeholder="nombre123"
-              error={errors.username}
-              value={loginData.username}
-              onChangeText={(text) => {
-                setLoginData({ ...loginData, username: text });
-                setErrors({ ...errors, username: "" });
-              }}
-            />
-            <Input
-              label="Contraseña"
-              placeholder="123456"
-              error={errors.password}
-              value={loginData.password}
-              onChangeText={(text) => {
-                setLoginData({ ...loginData, password: text });
-                setErrors({ ...errors, password: "" });
-              }}
-              secureTextEntry
-            />
+            <View style={styles.login__field}>
+              <Text style={styles.login__label}>Contraseña</Text>
+              <Input
+                placeholder="123456"
+                hasError={errors.password !== ""}
+                value={loginData.password}
+                onChangeText={handlePasswordChange}
+                secureTextEntry
+              />
+              {errors.password && (
+                <Text style={styles.login__error}>{errors.password}</Text>
+              )}
+            </View>
           </View>
-          {/* botones */}
+
           <Button
             onPress={handleLogin}
             variant="primary"
@@ -132,15 +141,17 @@ export default function Login({
             {loading ? "Cargando..." : "Iniciar sesión"}
           </Button>
 
-          <Text style={styles.registerText}>
-            ¿No tienes una cuenta?{" "}
-            <Text
-              style={styles.link}
-              onPress={() => navigation.navigate("Register")}
-            >
-              Registrarse
+          <View style={styles.login__footer}>
+            <Text style={styles.login__footer_text}>
+              ¿No tienes una cuenta?{" "}
+              <Text
+                style={styles.login__footer_link}
+                onPress={() => navigation.navigate("Register")}
+              >
+                Registrarse
+              </Text>
             </Text>
-          </Text>
+          </View>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

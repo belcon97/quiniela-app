@@ -1,26 +1,28 @@
 import { View, Text, ActivityIndicator } from "react-native";
 
 // Components
-import { RankingRow } from "../../../../ui/RankingRow/RankingRow";
+import { RankingRow } from "@/ui/RankingRow/RankingRow";
 
 // Types
-import type { RankingEntry } from "../../types/home.types";
+import type { RankingEntry } from "@/features/home/types/home.types";
 
 // Store
-import { useAuthStore } from "../../../../store/authStore";
+import { useAuthStore } from "@/store/authStore";
 
 interface RankingListProps {
   loading: boolean;
   ranking: RankingEntry[];
   myPosition: number | null;
+  onUserPress: (username: string) => void;
 }
 
 export function RankingList({
   ranking,
   loading,
   myPosition,
+  onUserPress,
 }: RankingListProps) {
-  const { user } = useAuthStore();
+  const user = useAuthStore((state) => state.user);
 
   if (loading) return <ActivityIndicator />;
 
@@ -43,12 +45,17 @@ export function RankingList({
             key={item.username}
             ranking={item}
             isMe={item.username === user?.username}
+            onPress={() => onUserPress?.(item.username)}
           />
         ))}
       </View>
 
       {!isMeInTop5 && myRankingEntry ? (
-        <RankingRow ranking={myRankingEntry} isMe />
+        <RankingRow
+          ranking={myRankingEntry}
+          isMe
+          onPress={() => onUserPress?.(myRankingEntry.username)}
+        />
       ) : null}
 
       {myPosition === null ? (

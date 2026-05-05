@@ -1,4 +1,4 @@
-import type { Match } from "../../../shared/types/shared.types";
+import type { Match } from "@/shared/types/shared.types";
 
 export interface Prediction {
   id: string;

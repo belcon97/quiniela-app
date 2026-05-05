@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAuthStore } from "../../../store/authStore";
+import { useAuthStore } from "@/store/authStore";
 
 //Types
 import type { PrivateProfileData } from "../types/profile.types";
@@ -7,7 +7,7 @@ import type { PrivateProfileData } from "../types/profile.types";
 import { profileService } from "../services/profileService";
 
 export function usePrivateProfile() {
-  const { token } = useAuthStore();
+  const token = useAuthStore((state) => state.token);
 
   const [loading, setLoading] = useState(true);
   const [privateProfileData, setPrivateProfileData] =

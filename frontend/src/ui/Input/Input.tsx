@@ -1,58 +1,55 @@
-import { View, Text, TextInput } from "react-native";
-import { inputStyles } from "../../styles/ui";
-import { colors } from "../../styles/theme";
-
-type InputVariant = "form" | "search";
+import { useState } from "react";
+import { View, TextInput, Pressable } from "react-native";
+import Feather from "@expo/vector-icons/Feather";
+import { styles } from "./Input.styles";
+import { colors } from "@/styles/theme";
 
 interface InputProps {
-  label?: string;
-  placeholder?: string;
-  error?: string;
   value: string;
   onChangeText: (text: string) => void;
-  variant?: InputVariant;
+  placeholder?: string;
   icon?: React.ReactNode;
+  hasError?: boolean;
   secureTextEntry?: boolean;
 }
 
 export default function Input({
-  label,
-  placeholder,
-  error,
   value,
   onChangeText,
-  variant = "form",
+  placeholder,
   icon,
+  hasError = false,
   secureTextEntry = false,
 }: InputProps) {
-  if (variant === "search") {
-    return (
-      <View style={inputStyles.searchContainer}>
-        {icon && icon}
-        <TextInput
-          style={inputStyles.search}
-          placeholder={placeholder || "Search"}
-          value={value}
-          onChangeText={onChangeText}
-          placeholderTextColor={colors.secondary}
-        />
-      </View>
-    );
-  }
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   return (
-    <View style={inputStyles.container}>
-      {label && <Text style={inputStyles.label}>{label}</Text>}
+    <View style={[styles.input, hasError && styles.input_error]}>
+      {icon && <View style={styles.input__icon}>{icon}</View>}
+
       <TextInput
-        style={inputStyles.form}
+        style={styles.input__field}
         placeholder={placeholder}
         value={value}
         onChangeText={onChangeText}
-        secureTextEntry={secureTextEntry}
+        secureTextEntry={secureTextEntry && !isPasswordVisible}
         autoCapitalize="none"
-        placeholderTextColor={colors.secondary}
+        placeholderTextColor={colors.textPlaceholder}
+        underlineColorAndroid="transparent" // Para Android
       />
-      {error && <Text style={inputStyles.error}>{error}</Text>}
+
+      {secureTextEntry && (
+        <Pressable
+          onPress={() => setIsPasswordVisible((prev) => !prev)}
+          style={styles.input__eye}
+        >
+          <Feather
+            name={isPasswordVisible ? "eye-off" : "eye"}
+            size={18}
+            color={colors.neutral400}
+          />
+        </Pressable>
+      )}
     </View>
   );
 }

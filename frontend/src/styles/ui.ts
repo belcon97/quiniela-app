@@ -1,26 +1,6 @@
 import { StyleSheet } from "react-native";
 import { colors, spacing, borderRadius, typography } from "./theme";
 
-export const buttonStyles = StyleSheet.create({
-  base: {
-    padding: spacing.md,
-    borderRadius: borderRadius.md,
-    alignItems: "center",
-  },
-  primary: { backgroundColor: colors.primary },
-  secondary: { backgroundColor: colors.neutral },
-  outlined: { borderWidth: 1, borderColor: colors.primary },
-
-  baseText: {
-    fontSize: typography.label,
-    fontWeight: "bold",
-    fontFamily: "Inter_700Bold",
-  },
-  primaryText: { color: colors.white },
-  secondaryText: { color: colors.primary },
-  outlinedText: { color: colors.primary },
-});
-
 export const inputStyles = StyleSheet.create({
   container: { marginBottom: spacing.md },
   label: {

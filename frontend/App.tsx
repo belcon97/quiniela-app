@@ -1,35 +1,26 @@
 import { useEffect } from "react";
 import { View, ActivityIndicator } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import {
-  useFonts,
-  Inter_400Regular,
-  Inter_500Medium,
-  Inter_600SemiBold,
-  Inter_700Bold,
-} from "@expo-google-fonts/inter";
 
+// Fonts
+import { useAppFonts } from "./src/hooks/useAppFonts";
+// Store
 import { useAuthStore } from "./src/store/authStore";
-
+// Navigation
 import AppNavigator from "./src/navigation/AppNavigator";
 
 export default function App() {
-  const { hydrateStore, isHydrated } = useAuthStore();
+  const fontsLoaded = useAppFonts();
+  const hydrateStore = useAuthStore((state) => state.hydrateStore);
+  const isHydrated = useAuthStore((state) => state.isHydrated);
 
   useEffect(() => {
     hydrateStore();
   }, []);
 
-  const [fontsLoaded] = useFonts({
-    Inter_400Regular,
-    Inter_500Medium,
-    Inter_600SemiBold,
-    Inter_700Bold,
-  });
-
   return (
     <SafeAreaProvider>
-      {/* Espera fonts e hidratacion del store */}
+      {/* Espera fonts e hidratación del store antes de renderizar */}
       {!fontsLoaded || !isHydrated ? (
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}

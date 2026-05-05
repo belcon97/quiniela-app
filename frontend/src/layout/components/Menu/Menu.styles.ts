@@ -15,12 +15,12 @@ export const styles = StyleSheet.create({
   panel: {
     position: "absolute",
     top: 0,
+    bottom: 0,
     left: 0,
     width: MENU_WIDTH,
-    height: "100%",
     backgroundColor: "#fff",
     zIndex: 11,
-    padding: 24,
+    paddingHorizontal: 24,
   },
   // Usuario
   userSection: {
@@ -45,6 +45,9 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 16,
   },
+  userInfo: {
+    flex: 1,
+  },
   userName: {
     fontSize: 16,
     fontWeight: "600",
@@ -55,8 +58,7 @@ export const styles = StyleSheet.create({
     marginTop: 2,
   },
   closeButton: {
-    alignSelf: "flex-end",
-    marginBottom: 16,
+    marginLeft: "auto",
   },
   // Items de navegación
   navItem: {
@@ -77,9 +79,8 @@ export const styles = StyleSheet.create({
 
   // Logout
   footer: {
-    position: "absolute",
-    bottom: 40,
-    left: 24,
+    marginTop: "auto",
+    paddingBottom: 8,
   },
   logoutItem: {
     flexDirection: "row",
