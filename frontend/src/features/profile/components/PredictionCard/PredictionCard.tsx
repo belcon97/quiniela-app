@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, Image } from "react-native";
 import { styles } from "./PredictionCard.styles";
 import type { Prediction } from "../../types/profile.types";
 import { formatDate } from "@/utils/formatDate";
@@ -29,8 +29,16 @@ export function PredictionCard({ prediction }: PredictionCardProps) {
 
       {/* Flags */}
       <View style={styles.flags}>
-        <Text style={styles.flag}>{match.homeFlag}</Text>
-        <Text style={styles.flag}>{match.awayFlag}</Text>
+        <Image
+          source={{ uri: match.homeFlag }}
+          style={styles.flag}
+          resizeMode="contain"
+        />
+        <Image
+          source={{ uri: match.awayFlag }}
+          style={styles.flag}
+          resizeMode="contain"
+        />
       </View>
 
       {/* Info */}

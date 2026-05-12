@@ -13,28 +13,28 @@ export function usePrivateProfile() {
   const [privateProfileData, setPrivateProfileData] =
     useState<PrivateProfileData | null>(null);
 
-  useEffect(() => {
-    const fetchPrivateProfileData = async () => {
-      try {
-        setLoading(true);
-
-        if (!token) return;
-        const response = await profileService.getPrivateProfile(token);
-        setPrivateProfileData(response);
-      } catch (error) {
-        if (error instanceof Error) {
-          console.error(error.message);
-        }
-      } finally {
-        setLoading(false);
+  const fetchPrivateProfileData = async () => {
+    try {
+      setLoading(true);
+      if (!token) return;
+      const response = await profileService.getPrivateProfile(token);
+      setPrivateProfileData(response);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
       }
-    };
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchPrivateProfileData();
   }, [token]);
 
   return {
     privateData: privateProfileData,
     loading,
+    refetch: fetchPrivateProfileData,
   };
 }

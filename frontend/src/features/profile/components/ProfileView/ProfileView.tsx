@@ -16,9 +16,7 @@ interface ProfileViewProps {
   totalPoints: number;
   predictionsHistory: Prediction[];
   predictionsPending?: Prediction[];
-  matchesWithoutPredictions?: Match[];
 
-  isOwner: boolean;
   username: string;
   name: string;
 }
@@ -28,8 +26,6 @@ export function ProfileView({
   totalPoints,
   predictionsHistory,
   predictionsPending,
-  matchesWithoutPredictions,
-  isOwner,
   username,
   name,
 }: ProfileViewProps) {

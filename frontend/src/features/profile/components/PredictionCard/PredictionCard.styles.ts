@@ -26,7 +26,9 @@ export const styles = StyleSheet.create({
     gap: 4,
   },
   flag: {
-    fontSize: 20,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
   },
   info: {
     flex: 1,

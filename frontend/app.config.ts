@@ -18,6 +18,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     supportsTablet: true,
   },
   android: {
+    package: "com.belcon.quiniela",
     adaptiveIcon: {
       foregroundImage: "./assets/adaptive-icon.png",
       backgroundColor: "#ffffff",
@@ -30,6 +31,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   plugins: ["expo-font", "expo-secure-store"],
   extra: {
-    apiUrl: process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:3000",
+    eas: {
+      projectId: "e4129d4a-82c6-4c63-a93d-c19d224cb7e2",
+    },
+    apiUrl: process.env.EXPO_PUBLIC_API_URL ?? "http://192.168.1.61:3000",
   },
 });

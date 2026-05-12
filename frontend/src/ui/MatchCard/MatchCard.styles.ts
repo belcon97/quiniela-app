@@ -1,27 +1,24 @@
 import { StyleSheet, Dimensions } from "react-native";
+import { colors, spacing, radius, typography } from "@/styles/theme";
 
 const { width } = Dimensions.get("window");
 
 export const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#ffd6d6ff",
-    borderRadius: 16,
-    padding: 16,
-    width: width * 0.7,
-    height: 160,
-    marginRight: 12,
-    shadowColor: "#1f1e1eff",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 3,
+    backgroundColor: colors.primary,
+    borderRadius: radius.lg,
+    padding: spacing.md,
+    width: width * 0.65,
+    height: 170,
+    justifyContent: "space-between",
   },
   stadium: {
-    fontSize: 11,
-    color: "#999",
+    fontSize: typography.xs,
+    fontFamily: typography.regular,
+    color: "rgba(255,255,255,0.5)",
     textTransform: "uppercase",
+    letterSpacing: 0.8,
     textAlign: "right",
-    marginBottom: 16,
   },
   teamsRow: {
     flexDirection: "row",
@@ -31,26 +28,29 @@ export const styles = StyleSheet.create({
   team: {
     alignItems: "center",
     flex: 1,
+    gap: spacing.xs,
   },
   flag: {
-    fontSize: 36,
-    marginBottom: 6,
+    width: 44,
+    height: 44,
+    borderRadius: radius.full,
   },
   teamName: {
-    fontSize: 12,
-    fontWeight: "600",
+    fontSize: typography.xs,
+    fontFamily: typography.semiBold,
+    color: colors.background,
     textAlign: "center",
   },
   vs: {
-    fontSize: 14,
-    fontWeight: "bold",
-    color: "#999",
-    paddingHorizontal: 8,
+    fontSize: typography.sm,
+    fontFamily: typography.bold,
+    color: "rgba(255,255,255,0.4)",
+    paddingHorizontal: spacing.sm,
   },
   date: {
-    fontSize: 12,
-    color: "#999",
+    fontSize: typography.xs,
+    fontFamily: typography.regular,
+    color: "rgba(255,255,255,0.6)",
     textAlign: "center",
-    marginTop: 16,
   },
 });

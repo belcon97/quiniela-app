@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
   View,
   Text,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -14,6 +13,7 @@ import { styles } from "./Login.styles";
 // Components
 import Button from "@/ui/Button/Button";
 import Input from "@/ui/Input/Input";
+import ErrorBanner from "@/ui/ErrorBanner/ErrorBanner";
 
 // Services
 import { authService } from "@/features/auth/services/authService";
@@ -40,6 +40,10 @@ export default function Login({
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({ username: "", password: "" });
+  const [errorBanner, setErrorBanner] = useState({
+    visible: false,
+    message: "",
+  });
 
   // Maneja cambios en campos de formulario
   const handleUsernameChange = (text: string) => {
@@ -78,7 +82,7 @@ export default function Login({
       await saveLogin(response.token, response.user);
     } catch (error) {
       if (error instanceof Error) {
-        Alert.alert("Ups!", error.message);
+        setErrorBanner({ visible: true, message: error.message });
       }
     } finally {
       setLoading(false);
@@ -131,7 +135,11 @@ export default function Login({
               )}
             </View>
           </View>
-
+          <ErrorBanner
+            message={errorBanner.message}
+            visible={errorBanner.visible}
+            onHide={() => setErrorBanner({ visible: false, message: "" })}
+          />
           <Button
             onPress={handleLogin}
             variant="primary"

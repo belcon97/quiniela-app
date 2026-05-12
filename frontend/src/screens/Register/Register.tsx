@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
   View,
   Text,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -13,6 +12,7 @@ import { styles } from "./Register.styles";
 // Components
 import Button from "@/ui/Button/Button";
 import Input from "@/ui/Input/Input";
+import ErrorBanner from "@/ui/ErrorBanner/ErrorBanner";
 
 // Services
 import { authService } from "@/features/auth/services/authService";
@@ -49,6 +49,10 @@ export default function Register({
     username: "",
     email: "",
     password: "",
+  });
+  const [errorBanner, setErrorBanner] = useState({
+    visible: false,
+    message: "",
   });
 
   const handleNameChange = (text: string) => {
@@ -108,7 +112,7 @@ export default function Register({
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Ocurrió un error inesperado";
-      Alert.alert("Ups!", message);
+      setErrorBanner({ visible: true, message });
     } finally {
       setLoading(false);
     }
@@ -186,7 +190,11 @@ export default function Register({
               )}
             </View>
           </View>
-
+          <ErrorBanner
+            message={errorBanner.message}
+            visible={errorBanner.visible}
+            onHide={() => setErrorBanner({ visible: false, message: "" })}
+          />
           <Button
             onPress={handleRegister}
             variant="primary"

@@ -1,7 +1,12 @@
 import Constants from "expo-constants";
+import { Platform } from "react-native";
 
 export const BASE_URL =
-  Constants.expoConfig?.extra?.apiUrl ?? "http://localhost:3000";
+  Platform.OS === "web"
+    ? (process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:3000")
+    : (Constants.expoConfig?.extra?.apiUrl ?? "http://localhost:3000");
+
+console.log("apiUrl:", BASE_URL);
 
 export const API_ROUTES = {
   // Auth
@@ -13,4 +18,8 @@ export const API_ROUTES = {
 
   // Profile
   profile: `${BASE_URL}/profile`,
+  predictions: `${BASE_URL}/predictions`,
+
+  // Admin matches
+  matches: `${BASE_URL}/matches`,
 };

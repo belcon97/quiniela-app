@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/store/authStore";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { AppStackParams } from "@/navigation/navigation.types";
 
 // Types
 import type { HomeData } from "../types/home.types";
@@ -8,6 +11,7 @@ import { homeService } from "../services/homeService";
 
 export function useHome() {
   const { token } = useAuthStore();
+  const navigation = useNavigation<NativeStackNavigationProp<AppStackParams>>();
 
   const [loading, setLoading] = useState(true);
   const [homeData, setHomeData] = useState<HomeData | null>(null);

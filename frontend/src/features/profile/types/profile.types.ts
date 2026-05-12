@@ -26,3 +26,9 @@ export interface PublicProfileData {
   totalPoints: number;
   predictionsHistory: Prediction[];
 }
+
+export interface PredictionInput {
+  matchId: string;
+  homeScore: string;
+  awayScore: string;
+}

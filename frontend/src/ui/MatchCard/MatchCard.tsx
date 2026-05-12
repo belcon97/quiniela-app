@@ -1,10 +1,7 @@
-import { View, Text } from "react-native";
+import { View, Text, Image } from "react-native";
 import { styles } from "./MatchCard.styles";
 import { Ionicons } from "@expo/vector-icons";
-
-// Types
 import type { Match } from "@/shared/types/shared.types";
-// Utils
 import { formatDate } from "@/utils/formatDate";
 
 interface MatchCardProps {
@@ -14,14 +11,16 @@ interface MatchCardProps {
 export function MatchCard({ match }: MatchCardProps) {
   return (
     <View style={styles.card}>
-      {/* Estadio */}
       <Text style={styles.stadium}>{match.stadium}</Text>
 
-      {/* Equipos */}
       <View style={styles.teamsRow}>
         <View style={styles.team}>
           {match.homeFlag ? (
-            <Text style={styles.flag}>{match.homeFlag}</Text>
+            <Image
+              source={{ uri: match.homeFlag }}
+              style={styles.flag}
+              resizeMode="contain"
+            />
           ) : (
             <Ionicons name="flag-outline" size={36} color="#ccc" />
           )}
@@ -32,7 +31,11 @@ export function MatchCard({ match }: MatchCardProps) {
 
         <View style={styles.team}>
           {match.awayFlag ? (
-            <Text style={styles.flag}>{match.awayFlag}</Text>
+            <Image
+              source={{ uri: match.awayFlag }}
+              style={styles.flag}
+              resizeMode="contain"
+            />
           ) : (
             <Ionicons name="flag-outline" size={36} color="#ccc" />
           )}
@@ -40,7 +43,6 @@ export function MatchCard({ match }: MatchCardProps) {
         </View>
       </View>
 
-      {/* Fecha */}
       <Text style={styles.date}>{formatDate(match.date)}</Text>
     </View>
   );

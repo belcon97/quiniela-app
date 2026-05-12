@@ -31,4 +31,21 @@ export const profileService = {
     }
     return response.json() as Promise<PublicProfileData>;
   },
+
+  createPredictions: async (
+    token: string,
+    predictions: { matchId: string; homeScore: number; awayScore: number }[],
+  ) => {
+    const response = await fetch(API_ROUTES.predictions, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ predictions }),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message);
+    return data;
+  },
 };
