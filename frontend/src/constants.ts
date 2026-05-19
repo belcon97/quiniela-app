@@ -22,4 +22,9 @@ export const API_ROUTES = {
 
   // Admin matches
   matches: `${BASE_URL}/matches`,
+
+  // Top scorer
+  topScorers: `${BASE_URL}/top-scorers`,
+  topScorerPredict: `${BASE_URL}/top-scorers/predict`,
+  topScorerMyPrediction: `${BASE_URL}/top-scorers/my-prediction`,
 };

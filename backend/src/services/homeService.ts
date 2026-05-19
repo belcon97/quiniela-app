@@ -1,5 +1,6 @@
 import { getUpcomingMatchesRepository } from "../repositories/homeRepository";
 import { getRankingService, getUserRankingService } from "./rankingService";
+import { getTopScorersRepository } from "../repositories/topScorerRepository";
 
 export const getHomeService = async (userId: string) => {
   const matches = await getUpcomingMatchesRepository();
@@ -17,9 +18,14 @@ export const getHomeService = async (userId: string) => {
   // Mi posicion
   const myRanking = await getUserRankingService(userId);
 
+  // Top 3 goleadores
+  const allScorers = await getTopScorersRepository();
+  const topScorers = allScorers.slice(0, 3);
+
   return {
     myPosition: myRanking.position,
     upcomingMatches,
     fullRanking,
+    topScorers,
   };
 };

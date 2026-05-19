@@ -10,6 +10,7 @@ import type { AppStackParams } from "@/navigation/navigation.types";
 import { Layout } from "@/layout/Layout";
 import { UpcomingMatches } from "@/features/home/components/UpcomingMatches/UpcomingMatches";
 import { RankingList } from "@/features/home/components/RankingList/RankingList";
+import { TopScorersList } from "@/features/home/components/TopScorersList/TopScorersList";
 
 // Hooks
 import { useHome } from "@/features/home/hooks/useHome";
@@ -66,6 +67,7 @@ export default function Home({
             })
           }
         />
+        <TopScorersList topScorers={data?.topScorers ?? []} />
       </ScrollView>
     </Layout>
   );

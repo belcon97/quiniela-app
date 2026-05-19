@@ -4,6 +4,7 @@ import { ProfileView } from "../ProfileView/ProfileView";
 import { MatchPredictionList } from "../MatchPredictionList/MatchPredictionList";
 import { useAuthStore } from "@/store/authStore";
 import { usePrivateProfile } from "../../hooks/usePrivateProfile";
+import { TopScorerPrediction } from "../TopScorerPrediction/TopScorerPrediction";
 
 export function PrivateProfile() {
   const user = useAuthStore((state) => state.user);
@@ -26,6 +27,7 @@ export function PrivateProfile() {
         matches={privateData.matchesWithoutPredictions}
         onSaved={refetch}
       />
+      <TopScorerPrediction />
     </ScrollView>
   );
 }

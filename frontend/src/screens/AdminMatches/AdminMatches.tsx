@@ -24,9 +24,14 @@ import { useAuthStore } from "@/store/authStore";
 // Constants
 import { API_ROUTES } from "@/constants";
 
+// Services
+import { topScorerService } from "@/features/topScorer/services/topScorerService";
+import type { TopScorer } from "@/features/topScorer/services/topScorerService";
+
 // Types
 import type { Match } from "@/shared/types/shared.types";
 import type { MatchForm, ScoreForm } from "@/features/admin/types/admin.types";
+
 // Constants
 import {
   WORLD_CUP_COUNTRIES,
@@ -45,6 +50,7 @@ const EMPTY_FORM: MatchForm = {
   date: "",
   time: "",
 };
+
 export default function AdminMatches() {
   const { token, logout } = useAuthStore();
 
@@ -76,6 +82,29 @@ export default function AdminMatches() {
     visible: false,
     message: "",
   });
+
+  // Top Scorers
+  const [topScorers, setTopScorers] = useState<TopScorer[]>([]);
+  const [loadingScorers, setLoadingScorers] = useState(false);
+  const [scorersLoaded, setScorersLoaded] = useState(false);
+  const [scorerForm, setScorerForm] = useState({
+    name: "",
+    team: "",
+    flag: "",
+  });
+  const [creatingScorer, setCreatingScorer] = useState(false);
+  const [scorerCreateError, setScorerCreateError] = useState({
+    visible: false,
+    message: "",
+  });
+  const [scorerCreateSuccess, setScorerCreateSuccess] = useState("");
+  const [editingScorer, setEditingScorer] = useState<TopScorer | null>(null);
+  const [editGoals, setEditGoals] = useState("");
+  const [updatingGoals, setUpdatingGoals] = useState(false);
+  const [goalsError, setGoalsError] = useState({ visible: false, message: "" });
+  const [closing, setClosing] = useState(false);
+  const [closeSuccess, setCloseSuccess] = useState("");
+  const [closeError, setCloseError] = useState({ visible: false, message: "" });
 
   // ── Handlers: Create ──
 
@@ -158,6 +187,7 @@ export default function AdminMatches() {
   const handleTabChange = (index: number) => {
     setActiveTab(index);
     if (index === 1 && !matchesLoaded) fetchMatches();
+    if (index === 2 && !scorersLoaded) fetchTopScorers();
   };
 
   // ── Handlers: Update ──
@@ -215,6 +245,98 @@ export default function AdminMatches() {
       }
     } finally {
       setUpdating(false);
+    }
+  };
+
+  // ── Handlers: Top Scorers ──
+
+  const fetchTopScorers = async () => {
+    setLoadingScorers(true);
+    try {
+      const data = await topScorerService.getTopScorers();
+      setTopScorers(data);
+      setScorersLoaded(true);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoadingScorers(false);
+    }
+  };
+
+  const handleCreateScorer = async () => {
+    if (
+      !scorerForm.name.trim() ||
+      !scorerForm.team.trim() ||
+      !scorerForm.flag.trim()
+    ) {
+      setScorerCreateError({
+        visible: true,
+        message: "Todos los campos son obligatorios*",
+      });
+      return;
+    }
+    if (!token) return;
+    setCreatingScorer(true);
+    setScorerCreateSuccess("");
+    setScorerCreateError({ visible: false, message: "" });
+    try {
+      await topScorerService.createTopScorer(token, scorerForm);
+      setScorerCreateSuccess("Goleador creado correctamente");
+      setScorerForm({ name: "", team: "", flag: "" });
+      setScorersLoaded(false);
+    } catch (error) {
+      if (error instanceof Error) {
+        setScorerCreateError({ visible: true, message: error.message });
+      }
+    } finally {
+      setCreatingScorer(false);
+    }
+  };
+
+  const handleUpdateGoals = async () => {
+    if (!editingScorer || !token) return;
+    if (!editGoals.trim() || isNaN(Number(editGoals))) {
+      setGoalsError({ visible: true, message: "Ingresá un número válido*" });
+      return;
+    }
+    setUpdatingGoals(true);
+    setGoalsError({ visible: false, message: "" });
+    try {
+      await topScorerService.updateGoals(
+        token,
+        editingScorer.id,
+        Number(editGoals),
+      );
+      setTopScorers((prev) =>
+        prev.map((s) =>
+          s.id === editingScorer.id ? { ...s, goals: Number(editGoals) } : s,
+        ),
+      );
+      setEditingScorer(null);
+    } catch (error) {
+      if (error instanceof Error) {
+        setGoalsError({ visible: true, message: error.message });
+      }
+    } finally {
+      setUpdatingGoals(false);
+    }
+  };
+
+  const handleCloseTopScorer = async () => {
+    if (!token) return;
+    setClosing(true);
+    setCloseSuccess("");
+    setCloseError({ visible: false, message: "" });
+    try {
+      const data = await topScorerService.closeTopScorer(token);
+      setCloseSuccess(data.message);
+      await fetchTopScorers();
+    } catch (error) {
+      if (error instanceof Error) {
+        setCloseError({ visible: true, message: error.message });
+      }
+    } finally {
+      setClosing(false);
     }
   };
 
@@ -384,7 +506,6 @@ export default function AdminMatches() {
         visible={createError.visible}
         onHide={() => setCreateError({ visible: false, message: "" })}
       />
-
       <Button onPress={handleCreate} variant="primary" disabled={creating}>
         {creating ? "Creando..." : "Crear partido"}
       </Button>
@@ -437,7 +558,6 @@ export default function AdminMatches() {
                   </Text>
                 </View>
               </View>
-
               <View style={styles.adminMatches__card_teams}>
                 <View style={styles.adminMatches__team}>
                   {match.homeFlag ? (
@@ -453,7 +573,6 @@ export default function AdminMatches() {
                     {match.homeTeam}
                   </Text>
                 </View>
-
                 <View style={styles.adminMatches__score}>
                   {isCompleted ? (
                     <Text style={styles.adminMatches__scoreText}>
@@ -463,7 +582,6 @@ export default function AdminMatches() {
                     <Text style={styles.adminMatches__vs}>vs</Text>
                   )}
                 </View>
-
                 <View style={styles.adminMatches__team}>
                   {match.awayFlag ? (
                     <Image
@@ -479,7 +597,6 @@ export default function AdminMatches() {
                   </Text>
                 </View>
               </View>
-
               <View style={styles.adminMatches__card_footer}>
                 <View style={styles.adminMatches__meta}>
                   <Feather name="map-pin" size={12} color="#98A2B3" />
@@ -492,7 +609,6 @@ export default function AdminMatches() {
                   <Text style={styles.adminMatches__metaText}>{dateStr}</Text>
                 </View>
               </View>
-
               <TouchableOpacity
                 style={[
                   styles.adminMatches__updateBtn,
@@ -522,6 +638,166 @@ export default function AdminMatches() {
     </ScrollView>
   );
 
+  const topScorersContent = (
+    <ScrollView
+      contentContainerStyle={styles.adminMatches__scroll}
+      keyboardShouldPersistTaps="handled"
+    >
+      <View style={styles.adminMatches__section}>
+        <Text style={styles.adminMatches__sectionTitle}>Agregar goleador</Text>
+        <View style={styles.adminMatches__field}>
+          <Text style={styles.adminMatches__label}>Nombre</Text>
+          <TextInput
+            style={styles.adminMatches__input}
+            value={scorerForm.name}
+            onChangeText={(v) =>
+              setScorerForm((prev) => ({ ...prev, name: v }))
+            }
+            placeholder="Lionel Messi"
+            placeholderTextColor="#98A2B3"
+          />
+        </View>
+        <View style={styles.adminMatches__field}>
+          <Text style={styles.adminMatches__label}>Selección</Text>
+          <Select
+            options={WORLD_CUP_COUNTRIES}
+            value={
+              WORLD_CUP_COUNTRIES.find((c) => c.label === scorerForm.team)
+                ?.value ?? ""
+            }
+            onChange={(value) => {
+              const country = WORLD_CUP_COUNTRIES.find(
+                (c) => c.value === value,
+              );
+              setScorerForm((prev) => ({
+                ...prev,
+                team: country?.label ?? "",
+                flag: country?.icon ?? "",
+              }));
+            }}
+            placeholder="Seleccioná el país"
+            searchable
+          />
+        </View>
+
+        {scorerCreateSuccess ? (
+          <View style={styles.adminMatches__successBanner}>
+            <Feather name="check-circle" size={16} color="#00A651" />
+            <Text style={styles.adminMatches__successBanner_text}>
+              {scorerCreateSuccess}
+            </Text>
+          </View>
+        ) : null}
+
+        <ErrorBanner
+          message={scorerCreateError.message}
+          visible={scorerCreateError.visible}
+          onHide={() => setScorerCreateError({ visible: false, message: "" })}
+        />
+        <Button
+          onPress={handleCreateScorer}
+          variant="primary"
+          disabled={creatingScorer}
+        >
+          {creatingScorer ? "Creando..." : "Agregar goleador"}
+        </Button>
+      </View>
+
+      <View style={styles.adminMatches__section}>
+        <Text style={styles.adminMatches__sectionTitle}>Goleadores</Text>
+        {loadingScorers ? (
+          <ActivityIndicator color="#001F5B" />
+        ) : topScorers.length === 0 ? (
+          <View style={styles.adminMatches__empty}>
+            <Feather name="award" size={40} color="#98A2B3" />
+            <Text style={styles.adminMatches__emptyText}>
+              No hay goleadores cargados
+            </Text>
+          </View>
+        ) : (
+          topScorers.map((scorer) => (
+            <View key={scorer.id} style={styles.adminMatches__card}>
+              <View style={styles.adminMatches__card_teams}>
+                <View style={styles.adminMatches__team}>
+                  {scorer.flag ? (
+                    <Image
+                      source={{ uri: scorer.flag }}
+                      style={styles.adminMatches__flag}
+                      resizeMode="cover"
+                    />
+                  ) : (
+                    <View style={styles.adminMatches__flagPlaceholder} />
+                  )}
+                  <Text style={styles.adminMatches__teamName}>
+                    {scorer.name}
+                  </Text>
+                </View>
+                <View style={styles.adminMatches__score}>
+                  <Text style={styles.adminMatches__scoreText}>
+                    {scorer.goals} goles
+                  </Text>
+                </View>
+                {scorer.isWinner && (
+                  <View
+                    style={[
+                      styles.adminMatches__badge,
+                      styles.adminMatches__badge_completed,
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.adminMatches__badgeText,
+                        styles.adminMatches__badgeText_completed,
+                      ]}
+                    >
+                      Ganador
+                    </Text>
+                  </View>
+                )}
+              </View>
+              <TouchableOpacity
+                style={styles.adminMatches__updateBtn}
+                onPress={() => {
+                  setEditingScorer(scorer);
+                  setEditGoals(scorer.goals.toString());
+                }}
+              >
+                <Feather name="edit-2" size={14} color="#001F5B" />
+                <Text style={styles.adminMatches__updateBtn_text}>
+                  Actualizar goles
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ))
+        )}
+      </View>
+
+      <View style={styles.adminMatches__section}>
+        <Text style={styles.adminMatches__sectionTitle}>Fin del torneo</Text>
+        {closeSuccess ? (
+          <View style={styles.adminMatches__successBanner}>
+            <Feather name="check-circle" size={16} color="#00A651" />
+            <Text style={styles.adminMatches__successBanner_text}>
+              {closeSuccess}
+            </Text>
+          </View>
+        ) : null}
+        <ErrorBanner
+          message={closeError.message}
+          visible={closeError.visible}
+          onHide={() => setCloseError({ visible: false, message: "" })}
+        />
+        <Button
+          onPress={handleCloseTopScorer}
+          variant="secondary"
+          disabled={closing}
+        >
+          {closing ? "Cerrando..." : "Definir ganador y sumar puntos"}
+        </Button>
+      </View>
+    </ScrollView>
+  );
+
   return (
     <View style={styles.adminMatches}>
       <View style={styles.adminMatches__header}>
@@ -541,11 +817,12 @@ export default function AdminMatches() {
           tabs={[
             { label: "Crear partido", content: createContent },
             { label: "Partidos", content: matchesContent },
+            { label: "Goleadores", content: topScorersContent },
           ]}
         />
       </View>
 
-      {/* Update Modal */}
+      {/* Update Match Modal */}
       <Modal
         visible={!!selectedMatch}
         transparent
@@ -562,11 +839,9 @@ export default function AdminMatches() {
                 <Feather name="x" size={20} color="#101828" />
               </TouchableOpacity>
             </View>
-
             <Text style={styles.adminMatches__modal_subtitle}>
               {selectedMatch?.homeTeam} vs {selectedMatch?.awayTeam}
             </Text>
-
             <View style={styles.adminMatches__modal_scores}>
               <View style={styles.adminMatches__modal_scoreField}>
                 <Text style={styles.adminMatches__modal_scoreLabel}>
@@ -584,9 +859,7 @@ export default function AdminMatches() {
                   placeholderTextColor="#98A2B3"
                 />
               </View>
-
               <Text style={styles.adminMatches__modal_separator}>:</Text>
-
               <View style={styles.adminMatches__modal_scoreField}>
                 <Text style={styles.adminMatches__modal_scoreLabel}>
                   {selectedMatch?.awayTeam}
@@ -604,13 +877,11 @@ export default function AdminMatches() {
                 />
               </View>
             </View>
-
             <ErrorBanner
               message={updateError.message}
               visible={updateError.visible}
               onHide={() => setUpdateError({ visible: false, message: "" })}
             />
-
             <View style={styles.adminMatches__modal_actions}>
               <TouchableOpacity
                 style={styles.adminMatches__modal_cancelBtn}
@@ -629,6 +900,78 @@ export default function AdminMatches() {
                 disabled={updating}
               >
                 {updating ? (
+                  <ActivityIndicator color="#fff" size="small" />
+                ) : (
+                  <>
+                    <Feather name="check" size={14} color="#fff" />
+                    <Text style={styles.adminMatches__modal_saveText}>
+                      Guardar
+                    </Text>
+                  </>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Update Goals Modal */}
+      <Modal
+        visible={!!editingScorer}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setEditingScorer(null)}
+      >
+        <View style={styles.adminMatches__modal_overlay}>
+          <View style={styles.adminMatches__modal}>
+            <View style={styles.adminMatches__modal_header}>
+              <Text style={styles.adminMatches__modal_title}>
+                Actualizar goles
+              </Text>
+              <TouchableOpacity onPress={() => setEditingScorer(null)}>
+                <Feather name="x" size={20} color="#101828" />
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.adminMatches__modal_subtitle}>
+              {editingScorer?.name}
+            </Text>
+            <View style={styles.adminMatches__modal_scores}>
+              <View style={styles.adminMatches__modal_scoreField}>
+                <Text style={styles.adminMatches__modal_scoreLabel}>Goles</Text>
+                <TextInput
+                  style={styles.adminMatches__modal_scoreInput}
+                  value={editGoals}
+                  onChangeText={setEditGoals}
+                  keyboardType="numeric"
+                  maxLength={2}
+                  placeholder="0"
+                  placeholderTextColor="#98A2B3"
+                />
+              </View>
+            </View>
+            <ErrorBanner
+              message={goalsError.message}
+              visible={goalsError.visible}
+              onHide={() => setGoalsError({ visible: false, message: "" })}
+            />
+            <View style={styles.adminMatches__modal_actions}>
+              <TouchableOpacity
+                style={styles.adminMatches__modal_cancelBtn}
+                onPress={() => setEditingScorer(null)}
+              >
+                <Text style={styles.adminMatches__modal_cancelText}>
+                  Cancelar
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.adminMatches__modal_saveBtn,
+                  updatingGoals && { opacity: 0.6 },
+                ]}
+                onPress={handleUpdateGoals}
+                disabled={updatingGoals}
+              >
+                {updatingGoals ? (
                   <ActivityIndicator color="#fff" size="small" />
                 ) : (
                   <>

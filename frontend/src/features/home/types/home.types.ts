@@ -1,4 +1,5 @@
 import type { Match } from "@/shared/types/shared.types";
+import type { TopScorer } from "@/features/topScorer/services/topScorerService";
 
 export interface RankingEntry {
   id: string;
@@ -13,4 +14,5 @@ export interface HomeData {
   totalPoints: number;
   upcomingMatches: Match[];
   fullRanking: RankingEntry[];
+  topScorers: TopScorer[];
 }
