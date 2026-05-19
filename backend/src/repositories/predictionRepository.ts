@@ -51,3 +51,17 @@ export const getRankingRepository = async () => {
     orderBy: { _sum: { points: "desc" } },
   });
 };
+
+export const findUserWildcardStatus = async (userId: string) => {
+  return prisma.user.findUnique({
+    where: { id: userId },
+    select: { usedWildcard: true },
+  });
+};
+
+export const updateUserWildcard = async (userId: string) => {
+  return prisma.user.update({
+    where: { id: userId },
+    data: { usedWildcard: true },
+  });
+};

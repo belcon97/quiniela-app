@@ -7,6 +7,7 @@ import {
   updatePredictionRepository,
   getPredictionsRepository,
 } from "../repositories/matchRepository";
+import { findMatchesByIds } from "../repositories/predictionRepository";
 
 export const createMatchService = async (
   matches: {
@@ -71,37 +72,70 @@ export const updateMatchService = async (match: {
   // Actualiza todos los resultados de las predicciones
   const predictions = await getPredictionsRepository({ matchId: id });
 
+  // Obtener el partido para saber la fase
+  const matches = await findMatchesByIds([id]);
+  const currentMatch = matches[0];
+  const isGroupStage = currentMatch.group.startsWith("Grupo");
+
   await Promise.all(
     predictions.map(async (prediction) => {
       let points = 0;
 
-      // Determinar ganador
-      const realWinner =
-        homeScore > awayScore
-          ? "home"
-          : awayScore > homeScore
-            ? "away"
-            : "draw";
-      const predictionWinner =
-        prediction.homeScore > prediction.awayScore
-          ? "home"
-          : prediction.awayScore > prediction.homeScore
-            ? "away"
-            : "draw";
+      if (isGroupStage) {
+        const realWinner =
+          homeScore > awayScore
+            ? "home"
+            : awayScore > homeScore
+              ? "away"
+              : "draw";
+        const predictionWinner =
+          prediction.homeScore > prediction.awayScore
+            ? "home"
+            : prediction.awayScore > prediction.homeScore
+              ? "away"
+              : "draw";
 
-      if (
-        prediction.homeScore === homeScore &&
-        prediction.awayScore === awayScore
-      ) {
-        points = 3;
-      } else if (realWinner === predictionWinner) {
-        points = 1;
+        if (
+          prediction.homeScore === homeScore &&
+          prediction.awayScore === awayScore
+        ) {
+          points = 3;
+        } else if (realWinner === predictionWinner) {
+          points = 1;
+        }
+
+        // Aplicar comodín
+        if (prediction.isWildcard) {
+          points = points * 2;
+        }
+      } else {
+        // Fase eliminatoria — penales como desempate
+        const realWinner =
+          homeScore > awayScore
+            ? "home"
+            : awayScore > homeScore
+              ? "away"
+              : (prediction.penaltyWinner ?? "draw");
+
+        const predictionWinner =
+          prediction.homeScore > prediction.awayScore
+            ? "home"
+            : prediction.awayScore > prediction.homeScore
+              ? "away"
+              : (prediction.penaltyWinner ?? "draw");
+
+        if (
+          prediction.homeScore === homeScore &&
+          prediction.awayScore === awayScore &&
+          predictionWinner === realWinner
+        ) {
+          points = 3;
+        } else if (predictionWinner === realWinner) {
+          points = 1;
+        }
       }
 
-      await updatePredictionRepository({
-        id: prediction.id,
-        points,
-      });
+      await updatePredictionRepository({ id: prediction.id, points });
     }),
   );
 

@@ -34,7 +34,13 @@ export const profileService = {
 
   createPredictions: async (
     token: string,
-    predictions: { matchId: string; homeScore: number; awayScore: number }[],
+    predictions: {
+      matchId: string;
+      homeScore: number;
+      awayScore: number;
+      isWildcard?: boolean;
+      penaltyWinner?: string;
+    }[],
   ) => {
     const response = await fetch(API_ROUTES.predictions, {
       method: "POST",

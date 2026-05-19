@@ -1,5 +1,7 @@
-import { View, Text, ActivityIndicator } from "react-native";
-
+import { View, Text, ActivityIndicator, TouchableOpacity } from "react-native";
+import Feather from "@expo/vector-icons/Feather";
+import { colors } from "@/styles/theme";
+import { styles } from "./RankingList.styles";
 // Components
 import { RankingRow } from "@/ui/RankingRow/RankingRow";
 
@@ -14,6 +16,7 @@ interface RankingListProps {
   ranking: RankingEntry[];
   myPosition: number | null;
   onUserPress: (username: string) => void;
+  onRankingPress: () => void;
 }
 
 export function RankingList({
@@ -21,6 +24,7 @@ export function RankingList({
   loading,
   myPosition,
   onUserPress,
+  onRankingPress,
 }: RankingListProps) {
   const user = useAuthStore((state) => state.user);
 
@@ -35,8 +39,17 @@ export function RankingList({
 
   return (
     <View>
-      <View>
-        <Text>RANKING GENERAL</Text>
+      <View style={styles.rankingList__header}>
+        <Text style={styles.rankingList__title}>Ranking general</Text>
+        <TouchableOpacity
+          onPress={onRankingPress}
+          style={styles.rankingList__seeAll}
+        >
+          <Text style={styles.rankingList__seeAllText}>
+            Ver ranking completo
+          </Text>
+          <Feather name="arrow-right" size={14} color={colors.primary} />
+        </TouchableOpacity>
       </View>
 
       <View>

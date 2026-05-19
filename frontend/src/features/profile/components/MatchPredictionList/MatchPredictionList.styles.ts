@@ -108,4 +108,66 @@ export const styles = StyleSheet.create({
     fontFamily: typography.regular,
     textAlign: "center",
   },
+
+  matchPredictionList__wildcard: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: colors.neutral200,
+    borderRadius: radius.full,
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.md,
+    marginTop: spacing.sm,
+    alignSelf: "center",
+  },
+  matchPredictionList__wildcard_active: {
+    borderColor: "#5B21B6",
+    backgroundColor: "#EDE9FE",
+  },
+  matchPredictionList__wildcard_disabled: {
+    opacity: 0.4,
+  },
+  matchPredictionList__wildcardText: {
+    fontSize: typography.xs,
+    fontFamily: typography.semiBold,
+    color: colors.textMuted,
+  },
+  matchPredictionList__wildcardText_active: {
+    color: "#5B21B6",
+  },
+  matchPredictionList__penalty: {
+    marginTop: spacing.sm,
+    gap: spacing.xs,
+  },
+  matchPredictionList__penaltyLabel: {
+    fontSize: typography.xs,
+    fontFamily: typography.medium,
+    color: colors.textMuted,
+    textAlign: "center",
+  },
+  matchPredictionList__penaltyBtns: {
+    flexDirection: "row",
+    gap: spacing.sm,
+  },
+  matchPredictionList__penaltyBtn: {
+    flex: 1,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.neutral200,
+    alignItems: "center",
+  },
+  matchPredictionList__penaltyBtn_active: {
+    borderColor: colors.primary,
+    backgroundColor: colors.primary,
+  },
+  matchPredictionList__penaltyBtnText: {
+    fontSize: typography.xs,
+    fontFamily: typography.semiBold,
+    color: colors.textMuted,
+  },
+  matchPredictionList__penaltyBtnText_active: {
+    color: colors.background,
+  },
 });

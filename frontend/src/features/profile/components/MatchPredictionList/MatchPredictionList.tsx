@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { View, Text, TextInput, Image, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Image,
+  ActivityIndicator,
+  TouchableOpacity,
+} from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import { styles } from "./MatchPredictionList.styles";
 
@@ -52,12 +59,21 @@ export function MatchPredictionList({
     Object.fromEntries(
       matches.map((m) => [
         m.id,
-        { matchId: m.id, homeScore: "", awayScore: "" },
+        {
+          matchId: m.id,
+          homeScore: "",
+          awayScore: "",
+          isWildcard: false,
+          penaltyWinner: null,
+        },
       ]),
     ),
   );
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState({ visible: false, message: "" });
+
+  // Estado para saber si el usuario ya usó el comodín en este batch
+  const [wildcardUsed, setWildcardUsed] = useState(false);
 
   const grouped = groupMatchesByGroup(matches);
 
@@ -72,7 +88,28 @@ export function MatchPredictionList({
       [matchId]: { ...prev[matchId], [field]: numeric },
     }));
   };
+  const handleWildcard = (matchId: string) => {
+    setInputs((prev) => {
+      const current = prev[matchId].isWildcard;
+      // Desactivar todos y activar solo el seleccionado
+      const updated = Object.fromEntries(
+        Object.entries(prev).map(([id, input]) => [
+          id,
+          { ...input, isWildcard: false },
+        ]),
+      );
+      updated[matchId].isWildcard = !current;
+      setWildcardUsed(!current);
+      return updated;
+    });
+  };
 
+  const handlePenaltyWinner = (matchId: string, winner: "home" | "away") => {
+    setInputs((prev) => ({
+      ...prev,
+      [matchId]: { ...prev[matchId], penaltyWinner: winner },
+    }));
+  };
   const handleSave = async () => {
     if (!token) return;
 
@@ -95,6 +132,8 @@ export function MatchPredictionList({
           matchId: p.matchId,
           homeScore: Number(p.homeScore),
           awayScore: Number(p.awayScore),
+          isWildcard: p.isWildcard,
+          penaltyWinner: p.penaltyWinner ?? undefined,
         })),
       );
       onSaved();
@@ -208,6 +247,82 @@ export function MatchPredictionList({
                     {match.stadium}
                   </Text>
                 </View>
+
+                {/* Comodín — solo en fase de grupos */}
+                {group.startsWith("Grupo") && (
+                  <TouchableOpacity
+                    style={[
+                      styles.matchPredictionList__wildcard,
+                      input?.isWildcard &&
+                        styles.matchPredictionList__wildcard_active,
+                      wildcardUsed &&
+                        !input?.isWildcard &&
+                        styles.matchPredictionList__wildcard_disabled,
+                    ]}
+                    onPress={() => handleWildcard(match.id)}
+                    disabled={wildcardUsed && !input?.isWildcard}
+                  >
+                    <Text
+                      style={[
+                        styles.matchPredictionList__wildcardText,
+                        input?.isWildcard &&
+                          styles.matchPredictionList__wildcardText_active,
+                      ]}
+                    >
+                      ×2 Comodín
+                    </Text>
+                  </TouchableOpacity>
+                )}
+
+                {/* Penales — solo en fase eliminatoria con empate */}
+                {!group.startsWith("Grupo") &&
+                  input?.homeScore !== "" &&
+                  input?.awayScore !== "" &&
+                  input?.homeScore === input?.awayScore && (
+                    <View style={styles.matchPredictionList__penalty}>
+                      <Text style={styles.matchPredictionList__penaltyLabel}>
+                        ¿Quién gana en penales?
+                      </Text>
+                      <View style={styles.matchPredictionList__penaltyBtns}>
+                        <TouchableOpacity
+                          style={[
+                            styles.matchPredictionList__penaltyBtn,
+                            input?.penaltyWinner === "home" &&
+                              styles.matchPredictionList__penaltyBtn_active,
+                          ]}
+                          onPress={() => handlePenaltyWinner(match.id, "home")}
+                        >
+                          <Text
+                            style={[
+                              styles.matchPredictionList__penaltyBtnText,
+                              input?.penaltyWinner === "home" &&
+                                styles.matchPredictionList__penaltyBtnText_active,
+                            ]}
+                          >
+                            {match.homeTeam}
+                          </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={[
+                            styles.matchPredictionList__penaltyBtn,
+                            input?.penaltyWinner === "away" &&
+                              styles.matchPredictionList__penaltyBtn_active,
+                          ]}
+                          onPress={() => handlePenaltyWinner(match.id, "away")}
+                        >
+                          <Text
+                            style={[
+                              styles.matchPredictionList__penaltyBtnText,
+                              input?.penaltyWinner === "away" &&
+                                styles.matchPredictionList__penaltyBtnText_active,
+                            ]}
+                          >
+                            {match.awayTeam}
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  )}
               </View>
             );
           })}

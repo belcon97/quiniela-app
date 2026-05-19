@@ -59,6 +59,12 @@ export default function Home({
           loading={loading}
           myPosition={data?.myPosition ?? null}
           onUserPress={handleUserPress}
+          onRankingPress={() =>
+            navigation.navigate("Ranking", {
+              ranking: data?.fullRanking ?? [],
+              myPosition: data?.myPosition ?? null,
+            })
+          }
         />
       </ScrollView>
     </Layout>

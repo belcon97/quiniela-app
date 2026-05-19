@@ -21,7 +21,6 @@ export function PrivateProfile() {
         predictionsPending={privateData.predictionsPending}
         username={user.username}
         name={user.name}
-        isOwner
       />
       <MatchPredictionList
         matches={privateData.matchesWithoutPredictions}

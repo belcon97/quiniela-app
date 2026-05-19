@@ -16,6 +16,7 @@ import { styles } from "./AdminMatches.styles";
 import Button from "@/ui/Button/Button";
 import ErrorBanner from "@/ui/ErrorBanner/ErrorBanner";
 import { Tabs } from "@/ui/Tabs/Tabs";
+import Select from "@/ui/Select/Select";
 
 // Store
 import { useAuthStore } from "@/store/authStore";
@@ -26,12 +27,19 @@ import { API_ROUTES } from "@/constants";
 // Types
 import type { Match } from "@/shared/types/shared.types";
 import type { MatchForm, ScoreForm } from "@/features/admin/types/admin.types";
+// Constants
+import {
+  WORLD_CUP_COUNTRIES,
+  WORLD_CUP_PHASES,
+} from "@/features/admin/constants/worldCup2026";
 
 const EMPTY_FORM: MatchForm = {
   homeTeam: "",
   awayTeam: "",
+  homeCountryValue: "",
   homeFlag: "",
   awayFlag: "",
+  awayCountryValue: "",
   group: "",
   stadium: "",
   date: "",
@@ -105,9 +113,13 @@ export default function AdminMatches() {
         body: JSON.stringify({
           matches: [
             {
-              ...form,
+              homeTeam: form.homeTeam,
+              homeFlag: form.homeFlag,
+              awayTeam: form.awayTeam,
+              awayFlag: form.awayFlag,
+              group: form.group,
+              stadium: form.stadium,
               date: new Date(`${form.date}T${form.time}:00`),
-              time: undefined,
             },
           ],
         }),
@@ -216,39 +228,33 @@ export default function AdminMatches() {
       <View style={styles.adminMatches__section}>
         <Text style={styles.adminMatches__sectionTitle}>Equipo local</Text>
         <View style={styles.adminMatches__field}>
-          <Text style={styles.adminMatches__label}>Nombre</Text>
-          <TextInput
-            style={[
-              styles.adminMatches__input,
-              formErrors.homeTeam && styles.adminMatches__input_error,
-            ]}
-            value={form.homeTeam}
-            onChangeText={setField("homeTeam")}
-            placeholder="Argentina"
-            placeholderTextColor="#98A2B3"
+          <Text style={styles.adminMatches__label}>País</Text>
+          <Select
+            options={WORLD_CUP_COUNTRIES}
+            value={form.homeCountryValue ?? ""}
+            onChange={(value) => {
+              const country = WORLD_CUP_COUNTRIES.find(
+                (c) => c.value === value,
+              );
+              setForm((prev) => ({
+                ...prev,
+                homeCountryValue: value,
+                homeTeam: country?.label ?? "",
+                homeFlag: country?.icon ?? "",
+              }));
+              setFormErrors((prev) => ({
+                ...prev,
+                homeTeam: "",
+                homeFlag: "",
+              }));
+            }}
+            placeholder="Seleccioná el equipo local"
+            hasError={!!formErrors.homeTeam}
+            searchable
           />
           {formErrors.homeTeam && (
             <Text style={styles.adminMatches__errorText}>
               {formErrors.homeTeam}
-            </Text>
-          )}
-        </View>
-        <View style={styles.adminMatches__field}>
-          <Text style={styles.adminMatches__label}>URL del escudo</Text>
-          <TextInput
-            style={[
-              styles.adminMatches__input,
-              formErrors.homeFlag && styles.adminMatches__input_error,
-            ]}
-            value={form.homeFlag}
-            onChangeText={setField("homeFlag")}
-            placeholder="https://flagcdn.com/ar.svg"
-            placeholderTextColor="#98A2B3"
-            autoCapitalize="none"
-          />
-          {formErrors.homeFlag && (
-            <Text style={styles.adminMatches__errorText}>
-              {formErrors.homeFlag}
             </Text>
           )}
         </View>
@@ -257,39 +263,33 @@ export default function AdminMatches() {
       <View style={styles.adminMatches__section}>
         <Text style={styles.adminMatches__sectionTitle}>Equipo visitante</Text>
         <View style={styles.adminMatches__field}>
-          <Text style={styles.adminMatches__label}>Nombre</Text>
-          <TextInput
-            style={[
-              styles.adminMatches__input,
-              formErrors.awayTeam && styles.adminMatches__input_error,
-            ]}
-            value={form.awayTeam}
-            onChangeText={setField("awayTeam")}
-            placeholder="Brasil"
-            placeholderTextColor="#98A2B3"
+          <Text style={styles.adminMatches__label}>País</Text>
+          <Select
+            options={WORLD_CUP_COUNTRIES}
+            value={form.awayCountryValue ?? ""}
+            onChange={(value) => {
+              const country = WORLD_CUP_COUNTRIES.find(
+                (c) => c.value === value,
+              );
+              setForm((prev) => ({
+                ...prev,
+                awayCountryValue: value,
+                awayTeam: country?.label ?? "",
+                awayFlag: country?.icon ?? "",
+              }));
+              setFormErrors((prev) => ({
+                ...prev,
+                awayTeam: "",
+                awayFlag: "",
+              }));
+            }}
+            placeholder="Seleccioná el equipo visitante"
+            hasError={!!formErrors.awayTeam}
+            searchable
           />
           {formErrors.awayTeam && (
             <Text style={styles.adminMatches__errorText}>
               {formErrors.awayTeam}
-            </Text>
-          )}
-        </View>
-        <View style={styles.adminMatches__field}>
-          <Text style={styles.adminMatches__label}>URL del escudo</Text>
-          <TextInput
-            style={[
-              styles.adminMatches__input,
-              formErrors.awayFlag && styles.adminMatches__input_error,
-            ]}
-            value={form.awayFlag}
-            onChangeText={setField("awayFlag")}
-            placeholder="https://flagcdn.com/br.svg"
-            placeholderTextColor="#98A2B3"
-            autoCapitalize="none"
-          />
-          {formErrors.awayFlag && (
-            <Text style={styles.adminMatches__errorText}>
-              {formErrors.awayFlag}
             </Text>
           )}
         </View>
@@ -299,15 +299,12 @@ export default function AdminMatches() {
         <Text style={styles.adminMatches__sectionTitle}>Datos del partido</Text>
         <View style={styles.adminMatches__field}>
           <Text style={styles.adminMatches__label}>Grupo / Fase</Text>
-          <TextInput
-            style={[
-              styles.adminMatches__input,
-              formErrors.group && styles.adminMatches__input_error,
-            ]}
+          <Select
+            options={WORLD_CUP_PHASES}
             value={form.group}
-            onChangeText={setField("group")}
-            placeholder="Grupo A / Semifinal / Final"
-            placeholderTextColor="#98A2B3"
+            onChange={setField("group")}
+            placeholder="Seleccioná el grupo o fase"
+            hasError={!!formErrors.group}
           />
           {formErrors.group && (
             <Text style={styles.adminMatches__errorText}>
@@ -352,7 +349,6 @@ export default function AdminMatches() {
             </Text>
           )}
         </View>
-
         <View style={styles.adminMatches__field}>
           <Text style={styles.adminMatches__label}>Hora (UTC)</Text>
           <TextInput
@@ -448,7 +444,7 @@ export default function AdminMatches() {
                     <Image
                       source={{ uri: match.homeFlag }}
                       style={styles.adminMatches__flag}
-                      resizeMode="contain"
+                      resizeMode="cover"
                     />
                   ) : (
                     <View style={styles.adminMatches__flagPlaceholder} />
@@ -473,7 +469,7 @@ export default function AdminMatches() {
                     <Image
                       source={{ uri: match.awayFlag }}
                       style={styles.adminMatches__flag}
-                      resizeMode="contain"
+                      resizeMode="cover"
                     />
                   ) : (
                     <View style={styles.adminMatches__flagPlaceholder} />

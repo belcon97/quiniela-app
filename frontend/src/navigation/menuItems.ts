@@ -10,6 +10,5 @@ export interface MenuItem {
 export const MENU_ITEMS: MenuItem[] = [
   { label: "Home", icon: "home", screen: "Home" },
   { label: "Mi perfil", icon: "person", screen: "Profile" },
-  { label: "Partidos", icon: "football", screen: "Matches" },
   { label: "Ranking", icon: "bar-chart", screen: "Ranking" },
 ];
