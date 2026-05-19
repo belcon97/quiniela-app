@@ -1,18 +1,12 @@
 import { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  Image,
-  ActivityIndicator,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, TextInput, Image, TouchableOpacity } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import { styles } from "./MatchPredictionList.styles";
 
 // Components
 import Button from "@/ui/Button/Button";
 import ErrorBanner from "@/ui/ErrorBanner/ErrorBanner";
+import { Tabs } from "@/ui/Tabs/Tabs";
 
 // Services
 import { profileService } from "../../services/profileService";
@@ -71,8 +65,6 @@ export function MatchPredictionList({
   );
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState({ visible: false, message: "" });
-
-  // Estado para saber si el usuario ya usó el comodín en este batch
   const [wildcardUsed, setWildcardUsed] = useState(false);
 
   const grouped = groupMatchesByGroup(matches);
@@ -88,10 +80,10 @@ export function MatchPredictionList({
       [matchId]: { ...prev[matchId], [field]: numeric },
     }));
   };
+
   const handleWildcard = (matchId: string) => {
     setInputs((prev) => {
       const current = prev[matchId].isWildcard;
-      // Desactivar todos y activar solo el seleccionado
       const updated = Object.fromEntries(
         Object.entries(prev).map(([id, input]) => [
           id,
@@ -110,6 +102,7 @@ export function MatchPredictionList({
       [matchId]: { ...prev[matchId], penaltyWinner: winner },
     }));
   };
+
   const handleSave = async () => {
     if (!token) return;
 
@@ -159,175 +152,191 @@ export function MatchPredictionList({
 
   return (
     <View>
-      {grouped.map(({ group, matches }) => (
-        <View key={group} style={styles.matchPredictionList__group}>
-          <Text style={styles.matchPredictionList__groupTitle}>{group}</Text>
+      <Tabs
+        tabs={grouped.map(({ group, matches }) => ({
+          label: group,
+          content: (
+            <View>
+              {matches.map((match) => {
+                const input = inputs[match.id];
+                const dateStr = new Date(match.date).toLocaleDateString(
+                  "es-AR",
+                  {
+                    day: "2-digit",
+                    month: "short",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  },
+                );
 
-          {matches.map((match) => {
-            const input = inputs[match.id];
-            const dateStr = new Date(match.date).toLocaleDateString("es-AR", {
-              day: "2-digit",
-              month: "short",
-              hour: "2-digit",
-              minute: "2-digit",
-            });
+                return (
+                  <View key={match.id} style={styles.matchPredictionList__card}>
+                    <View style={styles.matchPredictionList__card_teams}>
+                      <View style={styles.matchPredictionList__team}>
+                        {match.homeFlag ? (
+                          <Image
+                            source={{ uri: match.homeFlag }}
+                            style={styles.matchPredictionList__flag}
+                            resizeMode="contain"
+                          />
+                        ) : null}
+                        <Text style={styles.matchPredictionList__teamName}>
+                          {match.homeTeam}
+                        </Text>
+                      </View>
 
-            return (
-              <View key={match.id} style={styles.matchPredictionList__card}>
-                <View style={styles.matchPredictionList__card_teams}>
-                  <View style={styles.matchPredictionList__team}>
-                    {match.homeFlag ? (
-                      <Image
-                        source={{ uri: match.homeFlag }}
-                        style={styles.matchPredictionList__flag}
-                        resizeMode="contain"
-                      />
-                    ) : null}
-                    <Text style={styles.matchPredictionList__teamName}>
-                      {match.homeTeam}
-                    </Text>
-                  </View>
-
-                  <View style={styles.matchPredictionList__inputs}>
-                    <TextInput
-                      style={[
-                        styles.matchPredictionList__input,
-                        input?.homeScore &&
-                          styles.matchPredictionList__input_filled,
-                      ]}
-                      value={input?.homeScore ?? ""}
-                      onChangeText={(v) =>
-                        handleScoreChange(match.id, "homeScore", v)
-                      }
-                      keyboardType="numeric"
-                      maxLength={2}
-                      placeholder="0"
-                      placeholderTextColor="#98A2B3"
-                    />
-                    <Text style={styles.matchPredictionList__separator}>:</Text>
-                    <TextInput
-                      style={[
-                        styles.matchPredictionList__input,
-                        input?.awayScore &&
-                          styles.matchPredictionList__input_filled,
-                      ]}
-                      value={input?.awayScore ?? ""}
-                      onChangeText={(v) =>
-                        handleScoreChange(match.id, "awayScore", v)
-                      }
-                      keyboardType="numeric"
-                      maxLength={2}
-                      placeholder="0"
-                      placeholderTextColor="#98A2B3"
-                    />
-                  </View>
-
-                  <View style={styles.matchPredictionList__team}>
-                    {match.awayFlag ? (
-                      <Image
-                        source={{ uri: match.awayFlag }}
-                        style={styles.matchPredictionList__flag}
-                        resizeMode="contain"
-                      />
-                    ) : null}
-                    <Text style={styles.matchPredictionList__teamName}>
-                      {match.awayTeam}
-                    </Text>
-                  </View>
-                </View>
-
-                <View style={styles.matchPredictionList__meta}>
-                  <Feather name="calendar" size={11} color="#98A2B3" />
-                  <Text style={styles.matchPredictionList__metaText}>
-                    {dateStr}
-                  </Text>
-                  <Text style={styles.matchPredictionList__metaText}>·</Text>
-                  <Feather name="map-pin" size={11} color="#98A2B3" />
-                  <Text style={styles.matchPredictionList__metaText}>
-                    {match.stadium}
-                  </Text>
-                </View>
-
-                {/* Comodín — solo en fase de grupos */}
-                {group.startsWith("Grupo") && (
-                  <TouchableOpacity
-                    style={[
-                      styles.matchPredictionList__wildcard,
-                      input?.isWildcard &&
-                        styles.matchPredictionList__wildcard_active,
-                      wildcardUsed &&
-                        !input?.isWildcard &&
-                        styles.matchPredictionList__wildcard_disabled,
-                    ]}
-                    onPress={() => handleWildcard(match.id)}
-                    disabled={wildcardUsed && !input?.isWildcard}
-                  >
-                    <Text
-                      style={[
-                        styles.matchPredictionList__wildcardText,
-                        input?.isWildcard &&
-                          styles.matchPredictionList__wildcardText_active,
-                      ]}
-                    >
-                      ×2 Comodín
-                    </Text>
-                  </TouchableOpacity>
-                )}
-
-                {/* Penales — solo en fase eliminatoria con empate */}
-                {!group.startsWith("Grupo") &&
-                  input?.homeScore !== "" &&
-                  input?.awayScore !== "" &&
-                  input?.homeScore === input?.awayScore && (
-                    <View style={styles.matchPredictionList__penalty}>
-                      <Text style={styles.matchPredictionList__penaltyLabel}>
-                        ¿Quién gana en penales?
-                      </Text>
-                      <View style={styles.matchPredictionList__penaltyBtns}>
-                        <TouchableOpacity
+                      <View style={styles.matchPredictionList__inputs}>
+                        <TextInput
                           style={[
-                            styles.matchPredictionList__penaltyBtn,
-                            input?.penaltyWinner === "home" &&
-                              styles.matchPredictionList__penaltyBtn_active,
+                            styles.matchPredictionList__input,
+                            input?.homeScore &&
+                              styles.matchPredictionList__input_filled,
                           ]}
-                          onPress={() => handlePenaltyWinner(match.id, "home")}
-                        >
-                          <Text
-                            style={[
-                              styles.matchPredictionList__penaltyBtnText,
-                              input?.penaltyWinner === "home" &&
-                                styles.matchPredictionList__penaltyBtnText_active,
-                            ]}
-                          >
-                            {match.homeTeam}
-                          </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
+                          value={input?.homeScore ?? ""}
+                          onChangeText={(v) =>
+                            handleScoreChange(match.id, "homeScore", v)
+                          }
+                          keyboardType="numeric"
+                          maxLength={2}
+                          placeholder="0"
+                          placeholderTextColor="#98A2B3"
+                        />
+                        <Text style={styles.matchPredictionList__separator}>
+                          :
+                        </Text>
+                        <TextInput
                           style={[
-                            styles.matchPredictionList__penaltyBtn,
-                            input?.penaltyWinner === "away" &&
-                              styles.matchPredictionList__penaltyBtn_active,
+                            styles.matchPredictionList__input,
+                            input?.awayScore &&
+                              styles.matchPredictionList__input_filled,
                           ]}
-                          onPress={() => handlePenaltyWinner(match.id, "away")}
-                        >
-                          <Text
-                            style={[
-                              styles.matchPredictionList__penaltyBtnText,
-                              input?.penaltyWinner === "away" &&
-                                styles.matchPredictionList__penaltyBtnText_active,
-                            ]}
-                          >
-                            {match.awayTeam}
-                          </Text>
-                        </TouchableOpacity>
+                          value={input?.awayScore ?? ""}
+                          onChangeText={(v) =>
+                            handleScoreChange(match.id, "awayScore", v)
+                          }
+                          keyboardType="numeric"
+                          maxLength={2}
+                          placeholder="0"
+                          placeholderTextColor="#98A2B3"
+                        />
+                      </View>
+
+                      <View style={styles.matchPredictionList__team}>
+                        {match.awayFlag ? (
+                          <Image
+                            source={{ uri: match.awayFlag }}
+                            style={styles.matchPredictionList__flag}
+                            resizeMode="contain"
+                          />
+                        ) : null}
+                        <Text style={styles.matchPredictionList__teamName}>
+                          {match.awayTeam}
+                        </Text>
                       </View>
                     </View>
-                  )}
-              </View>
-            );
-          })}
-        </View>
-      ))}
+
+                    <View style={styles.matchPredictionList__meta}>
+                      <Feather name="calendar" size={11} color="#98A2B3" />
+                      <Text style={styles.matchPredictionList__metaText}>
+                        {dateStr}
+                      </Text>
+                      <Text style={styles.matchPredictionList__metaText}>
+                        ·
+                      </Text>
+                      <Feather name="map-pin" size={11} color="#98A2B3" />
+                      <Text style={styles.matchPredictionList__metaText}>
+                        {match.stadium}
+                      </Text>
+                    </View>
+
+                    {/* Comodín — solo en fase de grupos */}
+                    {group.startsWith("Grupo") && (
+                      <TouchableOpacity
+                        style={[
+                          styles.matchPredictionList__wildcard,
+                          input?.isWildcard &&
+                            styles.matchPredictionList__wildcard_active,
+                          wildcardUsed &&
+                            !input?.isWildcard &&
+                            styles.matchPredictionList__wildcard_disabled,
+                        ]}
+                        onPress={() => handleWildcard(match.id)}
+                        disabled={wildcardUsed && !input?.isWildcard}
+                      >
+                        <Text
+                          style={[
+                            styles.matchPredictionList__wildcardText,
+                            input?.isWildcard &&
+                              styles.matchPredictionList__wildcardText_active,
+                          ]}
+                        >
+                          ×2 Comodín
+                        </Text>
+                      </TouchableOpacity>
+                    )}
+
+                    {/* Penales — solo en fase eliminatoria con empate */}
+                    {!group.startsWith("Grupo") &&
+                      input?.homeScore !== "" &&
+                      input?.awayScore !== "" &&
+                      input?.homeScore === input?.awayScore && (
+                        <View style={styles.matchPredictionList__penalty}>
+                          <Text
+                            style={styles.matchPredictionList__penaltyLabel}
+                          >
+                            ¿Quién gana en penales?
+                          </Text>
+                          <View style={styles.matchPredictionList__penaltyBtns}>
+                            <TouchableOpacity
+                              style={[
+                                styles.matchPredictionList__penaltyBtn,
+                                input?.penaltyWinner === "home" &&
+                                  styles.matchPredictionList__penaltyBtn_active,
+                              ]}
+                              onPress={() =>
+                                handlePenaltyWinner(match.id, "home")
+                              }
+                            >
+                              <Text
+                                style={[
+                                  styles.matchPredictionList__penaltyBtnText,
+                                  input?.penaltyWinner === "home" &&
+                                    styles.matchPredictionList__penaltyBtnText_active,
+                                ]}
+                              >
+                                {match.homeTeam}
+                              </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                              style={[
+                                styles.matchPredictionList__penaltyBtn,
+                                input?.penaltyWinner === "away" &&
+                                  styles.matchPredictionList__penaltyBtn_active,
+                              ]}
+                              onPress={() =>
+                                handlePenaltyWinner(match.id, "away")
+                              }
+                            >
+                              <Text
+                                style={[
+                                  styles.matchPredictionList__penaltyBtnText,
+                                  input?.penaltyWinner === "away" &&
+                                    styles.matchPredictionList__penaltyBtnText_active,
+                                ]}
+                              >
+                                {match.awayTeam}
+                              </Text>
+                            </TouchableOpacity>
+                          </View>
+                        </View>
+                      )}
+                  </View>
+                );
+              })}
+            </View>
+          ),
+        }))}
+      />
 
       <View style={styles.matchPredictionList__footer}>
         <ErrorBanner

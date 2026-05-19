@@ -6,6 +6,7 @@ import matchRoutes from "./routes/matches";
 import predictionRoutes from "./routes/predictions";
 import homeRoutes from "./routes/home";
 import profileRoutes from "./routes/profile";
+import topScorerRoutes from "./routes/topScorer";
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use("/auth", authRoutes);
 app.use("/home", homeRoutes);
 app.use("/predictions", predictionRoutes);
 app.use("/profile", profileRoutes);
+app.use("/top-scorers", topScorerRoutes);
 
 // private routes
 app.use("/matches", matchRoutes);
