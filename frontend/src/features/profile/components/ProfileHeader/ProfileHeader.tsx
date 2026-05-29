@@ -1,9 +1,8 @@
 import { View, Text } from "react-native";
+// Styles
 import { styles } from "./ProfileHeader.styles";
-
 // Components
 import { Avatar } from "@/ui/Avatar/Avatar";
-
 // Utils
 import { getInitials } from "@/utils/getInitials";
 
@@ -18,8 +17,10 @@ export function ProfileHeader({ name, username }: ProfileHeaderProps) {
   return (
     <View style={styles.container}>
       <Avatar initials={initials} />
-      <Text style={styles.name}>{name}</Text>
-      <Text style={styles.username}>@{username}</Text>
+      <View style={styles.container__info}>
+        <Text style={styles.container__username}>{username}</Text>
+        <Text style={styles.container__name}>{name}</Text>
+      </View>
     </View>
   );
 }

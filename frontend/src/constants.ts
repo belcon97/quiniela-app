@@ -6,7 +6,6 @@ export const BASE_URL =
     ? (process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:3000")
     : (Constants.expoConfig?.extra?.apiUrl ?? "http://localhost:3000");
 
-console.log("apiUrl:", BASE_URL);
 
 export const API_ROUTES = {
   // Auth

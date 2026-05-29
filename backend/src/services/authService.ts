@@ -1,68 +1,40 @@
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import {
-  findUserByUsername,
-  findUserByEmail,
-  createUser,
-} from "../repositories/authRepository";
+import { findUserByUsername, createUser } from "../repositories/authRepository";
+// Utils
+import { generateToken } from "../utils/generateToken";
 
 export const registerService = async (data: {
   name: string;
-  email: string;
   password: string;
   username: string;
 }) => {
-  const { name, email, password, username } = data;
+  const { name, password, username } = data;
 
-  // Validaciones
-  if (!name || !email || !password || !username) {
-    throw { status: 400, message: "Todos los campos son obligatorios" };
-  }
+  // Password minimo 6 caracteres
   if (password.length < 6) {
     throw {
       status: 400,
       message: "La contraseña debe tener al menos 6 caracteres",
     };
   }
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    throw { status: 400, message: "El email no es válido" };
-  }
 
-  // Verificar que no exista
-  const existingUsername = await findUserByUsername(username);
-  if (existingUsername) {
+  // Username unico
+  const existingUser = await findUserByUsername(username);
+  if (existingUser) {
     throw { status: 400, message: "El usuario ya existe" };
   }
 
-  const existingEmail = await findUserByEmail(email);
-  if (existingEmail) {
-    throw { status: 400, message: "El email ya existe" };
-  }
-
-  // Encriptar y crear
+  // Hashear password antes de guardar
   const hashedPassword = await bcrypt.hash(password, 10);
-  const user = await createUser({
-    name,
-    email,
-    password: hashedPassword,
-    username,
-  });
+  const user = await createUser({ name, username, password: hashedPassword });
 
-  // Generar token
-  const token = jwt.sign(
-    { id: user.id, role: user.role },
-    process.env.JWT_SECRET as string,
-    {
-      expiresIn: "1d",
-    },
-  );
+  // Generar token para que el usuario quede logueado automaticamente
+  const token = generateToken({ id: user.id, role: user.role });
 
   return {
     user: {
       id: user.id,
       name: user.name,
-      email: user.email,
       username: user.username,
       role: user.role,
     },
@@ -77,37 +49,33 @@ export const loginService = async (data: {
 }) => {
   const { username, password } = data;
 
-  // Validaciones
-  if (!username || !password) {
-    throw { status: 400, message: "Todos los campos son obligatorios" };
-  }
-
-  // Buscar usuario
+  // Verificar que el usuario existe
   const user = await findUserByUsername(username);
   if (!user) {
     throw { status: 400, message: "No existe el usuario" };
   }
 
-  // Verificar contraseña
+  // Verificar que tiene password
+  if (!user.password) {
+    throw {
+      status: 400,
+      message: "Este usuario no tiene contraseña configurada",
+    };
+  }
+
+  // Verificar que el password sea correcto
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
     throw { status: 400, message: "Contraseña incorrecta" };
   }
 
   // Generar token
-  const token = jwt.sign(
-    { id: user.id, role: user.role },
-    process.env.JWT_SECRET as string,
-    {
-      expiresIn: "7d",
-    },
-  );
+  const token = generateToken({ id: user.id, role: user.role });
 
   return {
     user: {
       id: user.id,
       name: user.name,
-      email: user.email,
       username: user.username,
       role: user.role,
     },

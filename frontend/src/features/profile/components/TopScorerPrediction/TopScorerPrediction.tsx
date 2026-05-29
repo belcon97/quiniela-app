@@ -1,26 +1,15 @@
 import { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  TextInput,
-  ActivityIndicator,
-} from "react-native";
-import Feather from "@expo/vector-icons/Feather";
+import { View, Text, Image, Pressable, TextInput, ActivityIndicator } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
+import { colors } from "@/styles/theme";
+// Styles
 import { styles } from "./TopScorerPrediction.styles";
-
 // Services
 import { topScorerService } from "@/features/topScorer/services/topScorerService";
-import type {
-  TopScorer,
-  TopScorerPrediction as TopScorerPredictionType,
-} from "@/features/topScorer/services/topScorerService";
-
+import type { TopScorer, TopScorerPrediction as TopScorerPredictionType } from "@/features/topScorer/services/topScorerService";
 // Components
-import Button from "@/ui/Button/Button";
-import ErrorBanner from "@/ui/ErrorBanner/ErrorBanner";
-
+import { Button } from "@/ui/Button/Button";
+import { ErrorBanner } from "@/ui/ErrorBanner/ErrorBanner";
 // Store
 import { useAuthStore } from "@/store/authStore";
 
@@ -28,14 +17,11 @@ export function TopScorerPrediction() {
   const { token } = useAuthStore();
 
   const [topScorers, setTopScorers] = useState<TopScorer[]>([]);
-  const [myPrediction, setMyPrediction] =
-    useState<TopScorerPredictionType | null>(null);
+  const [myPrediction, setMyPrediction] = useState<TopScorerPredictionType | null>(null);
   const [loading, setLoading] = useState(true);
-
-  const [selected, setSelected] = useState<string | null>(null); // topScorerId
+  const [selected, setSelected] = useState<string | null>(null);
   const [customName, setCustomName] = useState("");
   const [isCustom, setIsCustom] = useState(false);
-
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState({ visible: false, message: "" });
   const [success, setSuccess] = useState("");
@@ -62,10 +48,7 @@ export function TopScorerPrediction() {
   const handleSave = async () => {
     if (!token) return;
     if (!selected && !customName.trim()) {
-      setError({
-        visible: true,
-        message: "Seleccioná un goleador o ingresá un nombre*",
-      });
+      setError({ visible: true, message: "Seleccioná un goleador o ingresá un nombre*" });
       return;
     }
 
@@ -77,14 +60,11 @@ export function TopScorerPrediction() {
         topScorerId: isCustom ? undefined : (selected ?? undefined),
         customName: isCustom ? customName : undefined,
       });
-      // Refetch predicción
       const prediction = await topScorerService.getMyPrediction(token);
       setMyPrediction(prediction);
       setSuccess("¡Predicción guardada!");
     } catch (err) {
-      if (err instanceof Error) {
-        setError({ visible: true, message: err.message });
-      }
+      if (err instanceof Error) setError({ visible: true, message: err.message });
     } finally {
       setSaving(false);
     }
@@ -94,102 +74,87 @@ export function TopScorerPrediction() {
 
   return (
     <View style={styles.topScorer}>
+
+      {/* Header */}
       <View style={styles.topScorer__header}>
-        <Feather name="award" size={16} color="#854D0E" />
+        <MaterialIcons name="emoji-events" size={22} color={colors.primary} />
         <Text style={styles.topScorer__title}>Goleador del torneo</Text>
       </View>
 
       {myPrediction ? (
-        // Ya tiene predicción — mostrar
+
+        // Ya tiene predicción
         <View style={styles.topScorer__saved}>
-          <Feather name="check-circle" size={20} color="#00A651" />
+          <MaterialIcons name="check-circle" size={20} color={colors.secondary} />
           <View style={styles.topScorer__savedInfo}>
             <Text style={styles.topScorer__savedLabel}>Tu predicción</Text>
             <Text style={styles.topScorer__savedName}>
               {myPrediction.topScorer?.name ?? myPrediction.customName ?? "—"}
             </Text>
             {myPrediction.points > 0 && (
-              <Text style={styles.topScorer__savedPoints}>
-                +{myPrediction.points} pts
-              </Text>
+              <Text style={styles.topScorer__savedPoints}>+{myPrediction.points} pts</Text>
             )}
           </View>
         </View>
+
       ) : (
-        // Sin predicción — mostrar form
+
+        // Sin predicción — form
         <View>
           <Text style={styles.topScorer__subtitle}>
             Elegí quién será el máximo goleador. Vale +3 pts si acertás.
           </Text>
 
-          {/* Lista de candidatos */}
+          {/* Candidatos */}
           {topScorers.map((scorer) => (
-            <TouchableOpacity
+            <Pressable
               key={scorer.id}
               style={[
                 styles.topScorer__option,
-                selected === scorer.id &&
-                  !isCustom &&
-                  styles.topScorer__option_active,
+                selected === scorer.id && !isCustom && styles.topScorer__option__active,
               ]}
-              onPress={() => {
-                setSelected(scorer.id);
-                setIsCustom(false);
-              }}
+              onPress={() => { setSelected(scorer.id); setIsCustom(false); }}
             >
-              {scorer.flag ? (
-                <Image
-                  source={{ uri: scorer.flag }}
-                  style={styles.topScorer__flag}
-                  resizeMode="cover"
-                />
-              ) : null}
+              {scorer.flag && (
+                <Image source={{ uri: scorer.flag }} style={styles.topScorer__flag} resizeMode="cover" />
+              )}
               <View style={styles.topScorer__optionInfo}>
                 <Text style={styles.topScorer__optionName}>{scorer.name}</Text>
                 <Text style={styles.topScorer__optionTeam}>{scorer.team}</Text>
               </View>
               {selected === scorer.id && !isCustom && (
-                <Feather name="check" size={16} color="#001F5B" />
+                <MaterialIcons name="check" size={16} color={colors.primary} />
               )}
-            </TouchableOpacity>
+            </Pressable>
           ))}
 
-          {/* Opción "Otro" */}
-          <TouchableOpacity
-            style={[
-              styles.topScorer__option,
-              isCustom && styles.topScorer__option_active,
-            ]}
-            onPress={() => {
-              setIsCustom(true);
-              setSelected(null);
-            }}
+          {/* Opción Otro */}
+          <Pressable
+            style={[styles.topScorer__option, isCustom && styles.topScorer__option__active]}
+            onPress={() => { setIsCustom(true); setSelected(null); }}
           >
-            <View
-              style={[
-                styles.topScorer__flag,
-                styles.topScorer__flagPlaceholder,
-              ]}
-            >
-              <Feather name="edit-2" size={14} color="#98A2B3" />
+            <View style={[styles.topScorer__flag, styles.topScorer__flag__placeholder]}>
+              <MaterialIcons name="edit" size={14} color={colors.textPlaceholder} />
             </View>
             <Text style={styles.topScorer__optionName}>Otro</Text>
-            {isCustom && <Feather name="check" size={16} color="#001F5B" />}
-          </TouchableOpacity>
+            {isCustom && <MaterialIcons name="check" size={16} color={colors.primary} />}
+          </Pressable>
 
+          {/* Input custom */}
           {isCustom && (
             <TextInput
               style={styles.topScorer__customInput}
               value={customName}
               onChangeText={setCustomName}
               placeholder="Nombre del goleador"
-              placeholderTextColor="#98A2B3"
+              placeholderTextColor={colors.textPlaceholder}
             />
           )}
 
+          {/* Success */}
           {success ? (
             <View style={styles.topScorer__successBanner}>
-              <Feather name="check-circle" size={16} color="#00A651" />
+              <MaterialIcons name="check-circle" size={16} color={colors.secondary} />
               <Text style={styles.topScorer__successText}>{success}</Text>
             </View>
           ) : null}
@@ -205,6 +170,7 @@ export function TopScorerPrediction() {
           </Button>
         </View>
       )}
+
     </View>
   );
 }

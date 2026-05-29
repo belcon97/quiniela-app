@@ -2,12 +2,12 @@ import { StyleSheet } from "react-native";
 import { colors, spacing, radius, typography } from "@/styles/theme";
 
 export const styles = StyleSheet.create({
+  // Bloque
   topScorer: {
     marginHorizontal: spacing.md,
     marginBottom: spacing.xl,
     borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.neutral200,
+    backgroundColor: colors.neutral100,
     padding: spacing.md,
   },
 
@@ -19,9 +19,9 @@ export const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   topScorer__title: {
-    fontSize: typography.sm,
+    fontSize: typography.lg,
     fontFamily: typography.bold,
-    color: "#854D0E",
+    color: colors.text,
   },
   topScorer__subtitle: {
     fontSize: typography.xs,
@@ -30,7 +30,7 @@ export const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
 
-  // Opción
+  // Opciones
   topScorer__option: {
     flexDirection: "row",
     alignItems: "center",
@@ -41,8 +41,9 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.neutral200,
     marginBottom: spacing.sm,
+    backgroundColor: colors.background,
   },
-  topScorer__option_active: {
+  topScorer__option__active: {
     borderColor: colors.primary,
     backgroundColor: colors.neutral100,
   },
@@ -50,9 +51,10 @@ export const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: radius.full,
-  },
-  topScorer__flagPlaceholder: {
+    overflow: "hidden",
     backgroundColor: colors.neutral200,
+  },
+  topScorer__flag__placeholder: {
     alignItems: "center",
     justifyContent: "center",
   },
@@ -70,7 +72,7 @@ export const styles = StyleSheet.create({
     color: colors.textMuted,
   },
 
-  // Custom input
+  // Input custom
   topScorer__customInput: {
     backgroundColor: colors.inputBg,
     borderRadius: radius.md,
@@ -84,12 +86,12 @@ export const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
 
-  // Saved state
+  // Saved
   topScorer__saved: {
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.md,
-    backgroundColor: "#DCFCE7",
+    backgroundColor: "rgba(0, 166, 81, 0.1)",
     borderRadius: radius.md,
     padding: spacing.md,
   },
@@ -118,7 +120,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.sm,
-    backgroundColor: "#DCFCE7",
+    backgroundColor: "rgba(0, 166, 81, 0.1)",
     borderRadius: radius.md,
     padding: spacing.md,
     marginBottom: spacing.md,

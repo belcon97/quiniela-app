@@ -12,6 +12,7 @@ export const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.5)",
     zIndex: 10,
   },
+
   panel: {
     position: "absolute",
     top: 0,
@@ -22,45 +23,17 @@ export const styles = StyleSheet.create({
     zIndex: 11,
     paddingHorizontal: 24,
   },
-  // Usuario
   userSection: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
     paddingBottom: 24,
     borderBottomWidth: 1,
     borderBottomColor: "#f0f0f0",
     marginBottom: 24,
   },
-  avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: "#000",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  avatarText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-  userInfo: {
-    flex: 1,
-  },
-  userName: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  userUsername: {
-    fontSize: 13,
-    color: "#999",
-    marginTop: 2,
-  },
   closeButton: {
     marginLeft: "auto",
   },
-  // Items de navegación
   navItem: {
     flexDirection: "row",
     alignItems: "center",
@@ -69,15 +42,13 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 8,
   },
-  navItemActive: {
+  navItem__active: {
     backgroundColor: "#f5f5f5",
   },
-  navItemText: {
+  navItem__text: {
     fontSize: 15,
     fontWeight: "500",
   },
-
-  // Logout
   footer: {
     marginTop: "auto",
     paddingBottom: 8,
@@ -87,7 +58,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     gap: 12,
   },
-  logoutText: {
+  logoutItem__text: {
     fontSize: 15,
     color: "#ff3b30",
     fontWeight: "500",

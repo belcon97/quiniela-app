@@ -1,46 +1,58 @@
 import { StyleSheet } from "react-native";
+import { colors, spacing, radius, typography } from "@/styles/theme";
 
 export const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 8,
-    borderRadius: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderRadius: radius.md,
+    gap: spacing.md,
   },
-  rowActive: {
-    backgroundColor: "#f0f7ff",
-    borderBottomWidth: 0,
+
+  row__active: {
+    backgroundColor: colors.background,
+    shadowColor: colors.neutral900,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
   },
-  position: {
-    width: 24,
-    fontSize: 14,
-    color: "#999",
-    fontWeight: "500",
+
+  row__position: {
+    width: 28,
+    fontSize: typography.sm,
+    fontFamily: typography.medium,
+    color: colors.neutral400,
   },
-  info: {
+  row__position__first: {
+    color: colors.secondary,
+    fontFamily: typography.bold,
+  },
+  row__info: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
-    marginLeft: 8,
+    gap: spacing.sm,
   },
-  nameContainer: {
+  row__userInfo: {
     flex: 1,
   },
-  name: {
-    fontSize: 14,
-    fontWeight: "600",
+  row__name: {
+    fontSize: typography.sm,
+    fontFamily: typography.bold,
+    color: colors.text,
   },
-  username: {
-    fontSize: 12,
-    color: "#999",
-    marginTop: 2,
+  row__username: {
+    fontSize: typography.xs,
+    fontFamily: typography.regular,
+    color: colors.textMuted,
+    letterSpacing: 0.5,
   },
-  points: {
-    fontSize: 14,
-    fontWeight: "700",
+  row__points: {
+    fontSize: typography.sm,
+    fontFamily: typography.bold,
+    color: colors.text,
   },
 });

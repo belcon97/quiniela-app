@@ -3,27 +3,29 @@ import { colors, spacing, radius, typography } from "@/styles/theme";
 
 export const styles = StyleSheet.create({
   topScorers: {
-    marginHorizontal: spacing.md,
-    marginBottom: spacing.lg,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.neutral200,
-    padding: spacing.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.md,
   },
 
   // Header
   topScorers__header: {
     flexDirection: "row",
     alignItems: "center",
-    gap: spacing.xs,
-    marginBottom: spacing.md,
+    gap: spacing.sm,
+    marginBottom: spacing.sm,
   },
   topScorers__title: {
-    fontSize: typography.xs,
+    fontSize: typography.lg,
     fontFamily: typography.bold,
-    color: "#854D0E",
-    textTransform: "uppercase",
-    letterSpacing: 0.8,
+    color: colors.text,
+  },
+
+  // list
+  topScorers__container: {
+    backgroundColor: colors.neutral100,
+    borderRadius: radius.lg,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
   },
 
   // Row
@@ -32,20 +34,22 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     gap: spacing.sm,
     paddingVertical: spacing.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.neutral100,
   },
-  topScorers__medal: {
-    fontSize: 18,
-    width: 24,
+  topScorers__position: {
+    width: 28,
+    fontSize: typography.sm,
+    fontFamily: typography.medium,
+    color: colors.neutral400,
     textAlign: "center",
   },
   topScorers__flag: {
     width: 32,
     height: 32,
     borderRadius: radius.full,
+    overflow: "hidden",
+    backgroundColor: colors.neutral200,
   },
-  topScorers__flagPlaceholder: {
+  topScorers__flag__placeholder: {
     backgroundColor: colors.neutral200,
   },
   topScorers__info: {
@@ -60,16 +64,21 @@ export const styles = StyleSheet.create({
     fontSize: typography.xs,
     fontFamily: typography.regular,
     color: colors.textMuted,
+    letterSpacing: 0.5,
   },
+
+  // Goles
   topScorers__goals: {
+    flexDirection: "row",
+    gap:6,
     alignItems: "center",
   },
-  topScorers__goalsCount: {
+  topScorers__goals__count: {
     fontSize: typography.md,
     fontFamily: typography.bold,
     color: colors.primary,
   },
-  topScorers__goalsLabel: {
+  topScorers__goals__label: {
     fontSize: typography.xs,
     fontFamily: typography.regular,
     color: colors.textMuted,

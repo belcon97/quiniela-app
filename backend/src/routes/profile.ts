@@ -1,13 +1,16 @@
 import { Router } from "express";
-import {
+import { 
   getPrivateProfile,
   getPublicProfile,
-} from "../controllers/profileController";
-import { authMiddleware } from "../middlewares/authMiddleware";
+  updateFavoriteTeam,
+  markRulesAsRead,} from "../controllers/profileController";
+import { requireAuth } from "../middlewares/authMiddleware";
 
 const router = Router();
 
-router.get("/", authMiddleware, getPrivateProfile);
-router.get("/:username", getPublicProfile);
+router.get("/", requireAuth, getPrivateProfile);
+router.get("/:username", requireAuth, getPublicProfile);
+router.put("/favorite-team", requireAuth, updateFavoriteTeam);
+router.patch("/rules", requireAuth, markRulesAsRead);
 
 export default router;

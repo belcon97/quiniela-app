@@ -1,16 +1,43 @@
 import { StyleSheet } from "react-native";
+import { colors, typography, radius } from "@/styles/theme";
 
 export const styles = StyleSheet.create({
+  // Bloque
   avatar: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    backgroundColor: "#e0e0e0",
+    borderRadius: radius.full,
+    backgroundColor: colors.primary,
     justifyContent: "center",
     alignItems: "center",
   },
-  avatarText: {
-    fontWeight: "bold",
-    fontSize: 13,
+
+  // Modificadores — tamaño
+  avatar__small: {
+    width: 28,
+    height: 28,
+  },
+  avatar__medium: {
+    width: 36,
+    height: 36,
+  },
+  avatar__large: {
+    width: 56,
+    height: 56,
+    borderWidth: 2,
+    borderColor: colors.secondary,
+  },
+
+  // Texto
+  avatar__text: {
+    fontFamily: typography.bold,
+    color: colors.background,
+  },
+  avatar__text__small: {
+    fontSize: typography.xs,
+  },
+  avatar__text__medium: {
+    fontSize: typography.xs,
+  },
+  avatar__text__large: {
+    fontSize: typography.md,
   },
 });

@@ -1,28 +1,22 @@
 import {
   View,
   Text,
-  TouchableOpacity,
-  Animated,
   Pressable,
+  Animated,
 } from "react-native";
 import { useEffect, useState, useRef } from "react";
 import { useNavigationState, useNavigation } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
+import { MaterialIcons } from "@expo/vector-icons";
+// Styles
 import { styles, MENU_WIDTH } from "./Menu.styles";
-
-// Components
-import { Avatar } from "@/ui/Avatar/Avatar";
-
 // Navigation
-import { MENU_ITEMS } from "@/navigation/menuItems";
-
+import { ROUTE_CONFIG, NAV_GROUPS } from "@/navigation/navigation.config";
 // Store
 import { useAuthStore } from "@/store/authStore";
-
-// Utils
-import { getInitials } from "@/utils/getInitials";
+// Types
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { AppStackParams } from "@/navigation/navigation.types";
 
 interface MenuProps {
   isOpen: boolean;
@@ -31,22 +25,33 @@ interface MenuProps {
 
 export function Menu({ isOpen, onClose }: MenuProps) {
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation();
-
-  const user = useAuthStore((state) => state.user);
+  const navigation = useNavigation<NativeStackNavigationProp<AppStackParams>>();
   const logout = useAuthStore((state) => state.logout);
 
-  const initials = user?.name ? getInitials(user.name) : "";
-
-  // Detectar si estamos en el perfil propio
+  // Detectar ruta activa
   const currentRoute = useNavigationState((state) => state.routes[state.index]);
   const currentScreen = currentRoute.name;
   const isOwnProfile =
     currentScreen === "Profile" &&
     !(currentRoute.params as { username?: string })?.username;
 
+  function isRouteActive(routeName: keyof AppStackParams): boolean {
+    if (routeName === "Profile") return isOwnProfile;
+    return currentScreen === routeName;
+  }
+
+  // Animacion del menu
   const translateX = useRef(new Animated.Value(-MENU_WIDTH)).current;
   const [visible, setVisible] = useState(false);
+
+  const panelStyle = [
+    styles.panel,
+    {
+      paddingTop: insets.top + 8,
+      paddingBottom: insets.bottom + 8,
+      transform: [{ translateX }],
+    },
+  ];
 
   useEffect(() => {
     if (isOpen) {
@@ -72,59 +77,41 @@ export function Menu({ isOpen, onClose }: MenuProps) {
     <View style={styles.overlay}>
       <Pressable style={styles.overlay} onPress={onClose} />
 
-      <Animated.View
-        style={[
-          styles.panel,
-          {
-            paddingTop: insets.top + 8,
-            paddingBottom: insets.bottom + 8,
-            transform: [{ translateX }],
-          },
-        ]}
-      >
+      <Animated.View style={panelStyle}>
+
         <View style={styles.userSection}>
-          <Avatar initials={initials} />
-
-          <View style={styles.userInfo}>
-            <Text style={styles.userName} numberOfLines={1}>
-              {user?.name}
-            </Text>
-            <Text style={styles.userUsername} numberOfLines={1}>
-              @{user?.username}
-            </Text>
-          </View>
-
-          <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-            <Ionicons name="close" size={28} color="#000" />
-          </TouchableOpacity>
+          <Pressable onPress={onClose} style={styles.closeButton}>
+            <MaterialIcons name="close" size={28} color="#000" />
+          </Pressable>
         </View>
 
-        {MENU_ITEMS.map((item) => (
-          <TouchableOpacity
-            key={item.screen}
-            style={[
-              styles.navItem,
-              (currentScreen === item.screen && item.screen !== "Profile") ||
-              (item.screen === "Profile" && isOwnProfile)
-                ? styles.navItemActive
-                : null,
-            ]}
-            onPress={() => {
-              navigation.navigate(item.screen as never);
-              onClose();
-            }}
-          >
-            <Ionicons name={item.icon} size={22} color="#000" />
-            <Text style={styles.navItemText}>{item.label}</Text>
-          </TouchableOpacity>
-        ))}
+        {/* navegacion */}
+        {NAV_GROUPS.drawerWeb.map((routeName) => {
+          const { label, icon } = ROUTE_CONFIG[routeName];
+          const isActive = isRouteActive(routeName);
+
+          return (
+            <Pressable
+              key={routeName}
+              style={[styles.navItem, isActive ? styles.navItem__active : null]}
+              onPress={() => {
+                navigation.navigate(routeName);
+                onClose();
+              }}
+            >
+              <MaterialIcons name={icon} size={22} color="#000" />
+              <Text style={styles.navItem__text}>{label}</Text>
+            </Pressable>
+          );
+        })}
 
         <View style={styles.footer}>
-          <TouchableOpacity style={styles.logoutItem} onPress={logout}>
-            <Ionicons name="log-out-outline" size={22} color="#ff3b30" />
-            <Text style={styles.logoutText}>Cerrar sesión</Text>
-          </TouchableOpacity>
+          <Pressable style={styles.logoutItem} onPress={logout}>
+            <MaterialIcons name="logout" size={22} color="#ff3b30" />
+            <Text style={styles.logoutItem__text}>Cerrar sesión</Text>
+          </Pressable>
         </View>
+
       </Animated.View>
     </View>
   );

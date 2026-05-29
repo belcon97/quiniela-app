@@ -9,8 +9,7 @@ const adapter = new PrismaPg({
 
 const prisma = new PrismaClient({ adapter });
 
-// Script para crear un admin
-// correr con: npx prisma db seed
+// npx prisma db seed
 async function main() {
   const existingAdmin = await prisma.user.findUnique({
     where: { username: "admin" },
@@ -27,7 +26,6 @@ async function main() {
     data: {
       name: "Administrador",
       username: "admin",
-      email: "admin@quiniela.com",
       password: hashedPassword,
       role: Role.admin,
     },

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, Pressable, ScrollView } from "react-native";
+// Styles
 import { styles } from "./Tabs.styles";
 
 interface Tab {
@@ -13,11 +14,7 @@ interface TabsProps {
   onTabChange?: (index: number) => void;
 }
 
-export function Tabs({
-  tabs,
-  activeTab: controlledTab,
-  onTabChange,
-}: TabsProps) {
+export function Tabs({ tabs, activeTab: controlledTab, onTabChange }: TabsProps) {
   const [internalTab, setInternalTab] = useState(0);
 
   const isControlled = controlledTab !== undefined;
@@ -29,26 +26,28 @@ export function Tabs({
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      <View style={styles.tabBar}>
+    <View style={styles.tabs}>
+
+      {/* Tab bar */}
+      <View style={styles.tabs__bar}>
         {tabs.map((tab, index) => (
-          <TouchableOpacity
+          <Pressable
             key={tab.label}
-            style={[styles.tab, activeTab === index && styles.tabActive]}
+            style={[styles.tabs__tab, activeTab === index && styles.tabs__tab__active]}
             onPress={() => handleTabChange(index)}
           >
-            <Text
-              style={[
-                styles.tabLabel,
-                activeTab === index && styles.tabLabelActive,
-              ]}
-            >
+            <Text style={[styles.tabs__label, activeTab === index && styles.tabs__label__active]}>
               {tab.label}
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         ))}
       </View>
-      <View style={styles.content}>{tabs[activeTab].content}</View>
+
+      {/* Contenido */}
+      <ScrollView style={styles.tabs__content}>
+        {tabs[activeTab].content}
+      </ScrollView>
+
     </View>
   );
 }

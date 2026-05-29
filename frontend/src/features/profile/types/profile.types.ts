@@ -7,6 +7,8 @@ export interface Prediction {
   homeScore: number;
   awayScore: number;
   points: number;
+  isWildcard: boolean;
+  penaltyWinner: "home" | "away" | null;
   createdAt: string;
   match: Match;
 }
@@ -25,6 +27,7 @@ export interface PublicProfileData {
   position: number | null;
   totalPoints: number;
   predictionsHistory: Prediction[];
+  predictionsPending?: Prediction[];
 }
 
 export interface PredictionInput {

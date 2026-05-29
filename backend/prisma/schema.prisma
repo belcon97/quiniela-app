@@ -7,24 +7,31 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Role {
+  user
+  admin
+}
+
 enum MatchStatus {
   pending
   completed
 }
 
-enum Role {
-  user
-  admin
+enum PenaltyWinner {
+  home
+  away
 }
 
 model User {
   id          String       @id @default(uuid())
   name        String
   username    String       @unique
-  email       String       @unique
-  password    String
+  password    String?
+  
+  favoriteTeam  String?
+  hasReadRules  Boolean  @default(false)
+
   role        Role         @default(user)
-  usedWildcard Boolean @default(false)
   
   createdAt   DateTime     @default(now())
   predictions Prediction[]
@@ -37,12 +44,17 @@ model Match {
   awayTeam    String
   homeFlag    String
   awayFlag    String
+
   group       String
   stadium     String
+
   date        DateTime
+
   homeScore   Int?
   awayScore   Int?
+
   status      MatchStatus @default(pending)
+
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   predictions Prediction[]
@@ -55,36 +67,40 @@ model Prediction {
   homeScore Int
   awayScore Int
   points    Int?
+
   isWildcard Boolean @default(false)
-  penaltyWinner String? // "home" | "away" | null
-  createdAt DateTime @default(now())
+  penaltyWinner PenaltyWinner?
 
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   match Match @relation(fields: [matchId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
 
   @@unique([userId, matchId])
 }
 
 model TopScorer {
   id        String   @id @default(uuid())
-  name      String
+  isActive Boolean @default(true)
+  name      String @unique
   team      String
   flag      String
   goals     Int      @default(0)
+
   isWinner  Boolean  @default(false)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   predictions UserTopScorerPrediction[]
 }
 
 model UserTopScorerPrediction {
-  id          String     @id @default(uuid())
-  userId      String     @unique
-  topScorerId String?
-  customName  String?
-  points      Int        @default(0)
-  createdAt   DateTime   @default(now())
+  id          String    @id @default(uuid())
+  userId      String    @unique
+  topScorerId String    // ← deja de ser opcional
+  points      Int       @default(0)
+  createdAt   DateTime  @default(now())
 
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  topScorer TopScorer? @relation(fields: [topScorerId], references: [id])
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topScorer TopScorer @relation(fields: [topScorerId], references: [id])
 }

@@ -10,7 +10,7 @@ type ErrorBannerProps = {
   duration?: number;
 };
 
-export default function ErrorBanner({
+export function ErrorBanner({
   message,
   visible,
   onHide,

@@ -1,18 +1,16 @@
-import { View, Text, ActivityIndicator, TouchableOpacity } from "react-native";
-import Feather from "@expo/vector-icons/Feather";
+import { View, Text, Pressable } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 import { colors } from "@/styles/theme";
+// Styles
 import { styles } from "./RankingList.styles";
 // Components
 import { RankingRow } from "@/ui/RankingRow/RankingRow";
-
+// Store
+import { useAuthStore } from "@/store/authStore";
 // Types
 import type { RankingEntry } from "@/features/home/types/home.types";
 
-// Store
-import { useAuthStore } from "@/store/authStore";
-
 interface RankingListProps {
-  loading: boolean;
   ranking: RankingEntry[];
   myPosition: number | null;
   onUserPress: (username: string) => void;
@@ -21,59 +19,67 @@ interface RankingListProps {
 
 export function RankingList({
   ranking,
-  loading,
   myPosition,
   onUserPress,
   onRankingPress,
 }: RankingListProps) {
   const user = useAuthStore((state) => state.user);
 
-  if (loading) return <ActivityIndicator />;
-
   const top5 = ranking.slice(0, 5);
-
   const isMeInTop5 = top5.some((item) => item.username === user?.username);
-  const myRankingEntry = ranking.find(
-    (item) => item.username === user?.username,
-  );
+  const myRankingEntry = ranking.find((item) => item.username === user?.username);
 
   return (
-    <View>
+    <View style={styles.rankingList}>
+
+      {/* Header — título y ver más */}
       <View style={styles.rankingList__header}>
-        <Text style={styles.rankingList__title}>Ranking general</Text>
-        <TouchableOpacity
-          onPress={onRankingPress}
-          style={styles.rankingList__seeAll}
-        >
-          <Text style={styles.rankingList__seeAllText}>
-            Ver ranking completo
-          </Text>
-          <Feather name="arrow-right" size={14} color={colors.primary} />
-        </TouchableOpacity>
+        <View style={styles.rankingList__titleRow}>
+          <MaterialIcons name="leaderboard" size={22} color={colors.primary} />
+          <Text style={styles.rankingList__title}>Ranking general</Text>
+        </View>
+        <Pressable onPress={onRankingPress} style={styles.rankingList__seeAll}>
+          <Text style={styles.rankingList__seeAllText}>Ver más</Text>
+          <MaterialIcons name="arrow-forward" size={14} color={colors.primary} />
+        </Pressable>
       </View>
 
-      <View>
+      {/* Contenedor lista */}
+      <View style={styles.rankingList__container}>
+
+        {/* Columnas */}
+        <View style={styles.rankingList__columns}>
+          <Text style={styles.rankingList__column}>POS</Text>
+          <Text style={[styles.rankingList__column, styles.rankingList__column__user]}>USER</Text>
+          <Text style={styles.rankingList__column}>POINTS</Text>
+        </View>
+
+        {/* Top 5 */}
         {top5.map((item) => (
           <RankingRow
             key={item.username}
             ranking={item}
             isMe={item.username === user?.username}
-            onPress={() => onUserPress?.(item.username)}
+            onPress={() => onUserPress(item.username)}
           />
         ))}
+
+        {/* Mi posicion si no estoy en top 5 */}
+        {!isMeInTop5 && myRankingEntry && (
+          <RankingRow
+            ranking={myRankingEntry}
+            isMe
+            onPress={() => onUserPress(myRankingEntry.username)}
+          />
+        )}
+
+        {/* Sin posicion */}
+        {myPosition === null && (
+          <Text style={styles.rankingList__empty}>
+            No has ingresado tus resultados
+          </Text>
+        )}
       </View>
-
-      {!isMeInTop5 && myRankingEntry ? (
-        <RankingRow
-          ranking={myRankingEntry}
-          isMe
-          onPress={() => onUserPress?.(myRankingEntry.username)}
-        />
-      ) : null}
-
-      {myPosition === null ? (
-        <Text>No has ingresado tus resultados</Text>
-      ) : null}
     </View>
   );
 }

@@ -1,16 +1,13 @@
 import prisma from "../lib/prisma";
 
+// Busca un usuario por username
 export const findUserByUsername = async (username: string) => {
   return prisma.user.findUnique({ where: { username } });
 };
 
-export const findUserByEmail = async (email: string) => {
-  return prisma.user.findUnique({ where: { email } });
-};
-
+// Crea un usuario nuevo
 export const createUser = async (data: {
   name: string;
-  email: string;
   password: string;
   username: string;
 }) => {

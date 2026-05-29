@@ -1,7 +1,9 @@
-import { ActivityIndicator } from "react-native";
+import { View, ScrollView, ActivityIndicator } from "react-native";
+// Styles
+import { styles } from "./PublicProfile.styles";
 // Components
 import { ProfileView } from "../ProfileView/ProfileView";
-// Services
+// Hooks
 import { usePublicProfile } from "../../hooks/usePublicProfile";
 
 interface PublicProfileProps {
@@ -11,16 +13,26 @@ interface PublicProfileProps {
 export function PublicProfile({ username }: PublicProfileProps) {
   const { publicData, loading } = usePublicProfile(username);
 
-  if (loading) return <ActivityIndicator />;
+  if (loading) {
+    return (
+      <View style={styles.publicProfile__loader}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
   if (!publicData) return null;
+
   return (
-    <ProfileView
-      position={publicData.position}
-      totalPoints={publicData.totalPoints}
-      predictionsHistory={publicData.predictionsHistory}
-      username={publicData.username}
-      name={publicData.name}
-      isOwner={false}
-    />
+    <ScrollView style={styles.publicProfile}>
+      <ProfileView
+        position={publicData.position}
+        totalPoints={publicData.totalPoints}
+        predictionsHistory={publicData.predictionsHistory}
+        predictionsPending={publicData.predictionsPending}
+        username={publicData.username}
+        name={publicData.name}
+      />
+    </ScrollView>
   );
 }

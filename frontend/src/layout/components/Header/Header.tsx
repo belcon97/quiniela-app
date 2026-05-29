@@ -8,7 +8,7 @@ import { colors, typography, spacing, radius } from "@/styles/theme";
 import { useAuthStore } from "@/store/authStore";
 
 interface HeaderProps {
-  onMenuPress: () => void;
+  onMenuPress?: () => void;
   onRulesPress?: () => void;
 }
 
@@ -20,9 +20,9 @@ export function Header({ onMenuPress, onRulesPress }: HeaderProps) {
   return (
     <>
       <View style={[styles.container, { paddingTop: insets.top + 8 }]}>
-        <TouchableOpacity onPress={onMenuPress}>
+        {onMenuPress && <TouchableOpacity onPress={onMenuPress}>
           <Ionicons name="menu" size={28} color="#000" />
-        </TouchableOpacity>
+        </TouchableOpacity>}
 
         <Text numberOfLines={1} style={styles.title}>
           Hola, {user?.username}

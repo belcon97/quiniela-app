@@ -11,9 +11,9 @@ import Feather from "@expo/vector-icons/Feather";
 import { styles } from "./Login.styles";
 
 // Components
-import Button from "@/ui/Button/Button";
+import {Button} from "@/ui/Button/Button";
 import Input from "@/ui/Input/Input";
-import ErrorBanner from "@/ui/ErrorBanner/ErrorBanner";
+import {ErrorBanner} from "@/ui/ErrorBanner/ErrorBanner";
 
 // Services
 import { authService } from "@/features/auth/services/authService";

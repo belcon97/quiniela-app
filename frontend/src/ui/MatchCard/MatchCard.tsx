@@ -1,8 +1,12 @@
 import { View, Text, Image } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
+// Styles
 import { styles } from "./MatchCard.styles";
-import { Ionicons } from "@expo/vector-icons";
-import type { Match } from "@/shared/types/shared.types";
+import { colors } from "@/styles/theme";
+// Utils
 import { formatDate } from "@/utils/formatDate";
+// Types
+import type { Match } from "@/shared/types/shared.types";
 
 interface MatchCardProps {
   match: Match;
@@ -11,39 +15,46 @@ interface MatchCardProps {
 export function MatchCard({ match }: MatchCardProps) {
   return (
     <View style={styles.card}>
-      <Text style={styles.stadium}>{match.stadium}</Text>
 
-      <View style={styles.teamsRow}>
-        <View style={styles.team}>
+      {/* Header */}
+      <View style={styles.card__header}>
+        <MaterialIcons name="location-on" size={12} color={colors.textMuted} />
+        <Text style={styles.card__stadium}>{match.stadium}</Text>
+      </View>
+
+      {/* Teams */}
+      <View style={styles.card__teamsRow}>
+        <View style={styles.card__team}>
           {match.homeFlag ? (
             <Image
               source={{ uri: match.homeFlag }}
-              style={styles.flag}
-              resizeMode="contain"
+              style={styles.card__flag}
+              resizeMode="cover"
             />
           ) : (
-            <Ionicons name="flag-outline" size={36} color="#ccc" />
+            <MaterialIcons name="flag" size={36} color={colors.neutral400} />
           )}
-          <Text style={styles.teamName}>{match.homeTeam}</Text>
+          <Text style={styles.card__teamName}>{match.homeTeam}</Text>
         </View>
 
-        <Text style={styles.vs}>vs</Text>
+        <Text style={styles.card__vs}>VS</Text>
 
-        <View style={styles.team}>
+        <View style={styles.card__team}>
           {match.awayFlag ? (
             <Image
               source={{ uri: match.awayFlag }}
-              style={styles.flag}
-              resizeMode="contain"
+              style={styles.card__flag}
+              resizeMode="cover"
             />
           ) : (
-            <Ionicons name="flag-outline" size={36} color="#ccc" />
+            <MaterialIcons name="flag" size={36} color={colors.neutral400} />
           )}
-          <Text style={styles.teamName}>{match.awayTeam}</Text>
+          <Text style={styles.card__teamName}>{match.awayTeam}</Text>
         </View>
       </View>
 
-      <Text style={styles.date}>{formatDate(match.date)}</Text>
+      {/* Footer — fecha */}
+      <Text style={styles.card__date}>{formatDate(match.date)}</Text>
     </View>
   );
 }

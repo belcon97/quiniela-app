@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
-export const authMiddleware = (
+// Verificar el token y el Rol
+export const requireAuth = (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -10,17 +11,18 @@ export const authMiddleware = (
 
   if (!token) {
     return res.status(401).json({
-      message: "No autorizado",
+      message: "Usuario no autorizado",
     });
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
-      id: string;
-      role: string;
-    };
-    (req as any).userId = decoded.id;
-    (req as any).userRole = decoded.role;
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET as string
+    ) as { id: string; role: string };
+    
+    req.userId = decoded.id;
+    req.userRole = decoded.role;
     next();
   } catch {
     return res.status(401).json({
@@ -30,12 +32,15 @@ export const authMiddleware = (
 };
 
 // Verifica si el usuario es admin
-export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
-  const role = (req as any).userRole;
-  if (role !== "admin") {
-    return res.status(403).json({
-      message: "No autorizado",
-    });
+const checkAdminRole = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (req.userRole !== "admin") {
+    return res.status(403).json({ message: "Acceso denegado" });
   }
   next();
 };
+
+export const requireAdmin = [requireAuth, checkAdminRole];

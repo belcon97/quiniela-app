@@ -1,21 +1,26 @@
 import { StyleSheet } from "react-native";
+import { colors, spacing, typography } from "@/styles/theme";
 
 export const styles = StyleSheet.create({
   container: {
+    flexDirection: "row",
     alignItems: "center",
-    paddingTop: 24,
-    paddingBottom: 16,
-    gap: 8,
+    gap: spacing.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.lg,
   },
-  name: {
-    fontSize: 20,
-    fontWeight: "700",
-    fontFamily: "Inter_700Bold",
-    color: "#000",
+
+  container__info: {
+    flex: 1,
   },
-  username: {
-    fontSize: 14,
-    color: "#888",
-    fontFamily: "Inter_400Regular",
+  container__username: {
+    fontSize: typography.xl,
+    fontFamily: typography.headline,
+    color: colors.text,
+  },
+  container__name: {
+    fontSize: typography.sm,
+    fontFamily: typography.regular,
+    color: colors.textMuted,
   },
 });

@@ -1,38 +1,43 @@
 import { StyleSheet } from "react-native";
+import { colors, spacing, radius, typography } from "@/styles/theme";
 
 export const styles = StyleSheet.create({
-  tabBar: {
-    flexDirection: "row",
-    backgroundColor: "#f0f0f0",
-    borderRadius: 10,
-    padding: 4,
-    marginHorizontal: 16,
-    marginVertical: 16,
-  },
-  tab: {
+  tabs: {
     flex: 1,
-    paddingVertical: 8,
-    alignItems: "center",
-    borderRadius: 8,
   },
-  tabActive: {
-    backgroundColor: "#fff",
-    shadowColor: "#000",
+
+  tabs__bar: {
+    flexDirection: "row",
+    backgroundColor: colors.neutral100,
+    borderRadius: radius.full,
+    padding: spacing.xs,
+    marginHorizontal: spacing.md,
+    marginVertical: spacing.md,
+  },
+  tabs__tab: {
+    flex: 1,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.full,
+    alignItems: "center",
+  },
+  tabs__tab__active: {
+    backgroundColor: colors.background,
+    shadowColor: colors.neutral900,
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.08,
-    shadowRadius: 2,
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
     elevation: 2,
   },
-  tabLabel: {
-    fontSize: 13,
-    fontWeight: "600",
-    fontFamily: "Inter_600SemiBold",
-    color: "#888",
+  tabs__label: {
+    fontSize: typography.sm,
+    fontFamily: typography.medium,
+    color: colors.textMuted,
   },
-  tabLabelActive: {
-    color: "#000",
+  tabs__label__active: {
+    fontFamily: typography.semiBold,
+    color: colors.text,
   },
-  content: {
+  tabs__content: {
     flex: 1,
   },
 });

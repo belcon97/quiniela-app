@@ -12,7 +12,7 @@ interface ButtonProps {
   disabled?: boolean;
 }
 
-export default function Button({
+export function Button({
   children,
   onPress,
   variant = "primary",

@@ -1,68 +1,78 @@
 import { StyleSheet } from "react-native";
+import { colors, spacing, radius, typography } from "@/styles/theme";
 
 export const styles = StyleSheet.create({
+  // Bloque
   card: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    marginHorizontal: 16,
-    marginVertical: 6,
-    padding: 12,
-    gap: 10,
-    shadowColor: "#000",
+    backgroundColor: colors.background,
+    borderRadius: radius.lg,
+    marginHorizontal: spacing.md,
+    marginVertical: spacing.xs,
+    padding: spacing.sm,
+    gap: spacing.sm,
+    shadowColor: colors.neutral900,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.06,
     shadowRadius: 3,
     elevation: 2,
   },
-  colorBar: {
+
+  // Elementos
+  card__bar: {
     width: 4,
-    height: "100%",
-    borderRadius: 4,
     alignSelf: "stretch",
+    borderRadius: radius.sm,
   },
-  flags: {
-    gap: 4,
+  card__flags: {
+    gap: spacing.xs,
   },
-  flag: {
+  card__flag: {
     width: 28,
     height: 28,
-    borderRadius: 14,
+    borderRadius: radius.full,
+    overflow: "hidden",
+    backgroundColor: colors.neutral200,
   },
-  info: {
+  card__info: {
     flex: 1,
+    gap: 2,
   },
-  matchName: {
-    fontSize: 13,
-    fontWeight: "700",
-    fontFamily: "Inter_700Bold",
-    color: "#000",
+  card__matchName: {
+    fontSize: typography.sm,
+    fontFamily: typography.bold,
+    color: colors.text,
   },
-  scores: {
-    fontSize: 12,
-    color: "#888",
-    fontFamily: "Inter_400Regular",
-    marginTop: 2,
+  card__scores: {
+    fontSize: typography.xs,
+    fontFamily: typography.regular,
+    color: colors.textMuted,
   },
-  badge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 20,
+  card__date: {
+    fontSize: typography.xs,
+    fontFamily: typography.regular,
+    color: colors.textPlaceholder,
   },
-  badgeText: {
-    fontSize: 11,
-    fontWeight: "700",
-    fontFamily: "Inter_700Bold",
-    color: "#fff",
+  card__badge: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radius.full,
   },
-  pointsGreen: {
-    backgroundColor: "#22c55e",
+  card__badgeText: {
+    fontSize: typography.xs,
+    fontFamily: typography.bold,
+    color: colors.background,
   },
-  pointsYellow: {
-    backgroundColor: "#eab308",
+
+  // Modificadores — colores de puntos
+  card__bar__green: {
+    backgroundColor: colors.secondary,
   },
-  pointsRed: {
-    backgroundColor: "#ef4444",
+  card__bar__yellow: {
+    backgroundColor: "#EAB308",
+  },
+  card__bar__red: {
+    backgroundColor: colors.tertiary,
   },
 });

@@ -1,58 +1,58 @@
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
-import Feather from "@expo/vector-icons/Feather";
+import { View, Text, ScrollView, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
+import { MaterialIcons } from "@expo/vector-icons";
+import { colors } from "@/styles/theme";
+
+// Components
+import { Layout } from "@/layout/Layout";
+// Styles
 import { styles } from "./Rules.styles";
+// Types
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { AppStackParams } from "@/navigation/navigation.types";
 
-type RulesNavigationProp = NativeStackNavigationProp<AppStackParams, "Rules">;
-
-export default function Rules({
-  navigation,
-}: {
-  navigation: RulesNavigationProp;
-}) {
+export function Rules() {
   const insets = useSafeAreaInsets();
+  const navigation = useNavigation<NativeStackNavigationProp<AppStackParams>>();
+
+  const containerStyle = [styles.rules, { paddingTop: insets.top }];
 
   return (
-    <View style={[styles.rules, { paddingTop: insets.top }]}>
-      <View style={styles.rules__header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Feather name="arrow-left" size={24} color="#fff" />
-        </TouchableOpacity>
-        <Text style={styles.rules__title}>Reglas</Text>
-        <View style={{ width: 24 }} />
-      </View>
-
+    <Layout>
+    <View style={containerStyle}>
       <ScrollView contentContainerStyle={styles.rules__scroll}>
-        <Text style={styles.rules__intro}>
-          La quiniela es con fines de entretenimiento. Los pronósticos se
-          puntúan de la siguiente manera:
-        </Text>
 
+        {/* Header */}
+        <View style={styles.rules__header}>
+          <Text style={styles.rules__title}>Reglas del Juego</Text>
+          <Text style={styles.rules__subtitle}>PUNTUACIÓN Y FUNCIONAMIENTO</Text>
+        </View>
+
+        {/* Seccion puntuacion */}
         <View style={styles.rules__section}>
-          <Text style={styles.rules__sectionTitle}>Puntuación</Text>
+          <View style={styles.rules__sectionHeader}>
+            <Text style={styles.rules__sectionTitle}>Puntuación</Text>
+            <MaterialIcons name="scoreboard" size={20} color={colors.secondary} />
+          </View>
 
+          {/* +1 PT */}
           <View style={styles.rules__card}>
-            <View style={[styles.rules__badge, { backgroundColor: "#FEF9C3" }]}>
-              <Text style={[styles.rules__badgeText, { color: "#854D0E" }]}>
-                +1 PT
-              </Text>
+            <View style={[styles.rules__badge, styles.rules__badge__yellow]}>
+              <Text style={[styles.rules__badgeText, styles.rules__badgeText__yellow]}>+1{"\n"}PT</Text>
             </View>
             <View style={styles.rules__cardContent}>
               <Text style={styles.rules__cardTitle}>Ganador o empate</Text>
               <Text style={styles.rules__cardDesc}>
-                Acertás el ganador del partido o el empate, pero no el resultado
-                exacto.
+                Acertás el ganador del partido o el empate, pero no el resultado exacto.
               </Text>
             </View>
           </View>
 
+          {/* +3 PTS */}
           <View style={styles.rules__card}>
-            <View style={[styles.rules__badge, { backgroundColor: "#DCFCE7" }]}>
-              <Text style={[styles.rules__badgeText, { color: "#166534" }]}>
-                +3 PTS
-              </Text>
+            <View style={[styles.rules__badge, styles.rules__badge__green]}>
+              <Text style={[styles.rules__badgeText, styles.rules__badgeText__green]}>+3{"\n"}PTS</Text>
             </View>
             <View style={styles.rules__cardContent}>
               <Text style={styles.rules__cardTitle}>Resultado exacto</Text>
@@ -62,58 +62,70 @@ export default function Rules({
             </View>
           </View>
 
-          <View style={styles.rules__card}>
-            <View style={[styles.rules__badge, { backgroundColor: "#EDE9FE" }]}>
-              <Text style={[styles.rules__badgeText, { color: "#5B21B6" }]}>
-                ×2
-              </Text>
+          {/* Comodin — card destacada */}
+          <View style={styles.rules__card__wildcard}>
+            <View style={styles.rules__wildcardBadge}>
+              <Text style={styles.rules__wildcardBadgeText}>×2</Text>
             </View>
-            <View style={styles.rules__cardContent}>
-              <Text style={styles.rules__cardTitle}>Comodín</Text>
-              <Text style={styles.rules__cardDesc}>
-                Podés usar el comodín una sola vez durante la fase de grupos.
-                Duplica los puntos obtenidos en ese partido.
-              </Text>
+            <View style={styles.rules__wildcardHeader}>
+              <Text style={styles.rules__wildcardTitle}>Comodín</Text>
+              <View style={styles.rules__wildcardChip}>
+                <Text style={styles.rules__wildcardChipText}>LIMITED</Text>
+              </View>
             </View>
+            <Text style={styles.rules__wildcardDesc}>
+              Podés usar el comodín una sola vez durante la fase de grupos. Duplica los puntos obtenidos en ese partido.
+            </Text>
           </View>
 
+          {/* Goleador */}
           <View style={styles.rules__card}>
-            <View style={[styles.rules__badge, { backgroundColor: "#DCFCE7" }]}>
-              <Text style={[styles.rules__badgeText, { color: "#166534" }]}>
-                +3 PTS
-              </Text>
+            <View style={[styles.rules__badge, styles.rules__badge__green]}>
+              <Text style={[styles.rules__badgeText, styles.rules__badgeText__green]}>+3{"\n"}PTS</Text>
             </View>
             <View style={styles.rules__cardContent}>
               <Text style={styles.rules__cardTitle}>Goleador del torneo</Text>
               <Text style={styles.rules__cardDesc}>
-                Si acertás el goleador del torneo al inicio de la quiniela,
-                sumás 3 puntos adicionales.
+                Si acertás el goleador del torneo al inicio de la quiniela, sumás 3 puntos adicionales.
               </Text>
             </View>
           </View>
         </View>
 
+        {/* Seccion empates */}
         <View style={styles.rules__section}>
-          <Text style={styles.rules__sectionTitle}>Empates en el ranking</Text>
-          <Text style={styles.rules__body}>
-            En caso de empate entre dos o más participantes, los premios se
-            suman y se dividen en partes iguales entre los empatados.
-          </Text>
+          <View style={styles.rules__empates}>
+            <Text style={styles.rules__empatesLabel}>EMPATES EN EL RANKING</Text>
+            <Text style={styles.rules__empatesText}>
+              En caso de empate entre dos o más participantes, los premios se suman y se dividen en partes iguales entre los empatados.
+            </Text>
+          </View>
         </View>
 
+        {/* Seccion fase eliminatoria */}
         <View style={styles.rules__section}>
-          <Text style={styles.rules__sectionTitle}>Fase eliminatoria</Text>
+          <View style={styles.rules__sectionHeader}>
+            <MaterialIcons name="info-outline" size={18} color={colors.text} />
+            <Text style={styles.rules__sectionTitle}>Fase Eliminatoria</Text>
+          </View>
+          <View style={styles.rules__sectionDivider} />
+
           <Text style={styles.rules__body}>
-            A partir de cuartos de final, el resultado válido incluye el tiempo
-            extra. Si el partido continúa empatado en tiempo extra, se considera
-            empate — los penales no cuentan.
+            A partir de cuartos de final, el resultado válido incluye el tiempo extra. Si el partido continúa empatado en tiempo extra, se considera empate — los penales no cuentan.
           </Text>
-          <Text style={[styles.rules__body, { marginTop: 8 }]}>
-            Los pronósticos para cada fase eliminatoria deben enviarse con al
-            menos 24 horas de anticipación al primer partido de esa fase.
-          </Text>
+
+          {/* Advertencia */}
+          <View style={styles.rules__warning}>
+            <MaterialIcons name="schedule" size={16} color={colors.tertiary} />
+            <Text style={styles.rules__warningText}>
+              Los pronósticos para cada fase eliminatoria deben enviarse con al menos 24 horas de anticipación al primer partido de esa fase.
+            </Text>
+          </View>
         </View>
+
       </ScrollView>
     </View>
+
+    </Layout>
   );
 }

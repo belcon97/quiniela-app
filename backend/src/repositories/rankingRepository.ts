@@ -1,6 +1,6 @@
 import prisma from "../lib/prisma";
 
-// Traer todos los usuarios y sus puntos
+// Traer todos los usuarios agrupados por puntos de mayor a menor
 export const getAllUserPointsRepository = async () => {
   return prisma.prediction.groupBy({
     by: ["userId"],
@@ -9,7 +9,7 @@ export const getAllUserPointsRepository = async () => {
   });
 };
 
-// Extraer usuarios por id
+// Traer datos de usuarios por sus ids
 export const getUsersByIdsRepository = async (userIds: string[]) => {
   return prisma.user.findMany({
     where: { id: { in: userIds } },

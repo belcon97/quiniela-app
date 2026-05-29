@@ -1,10 +1,12 @@
 import { StyleSheet } from "react-native";
+import { colors, spacing } from "@/styles/theme";
 
 export const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    gap: 12,
-    paddingHorizontal: 16,
-    marginTop: 16,
+    gap: spacing.sm,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.md,
+    backgroundColor: colors.neutral100,
   },
 });

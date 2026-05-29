@@ -8,6 +8,16 @@ import { useAppFonts } from "./src/hooks/useAppFonts";
 import { useAuthStore } from "./src/store/authStore";
 // Navigation
 import AppNavigator from "./src/navigation/AppNavigator";
+// Styles
+import { StyleSheet } from "react-native";
+
+export const styles = StyleSheet.create({
+  loader: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
 
 export default function App() {
   const fontsLoaded = useAppFonts();
@@ -22,11 +32,9 @@ export default function App() {
     <SafeAreaProvider>
       {/* Espera fonts e hidratación del store antes de renderizar */}
       {!fontsLoaded || !isHydrated ? (
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-          <ActivityIndicator />
-        </View>
+        <View style={styles.loader}>
+        <ActivityIndicator />
+      </View>
       ) : (
         <AppNavigator />
       )}

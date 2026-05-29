@@ -2,11 +2,13 @@ import { Request, Response } from "express";
 import {
   getUserPrivateProfileService,
   getUserPublicProfileService,
+  updateFavoriteTeamService,
+  markRulesAsReadService
 } from "../services/profileService";
 
 export const getPrivateProfile = async (req: Request, res: Response) => {
   try {
-    const userId = (req as any).userId as string;
+    const userId = req.userId as string;
 
     const profileData = await getUserPrivateProfileService(userId);
     res.status(200).json(profileData);
@@ -18,10 +20,36 @@ export const getPrivateProfile = async (req: Request, res: Response) => {
 
 export const getPublicProfile = async (req: Request, res: Response) => {
   try {
+    // username viene de la URL — /profile/:username
     const username = req.params.username as string;
 
     const profileData = await getUserPublicProfileService(username);
     res.status(200).json(profileData);
+  } catch (error: any) {
+    const status = error.status || 500;
+    res.status(status).json({ message: error.message });
+  }
+};
+
+export const updateFavoriteTeam = async (req: Request, res: Response) => {
+  try {
+    const { favoriteTeam } = req.body;
+    const userId = req.userId as string;
+
+    const result = await updateFavoriteTeamService(userId, favoriteTeam);
+    res.status(200).json(result);
+  } catch (error: any) {
+    const status = error.status || 500;
+    res.status(status).json({ message: error.message });
+  }
+};
+
+export const markRulesAsRead = async (req: Request, res: Response) => {
+  try {
+    const userId = req.userId as string;
+
+    const result = await markRulesAsReadService(userId);
+    res.status(200).json(result);
   } catch (error: any) {
     const status = error.status || 500;
     res.status(status).json({ message: error.message });
