@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import { Request, Response, RequestHandler } from "express";
 import { getRankingService } from "../services/rankingService";
 
-export const getRanking = async (req: Request, res: Response) => {
+export const getRanking: RequestHandler = async (req: Request, res: Response) => {
   try {
     const ranking = await getRankingService();
     res.status(200).json(ranking);
