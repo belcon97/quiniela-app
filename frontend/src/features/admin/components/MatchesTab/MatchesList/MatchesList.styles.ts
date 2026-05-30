@@ -2,6 +2,11 @@ import { StyleSheet, Platform } from "react-native";
 import { colors, spacing, typography, radius } from "@/styles/theme";
 
 export const styles = StyleSheet.create({
+  // Contenedor principal
+  container: {
+    flex: 1,
+  },
+
   scroll: {
     padding: spacing.md,
     paddingBottom: spacing.xxl,
@@ -20,6 +25,31 @@ export const styles = StyleSheet.create({
     fontSize: typography.sm,
     color: colors.textPlaceholder,
     fontFamily: typography.regular,
+  },
+
+  // Selector de grupos
+  groups: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    gap: spacing.sm,
+  },
+  groupBtn: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.full,
+    backgroundColor: colors.neutral100,
+  },
+  groupBtn__active: {
+    backgroundColor: colors.primary,
+  },
+  groupBtn__label: {
+    fontSize: typography.sm,
+    fontFamily: typography.medium,
+    color: colors.textMuted,
+  },
+  groupBtn__label_active: {
+    color: colors.background,
+    fontFamily: typography.semiBold,
   },
 
   // Card
@@ -173,6 +203,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     gap: spacing.xs,
     flex: 1,
+    minWidth: 80,
   },
   modal__scoreLabel: {
     fontSize: typography.xs,
@@ -218,5 +249,9 @@ export const styles = StyleSheet.create({
     fontSize: typography.sm,
     fontFamily: typography.bold,
     color: colors.background,
+  },
+
+  groupsContainer: {
+    height: 48,
   },
 });

@@ -1,25 +1,19 @@
 import { useState } from "react";
-import { View, TextInput, Pressable } from "react-native";
+import { View, TextInput, Pressable, Platform, type TextInputProps } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import { styles } from "./Input.styles";
 import { colors } from "@/styles/theme";
 
-interface InputProps {
-  value: string;
-  onChangeText: (text: string) => void;
-  placeholder?: string;
+interface InputProps extends TextInputProps {
   icon?: React.ReactNode;
   hasError?: boolean;
-  secureTextEntry?: boolean;
 }
 
 export default function Input({
-  value,
-  onChangeText,
-  placeholder,
   icon,
   hasError = false,
   secureTextEntry = false,
+  ...props
 }: InputProps) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
@@ -29,13 +23,13 @@ export default function Input({
 
       <TextInput
         style={styles.input__field}
-        placeholder={placeholder}
-        value={value}
-        onChangeText={onChangeText}
         secureTextEntry={secureTextEntry && !isPasswordVisible}
         autoCapitalize="none"
         placeholderTextColor={colors.textPlaceholder}
-        underlineColorAndroid="transparent" // Para Android
+        underlineColorAndroid="transparent"
+        // En web forzamos type="text" para evitar el slider del browser
+        {...(Platform.OS === "web" ? { type: "text" } : {})}
+        {...props}
       />
 
       {secureTextEntry && (

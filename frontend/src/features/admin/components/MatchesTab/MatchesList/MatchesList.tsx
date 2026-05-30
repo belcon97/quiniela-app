@@ -2,17 +2,18 @@ import {
   View,
   Text,
   ScrollView,
-  TouchableOpacity,
+  FlatList,
+  Pressable,
   Modal,
   ActivityIndicator,
   Image,
 } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
+import { useState } from "react";
 
 // Components
 import Input from "@/ui/Input/Input";
-import {ErrorBanner} from "@/ui/ErrorBanner/ErrorBanner";
-import { Button } from "@/ui/Button/Button";
+import { ErrorBanner } from "@/ui/ErrorBanner/ErrorBanner";
 
 // Types
 import type { Match } from "@/types/shared.types";
@@ -23,7 +24,24 @@ import { colors } from "@/styles/theme";
 
 // Utils
 import { formatDate } from "@/utils/formatDate";
-import { useState } from "react";
+
+interface GroupedMatches {
+  group: string;
+  matches: Match[];
+}
+
+function groupMatchesByGroup(matches: Match[]): GroupedMatches[] {
+  const map = new Map<string, Match[]>();
+  for (const match of matches) {
+    const group = match.group ?? "Sin grupo";
+    if (!map.has(group)) map.set(group, []);
+    map.get(group)!.push(match);
+  }
+  return Array.from(map.entries()).map(([group, matches]) => ({
+    group,
+    matches,
+  }));
+}
 
 interface MatchesListProps {
   matches: Match[];
@@ -32,7 +50,11 @@ interface MatchesListProps {
   updateError: string;
   deleting: boolean;
   deleteError: string;
-  onUpdateScore: (id: string, homeScore: number, awayScore: number) => Promise<void>;
+  onUpdateScore: (
+    id: string,
+    homeScore: number,
+    awayScore: number,
+  ) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
   onClearUpdateError: () => void;
   onClearDeleteError: () => void;
@@ -54,6 +76,10 @@ export function MatchesList({
   const [deletingMatch, setDeletingMatch] = useState<Match | null>(null);
   const [homeScore, setHomeScore] = useState("");
   const [awayScore, setAwayScore] = useState("");
+  const [activeGroup, setActiveGroup] = useState(0);
+
+  const grouped = groupMatchesByGroup(matches);
+  const currentGroup = grouped[activeGroup];
 
   const handleOpenUpdate = (match: Match) => {
     setSelectedMatch(match);
@@ -64,11 +90,7 @@ export function MatchesList({
 
   const handleUpdate = async () => {
     if (!selectedMatch) return;
-    await onUpdateScore(
-      selectedMatch.id,
-      Number(homeScore),
-      Number(awayScore)
-    );
+    await onUpdateScore(selectedMatch.id, Number(homeScore), Number(awayScore));
     setSelectedMatch(null);
   };
 
@@ -97,83 +119,111 @@ export function MatchesList({
 
   return (
     <>
-      <ScrollView contentContainerStyle={styles.scroll}>
-        {matches.map((match) => {
-          const isCompleted = match.status === "completed";
-          return (
-            <View key={match.id} style={styles.card}>
-              {/* Header */}
-              <View style={styles.card__header}>
-                <Text style={styles.card__group}>{match.group}</Text>
-                <View style={[
-                  styles.badge,
-                  isCompleted ? styles.badge__completed : styles.badge__pending
-                ]}>
-                  <Text style={[
-                    styles.badge__text,
-                    isCompleted ? styles.badge__text_completed : styles.badge__text_pending
-                  ]}>
-                    {isCompleted ? "Finalizado" : "Pendiente"}
-                  </Text>
-                </View>
-              </View>
-
-              {/* Equipos */}
-              <View style={styles.card__teams}>
-                <View style={styles.team}>
-                  {match.homeFlag ? (
-                    <Image
-                      source={{ uri: match.homeFlag }}
-                      style={styles.flag}
-                    />
-                  ) : null}
-                  <Text style={styles.teamName}>{match.homeTeam}</Text>
-                </View>
-
-                <Text style={styles.score}>
-                  {isCompleted
-                    ? `${match.homeScore} - ${match.awayScore}`
-                    : "vs"}
-                </Text>
-
-                <View style={styles.team}>
-                  {match.awayFlag ? (
-                    <Image
-                      source={{ uri: match.awayFlag }}
-                      style={styles.flag}
-                    />
-                  ) : null}
-                  <Text style={styles.teamName}>{match.awayTeam}</Text>
-                </View>
-              </View>
-
-              {/* Fecha */}
-              <Text style={styles.date}>{formatDate(match.date)}</Text>
-
-              {/* Acciones */}
-              <View style={styles.card__actions}>
-                <TouchableOpacity
-                  style={styles.actionBtn}
-                  onPress={() => handleOpenUpdate(match)}
+      <View style={styles.container}>
+        {/* Selector de grupos */}
+        <View style={styles.groupsContainer}>
+          <FlatList
+            data={grouped}
+            keyExtractor={(item) => item.group}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.groups}
+            renderItem={({ item, index }) => (
+              <Pressable
+                style={[
+                  styles.groupBtn,
+                  activeGroup === index && styles.groupBtn__active,
+                ]}
+                onPress={() => setActiveGroup(index)}
+              >
+                <Text
+                  style={[
+                    styles.groupBtn__label,
+                    activeGroup === index && styles.groupBtn__label_active,
+                  ]}
                 >
-                  <Feather name="edit-2" size={14} color={colors.primary} />
-                  <Text style={styles.actionBtn__text}>Resultado</Text>
-                </TouchableOpacity>
+                  {item.group}
+                </Text>
+              </Pressable>
+            )}
+          />
+        </View>
 
-                {!isCompleted && (
-                  <TouchableOpacity
-                    style={[styles.actionBtn, styles.actionBtn__danger]}
-                    onPress={() => setDeletingMatch(match)}
+        {/* Partidos del grupo activo */}
+        <ScrollView contentContainerStyle={styles.scroll}>
+          {currentGroup.matches.map((match) => {
+            const isCompleted = match.status === "completed";
+            return (
+              <View key={match.id} style={styles.card}>
+
+                {/* Badge estado */}
+                <View style={styles.card__header}>
+                  <View
+                    style={[
+                      styles.badge,
+                      isCompleted ? styles.badge__completed : styles.badge__pending,
+                    ]}
                   >
-                    <Feather name="trash-2" size={14} color={colors.error} />
-                    <Text style={styles.actionBtn__text_danger}>Eliminar</Text>
-                  </TouchableOpacity>
-                )}
+                    <Text
+                      style={[
+                        styles.badge__text,
+                        isCompleted ? styles.badge__text_completed : styles.badge__text_pending,
+                      ]}
+                    >
+                      {isCompleted ? "Finalizado" : "Pendiente"}
+                    </Text>
+                  </View>
+                </View>
+
+                {/* Equipos */}
+                <View style={styles.card__teams}>
+                  <View style={styles.team}>
+                    {match.homeFlag ? (
+                      <Image source={{ uri: match.homeFlag }} style={styles.flag} />
+                    ) : null}
+                    <Text style={styles.teamName}>{match.homeTeam}</Text>
+                  </View>
+
+                  <Text style={styles.score}>
+                    {isCompleted ? `${match.homeScore} - ${match.awayScore}` : "vs"}
+                  </Text>
+
+                  <View style={styles.team}>
+                    {match.awayFlag ? (
+                      <Image source={{ uri: match.awayFlag }} style={styles.flag} />
+                    ) : null}
+                    <Text style={styles.teamName}>{match.awayTeam}</Text>
+                  </View>
+                </View>
+
+                {/* Fecha */}
+                <Text style={styles.date}>{formatDate(match.date)}</Text>
+
+                {/* Acciones */}
+                <View style={styles.card__actions}>
+                  <Pressable
+                    style={styles.actionBtn}
+                    onPress={() => handleOpenUpdate(match)}
+                  >
+                    <Feather name="edit-2" size={14} color={colors.primary} />
+                    <Text style={styles.actionBtn__text}>Resultado</Text>
+                  </Pressable>
+
+                  {!isCompleted && (
+                    <Pressable
+                      style={[styles.actionBtn, styles.actionBtn__danger]}
+                      onPress={() => setDeletingMatch(match)}
+                    >
+                      <Feather name="trash-2" size={14} color={colors.error} />
+                      <Text style={styles.actionBtn__text_danger}>Eliminar</Text>
+                    </Pressable>
+                  )}
+                </View>
               </View>
-            </View>
-          );
-        })}
-      </ScrollView>
+            );
+          })}
+        </ScrollView>
+      </View>
 
       {/* Modal actualizar resultado */}
       <Modal
@@ -186,9 +236,9 @@ export function MatchesList({
           <View style={styles.modal}>
             <View style={styles.modal__header}>
               <Text style={styles.modal__title}>Actualizar resultado</Text>
-              <TouchableOpacity onPress={() => setSelectedMatch(null)}>
+              <Pressable onPress={() => setSelectedMatch(null)}>
                 <Feather name="x" size={20} color={colors.text} />
-              </TouchableOpacity>
+              </Pressable>
             </View>
 
             <Text style={styles.modal__subtitle}>
@@ -197,24 +247,24 @@ export function MatchesList({
 
             <View style={styles.modal__scores}>
               <View style={styles.modal__scoreField}>
-                <Text style={styles.modal__scoreLabel}>
-                  {selectedMatch?.homeTeam}
-                </Text>
+                <Text style={styles.modal__scoreLabel}>{selectedMatch?.homeTeam}</Text>
                 <Input
                   value={homeScore}
                   onChangeText={setHomeScore}
                   placeholder="0"
+                  inputMode="numeric"
+  style={{ textAlign: "center", minWidth: 80 }}
                 />
               </View>
               <Text style={styles.modal__separator}>:</Text>
               <View style={styles.modal__scoreField}>
-                <Text style={styles.modal__scoreLabel}>
-                  {selectedMatch?.awayTeam}
-                </Text>
+                <Text style={styles.modal__scoreLabel}>{selectedMatch?.awayTeam}</Text>
                 <Input
                   value={awayScore}
                   onChangeText={setAwayScore}
                   placeholder="0"
+                  inputMode="numeric"
+  style={{ textAlign: "center", minWidth: 80 }}
                 />
               </View>
             </View>
@@ -226,13 +276,10 @@ export function MatchesList({
             />
 
             <View style={styles.modal__actions}>
-              <TouchableOpacity
-                style={styles.modal__cancelBtn}
-                onPress={() => setSelectedMatch(null)}
-              >
+              <Pressable style={styles.modal__cancelBtn} onPress={() => setSelectedMatch(null)}>
                 <Text style={styles.modal__cancelText}>Cancelar</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
+              </Pressable>
+              <Pressable
                 style={[styles.modal__saveBtn, updating && { opacity: 0.6 }]}
                 onPress={handleUpdate}
                 disabled={updating}
@@ -242,7 +289,7 @@ export function MatchesList({
                 ) : (
                   <Text style={styles.modal__saveText}>Guardar</Text>
                 )}
-              </TouchableOpacity>
+              </Pressable>
             </View>
           </View>
         </View>
@@ -259,8 +306,7 @@ export function MatchesList({
           <View style={styles.modal}>
             <Text style={styles.modal__title}>Eliminar partido</Text>
             <Text style={styles.modal__subtitle}>
-              ¿Confirmás que querés eliminar{" "}
-              {deletingMatch?.homeTeam} vs {deletingMatch?.awayTeam}?
+              ¿Confirmás que querés eliminar {deletingMatch?.homeTeam} vs {deletingMatch?.awayTeam}?
             </Text>
 
             <ErrorBanner
@@ -270,13 +316,10 @@ export function MatchesList({
             />
 
             <View style={styles.modal__actions}>
-              <TouchableOpacity
-                style={styles.modal__cancelBtn}
-                onPress={() => setDeletingMatch(null)}
-              >
+              <Pressable style={styles.modal__cancelBtn} onPress={() => setDeletingMatch(null)}>
                 <Text style={styles.modal__cancelText}>Cancelar</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
+              </Pressable>
+              <Pressable
                 style={[
                   styles.modal__saveBtn,
                   styles.modal__saveBtn_danger,
@@ -290,7 +333,7 @@ export function MatchesList({
                 ) : (
                   <Text style={styles.modal__saveText}>Eliminar</Text>
                 )}
-              </TouchableOpacity>
+              </Pressable>
             </View>
           </View>
         </View>
