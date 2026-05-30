@@ -1,4 +1,4 @@
-import type { AuthUser } from "@/shared/types/shared.types";
+import type { AuthUser } from "@/types/shared.types";
 
 // Login
 export interface LoginRequest {
@@ -15,6 +15,5 @@ export interface AuthResponse {
 export interface RegisterRequest {
   username: string;
   name: string;
-  email: string;
   password: string;
 }

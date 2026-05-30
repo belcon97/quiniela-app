@@ -10,6 +10,7 @@ export function useHome() {
 
   const [loading, setLoading] = useState(true);
   const [homeData, setHomeData] = useState<HomeData | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchHomeData = async () => {
@@ -20,6 +21,7 @@ export function useHome() {
         setHomeData(response);
       } catch (error) {
         if (error instanceof Error) {
+          setError(error.message);
           console.error(error.message);
         }
       } finally {
@@ -30,8 +32,5 @@ export function useHome() {
     fetchHomeData();
   }, [token]);
 
-  return {
-    data: homeData,
-    loading,
-  };
+  return { data: homeData, loading, error };
 }

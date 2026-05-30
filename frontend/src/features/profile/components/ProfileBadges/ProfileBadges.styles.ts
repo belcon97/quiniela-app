@@ -9,7 +9,7 @@ export const styles = StyleSheet.create({
     gap: spacing.sm,
   },
 
-  // Comodin
+  // Comodín disponible
   profileBadges__wildcard: {
     flexDirection: "row",
     alignItems: "center",
@@ -26,6 +26,26 @@ export const styles = StyleSheet.create({
     fontSize: typography.xs,
     fontFamily: typography.bold,
     color: colors.secondary,
+    letterSpacing: 0.8,
+  },
+
+  // Comodín usado — solo visible en perfil ajeno
+  profileBadges__wildcardUsed: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
+    alignSelf: "flex-start",
+    backgroundColor: colors.neutral100,
+    borderRadius: radius.full,
+    borderWidth: 1,
+    borderColor: colors.neutral200,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+  },
+  profileBadges__wildcardUsedText: {
+    fontSize: typography.xs,
+    fontFamily: typography.bold,
+    color: colors.textMuted,
     letterSpacing: 0.8,
   },
 

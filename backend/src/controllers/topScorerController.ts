@@ -6,7 +6,7 @@ import {
 } from "../services/topScorerService";
 
 // Ver lista de candidatos activos
-export const getTopScorers = async (res: Response) => {
+export const getTopScorers = async (req: Request, res: Response) => {
   try {
     const result = await getTopScorersService();
     res.status(200).json(result);

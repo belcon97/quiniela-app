@@ -1,32 +1,28 @@
 import { Platform } from "react-native";
 import { create } from "zustand";
 import * as SecureStore from "expo-secure-store";
-// Types
-import type { AuthUser, Match } from "@/shared/types/shared.types";
+import type { AuthUser, Match } from "@/types/shared.types";
 
 interface AuthState {
   token: string | null;
   user: AuthUser | null;
   isAuthenticated: boolean;
+  isNewUser: boolean;
   isHydrated: boolean;
-
-  // Partidos que el usuario aun no predijo
   pendingMatches: Match[];
+  hasPendingMatches: boolean;
 }
 
 interface AuthActions {
-  saveLogin: (token: string, user: AuthUser) => Promise<void>;
+  saveLogin: (token: string, user: AuthUser, isNew?: boolean) => Promise<void>;
   logout: () => Promise<void>;
   hydrateStore: () => Promise<void>;
-
-  // Actualizar partidos pendientes despues de cada fetch
+  clearNewUser: () => void;
   setPendingMatches: (matches: Match[]) => void;
-
-  // Actualizar equipo favorito sin hacer
+  setHasPendingMatches: (value: boolean) => void;
   setFavoriteTeam: (team: string | null) => void;
 }
 
-// SecureStore no disponible en web — adaptador por plataforma
 const storage = {
   setItem: async (key: string, value: string) => {
     if (Platform.OS === "web") {
@@ -59,22 +55,29 @@ export const useAuthStore = create<AuthState & AuthActions>((set) => ({
   token: null,
   user: null,
   isAuthenticated: false,
+  isNewUser: false,
   isHydrated: false,
   pendingMatches: [],
+  hasPendingMatches: false,
 
-  saveLogin: async (token, user) => {
+  saveLogin: async (token, user, isNew = false) => {
     await storage.setItem(STORAGE_KEYS.token, token);
     await storage.setItem(STORAGE_KEYS.user, JSON.stringify(user));
-    set({ token, user, isAuthenticated: true });
+    set({ token, user, isAuthenticated: true, isNewUser: isNew });
   },
 
   logout: async () => {
     await storage.removeItem(STORAGE_KEYS.token);
     await storage.removeItem(STORAGE_KEYS.user);
-    set({ token: null, user: null, isAuthenticated: false, pendingMatches: [] });
+    set({
+      token: null,
+      user: null,
+      isAuthenticated: false,
+      pendingMatches: [],
+      hasPendingMatches: false,
+    });
   },
 
-  // Recuperar sesion guardada al arrancar la app
   hydrateStore: async () => {
     try {
       const token = await storage.getItem(STORAGE_KEYS.token);
@@ -89,10 +92,13 @@ export const useAuthStore = create<AuthState & AuthActions>((set) => ({
     }
   },
 
-  // Sincronizar partidos pendientes con el backend
+  clearNewUser: () => set({ isNewUser: false }),
+
   setPendingMatches: (matches) => set({ pendingMatches: matches }),
 
-  // Actualizar equipo favorito en el store sin refetch completo
+  // Indica si el usuario tiene partidos sin predecir
+  setHasPendingMatches: (value) => set({ hasPendingMatches: value }),
+
   setFavoriteTeam: (team) =>
     set((state) => ({
       user: state.user ? { ...state.user, favoriteTeam: team } : null,

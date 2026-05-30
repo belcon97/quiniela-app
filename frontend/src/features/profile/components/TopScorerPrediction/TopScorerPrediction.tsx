@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
-import { View, Text, Image, Pressable, TextInput, ActivityIndicator } from "react-native";
+import { View, Text, Image, Pressable, ActivityIndicator } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { colors } from "@/styles/theme";
 // Styles
 import { styles } from "./TopScorerPrediction.styles";
+// Types
+import type { TopScorer, TopScorerPrediction as TopScorerPredictionType } from "@/features/topScorer/types/topScorer.types";
 // Services
 import { topScorerService } from "@/features/topScorer/services/topScorerService";
-import type { TopScorer, TopScorerPrediction as TopScorerPredictionType } from "@/features/topScorer/services/topScorerService";
 // Components
 import { Button } from "@/ui/Button/Button";
 import { ErrorBanner } from "@/ui/ErrorBanner/ErrorBanner";
@@ -20,8 +21,6 @@ export function TopScorerPrediction() {
   const [myPrediction, setMyPrediction] = useState<TopScorerPredictionType | null>(null);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<string | null>(null);
-  const [customName, setCustomName] = useState("");
-  const [isCustom, setIsCustom] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState({ visible: false, message: "" });
   const [success, setSuccess] = useState("");
@@ -31,7 +30,7 @@ export function TopScorerPrediction() {
       if (!token) return;
       try {
         const [scorers, prediction] = await Promise.all([
-          topScorerService.getTopScorers(),
+          topScorerService.getTopScorers(token),
           topScorerService.getMyPrediction(token),
         ]);
         setTopScorers(scorers);
@@ -47,8 +46,8 @@ export function TopScorerPrediction() {
 
   const handleSave = async () => {
     if (!token) return;
-    if (!selected && !customName.trim()) {
-      setError({ visible: true, message: "Seleccioná un goleador o ingresá un nombre*" });
+    if (!selected) {
+      setError({ visible: true, message: "Seleccioná un goleador*" });
       return;
     }
 
@@ -56,10 +55,7 @@ export function TopScorerPrediction() {
     setError({ visible: false, message: "" });
 
     try {
-      await topScorerService.createPrediction(token, {
-        topScorerId: isCustom ? undefined : (selected ?? undefined),
-        customName: isCustom ? customName : undefined,
-      });
+      await topScorerService.createPrediction(token, selected);
       const prediction = await topScorerService.getMyPrediction(token);
       setMyPrediction(prediction);
       setSuccess("¡Predicción guardada!");
@@ -82,23 +78,20 @@ export function TopScorerPrediction() {
       </View>
 
       {myPrediction ? (
-
-        // Ya tiene predicción
+        // Ya tiene predicción — solo muestra
         <View style={styles.topScorer__saved}>
           <MaterialIcons name="check-circle" size={20} color={colors.secondary} />
           <View style={styles.topScorer__savedInfo}>
             <Text style={styles.topScorer__savedLabel}>Tu predicción</Text>
             <Text style={styles.topScorer__savedName}>
-              {myPrediction.topScorer?.name ?? myPrediction.customName ?? "—"}
+              {myPrediction.topScorer?.name ?? "—"}
             </Text>
             {myPrediction.points > 0 && (
               <Text style={styles.topScorer__savedPoints}>+{myPrediction.points} pts</Text>
             )}
           </View>
         </View>
-
       ) : (
-
         // Sin predicción — form
         <View>
           <Text style={styles.topScorer__subtitle}>
@@ -111,45 +104,26 @@ export function TopScorerPrediction() {
               key={scorer.id}
               style={[
                 styles.topScorer__option,
-                selected === scorer.id && !isCustom && styles.topScorer__option__active,
+                selected === scorer.id && styles.topScorer__option__active,
               ]}
-              onPress={() => { setSelected(scorer.id); setIsCustom(false); }}
+              onPress={() => setSelected(scorer.id)}
             >
               {scorer.flag && (
-                <Image source={{ uri: scorer.flag }} style={styles.topScorer__flag} resizeMode="cover" />
+                <Image
+                  source={{ uri: scorer.flag }}
+                  style={styles.topScorer__flag}
+                  resizeMode="cover"
+                />
               )}
               <View style={styles.topScorer__optionInfo}>
                 <Text style={styles.topScorer__optionName}>{scorer.name}</Text>
                 <Text style={styles.topScorer__optionTeam}>{scorer.team}</Text>
               </View>
-              {selected === scorer.id && !isCustom && (
+              {selected === scorer.id && (
                 <MaterialIcons name="check" size={16} color={colors.primary} />
               )}
             </Pressable>
           ))}
-
-          {/* Opción Otro */}
-          <Pressable
-            style={[styles.topScorer__option, isCustom && styles.topScorer__option__active]}
-            onPress={() => { setIsCustom(true); setSelected(null); }}
-          >
-            <View style={[styles.topScorer__flag, styles.topScorer__flag__placeholder]}>
-              <MaterialIcons name="edit" size={14} color={colors.textPlaceholder} />
-            </View>
-            <Text style={styles.topScorer__optionName}>Otro</Text>
-            {isCustom && <MaterialIcons name="check" size={16} color={colors.primary} />}
-          </Pressable>
-
-          {/* Input custom */}
-          {isCustom && (
-            <TextInput
-              style={styles.topScorer__customInput}
-              value={customName}
-              onChangeText={setCustomName}
-              placeholder="Nombre del goleador"
-              placeholderTextColor={colors.textPlaceholder}
-            />
-          )}
 
           {/* Success */}
           {success ? (

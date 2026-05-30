@@ -8,7 +8,7 @@ import { RankingRow } from "@/ui/RankingRow/RankingRow";
 // Store
 import { useAuthStore } from "@/store/authStore";
 // Types
-import type { RankingEntry } from "@/features/home/types/home.types";
+import type { RankingEntry } from "@/features/ranking/types/ranking.types";
 
 interface RankingListProps {
   ranking: RankingEntry[];
@@ -76,7 +76,7 @@ export function RankingList({
         {/* Sin posicion */}
         {myPosition === null && (
           <Text style={styles.rankingList__empty}>
-            No has ingresado tus resultados
+            Aún no tenés predicciones cargadas
           </Text>
         )}
       </View>

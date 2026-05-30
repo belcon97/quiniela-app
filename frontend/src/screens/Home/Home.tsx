@@ -7,6 +7,8 @@ import { Layout } from "@/layout/Layout";
 import { UpcomingMatches } from "@/features/home/components/UpcomingMatches/UpcomingMatches";
 import { RankingList } from "@/features/home/components/RankingList/RankingList";
 import { TopScorersList } from "@/features/home/components/TopScorersList/TopScorersList";
+import { FavoriteTeamBanner } from "@/features/home/components/FavoriteTeamBanner/FavoriteTeamBanner";
+
 // Hooks
 import { useHome } from "@/features/home/hooks/useHome";
 // Store
@@ -28,6 +30,8 @@ export function Home() {
       navigation.navigate("Profile", { username });
     }
   };
+  
+  const handleRankingPress = () => navigation.navigate("Ranking");
 
   if (loading) {
     return (
@@ -42,15 +46,22 @@ export function Home() {
   return (
     <Layout>
       <ScrollView style={styles.scrollView}>
-        <UpcomingMatches
-          matches={data?.upcomingMatches ?? []}
-        />
+        <UpcomingMatches matches={data?.upcomingMatches ?? []} />
+  
+        {data?.favoriteTeamMatch && user?.favoriteTeam && (
+          <FavoriteTeamBanner
+            match={data.favoriteTeamMatch}
+            teamName={user.favoriteTeam}
+          />
+        )}
+  
         <RankingList
           ranking={data?.fullRanking ?? []}
           myPosition={data?.myPosition ?? null}
           onUserPress={handleUserPress}
-          onRankingPress={() => navigation.navigate("Ranking")}
+          onRankingPress={handleRankingPress}
         />
+  
         <TopScorersList topScorers={data?.topScorers ?? []} />
       </ScrollView>
     </Layout>

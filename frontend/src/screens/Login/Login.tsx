@@ -74,11 +74,13 @@ export default function Login({
 
   const handleLogin = async () => {
     if (!validateForm()) return;
-
+  
     try {
       setLoading(true);
-      const response = await authService.login(loginData);
-
+      const response = await authService.login({
+        username: loginData.username.trim(),
+        password: loginData.password,
+      });
       await saveLogin(response.token, response.user);
     } catch (error) {
       if (error instanceof Error) {

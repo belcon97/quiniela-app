@@ -7,7 +7,7 @@ import { Avatar } from "../Avatar/Avatar";
 import { getInitials } from "@/utils/getInitials";
 import { formatPosition } from "@/utils/formatPosition";
 // Types
-import type { RankingEntry } from "@/features/home/types/home.types";
+import type { RankingEntry } from "@/features/ranking/types/ranking.types";
 
 interface RankingRowProps {
   ranking: RankingEntry;

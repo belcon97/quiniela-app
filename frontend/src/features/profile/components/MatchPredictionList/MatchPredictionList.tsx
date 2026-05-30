@@ -13,12 +13,13 @@ import { profileService } from "../../services/profileService";
 // Store
 import { useAuthStore } from "@/store/authStore";
 // Types
-import type { Match } from "@/shared/types/shared.types";
+import type { Match } from "@/types/shared.types";
 import type { PredictionInput, GroupedMatches } from "@/features/profile/types/matchPredictionList.types";
 
 interface MatchPredictionListProps {
   matches: Match[];
   onSaved: () => void;
+  wildcardAvailable: boolean;
 }
 
 function groupMatchesByGroup(matches: Match[]): GroupedMatches[] {
@@ -31,9 +32,11 @@ function groupMatchesByGroup(matches: Match[]): GroupedMatches[] {
   return Array.from(map.entries()).map(([group, matches]) => ({ group, matches }));
 }
 
-export function MatchPredictionList({ matches, onSaved }: MatchPredictionListProps) {
+export function MatchPredictionList({ matches, onSaved, wildcardAvailable }: MatchPredictionListProps) {
   const { token } = useAuthStore();
+  const setPendingMatches = useAuthStore((state) => state.setPendingMatches);
 
+  const [wildcardUsed, setWildcardUsed] = useState(!wildcardAvailable);
   const [inputs, setInputs] = useState<Record<string, PredictionInput>>(() =>
     Object.fromEntries(
       matches.map((m) => [m.id, {
@@ -47,7 +50,6 @@ export function MatchPredictionList({ matches, onSaved }: MatchPredictionListPro
   );
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState({ visible: false, message: "" });
-  const [wildcardUsed, setWildcardUsed] = useState(false);
   const [activeGroup, setActiveGroup] = useState(0);
 
   const grouped = groupMatchesByGroup(matches);
@@ -96,6 +98,8 @@ export function MatchPredictionList({ matches, onSaved }: MatchPredictionListPro
         isWildcard: p.isWildcard,
         penaltyWinner: p.penaltyWinner ?? undefined,
       })));
+      // Limpia el store — se va a refrescar con el próximo fetch
+      setPendingMatches([]);
       onSaved();
     } catch (err) {
       if (err instanceof Error) setError({ visible: true, message: err.message });

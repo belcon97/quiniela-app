@@ -5,6 +5,7 @@ import { styles } from "./PublicProfile.styles";
 import { ProfileView } from "../ProfileView/ProfileView";
 // Hooks
 import { usePublicProfile } from "../../hooks/usePublicProfile";
+import { ProfileBadges } from "../ProfileBadges/ProfileBadges";
 
 interface PublicProfileProps {
   username: string;
@@ -23,15 +24,25 @@ export function PublicProfile({ username }: PublicProfileProps) {
 
   if (!publicData) return null;
 
+  const topScorerName =
+    publicData?.topScorerPrediction?.topScorer?.name ?? null;
+
   return (
     <ScrollView style={styles.publicProfile}>
       <ProfileView
-        position={publicData.position}
+      position={publicData.position}
         totalPoints={publicData.totalPoints}
         predictionsHistory={publicData.predictionsHistory}
         predictionsPending={publicData.predictionsPending}
         username={publicData.username}
         name={publicData.name}
+        favoriteTeam={publicData.favoriteTeam}
+        isPublic={true}
+      />
+      <ProfileBadges
+        wildcardAvailable={!publicData.wildcardUsed}
+        topScorerName={topScorerName}
+        isOwner={false}
       />
     </ScrollView>
   );

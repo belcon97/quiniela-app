@@ -21,12 +21,6 @@ export const styles = StyleSheet.create({
     paddingTop: spacing.md,
     paddingBottom: spacing.lg,
   },
-  ranking__back: {
-    width: 40,
-    height: 40,
-    justifyContent: "center",
-    marginBottom: spacing.sm,
-  },
   ranking__headerText: {
     gap: spacing.xs,
   },

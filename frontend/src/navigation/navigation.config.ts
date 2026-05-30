@@ -16,9 +16,10 @@ export const ROUTE_CONFIG: RouteConfig = {
   Profile: { label: "Perfil",  icon: "person" },
   Rules:   { label: "Reglas",  icon: "menu-book" },
   Ranking: { label: "Ranking", icon: "leaderboard" },
+  Standings: { label: "Tabla",    icon: "table-chart" },
 };
 
 export const NAV_GROUPS = {
-  bottomTabs: ["Home", "Profile", "Ranking", "Rules"],
-  drawerWeb:  ["Home", "Ranking", "Rules", "Profile"],
+  bottomTabs: ["Home", "Standings", "Ranking", "Profile", "Rules"],
+  drawerWeb:  ["Home", "Standings", "Ranking", "Rules", "Profile"],
 } satisfies Record<string, (keyof AppStackParams)[]>;

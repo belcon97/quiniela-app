@@ -25,6 +25,7 @@ import type { RegisterRequest } from "@/features/auth/types/auth.types";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { AuthStackParams } from "@/navigation/navigation.types";
 
+
 type RegisterNavigationProp = NativeStackNavigationProp<
   AuthStackParams,
   "Register"
@@ -35,19 +36,17 @@ export default function Register({
 }: {
   navigation: RegisterNavigationProp;
 }) {
-  const { saveLogin } = useAuthStore();
+  const saveLogin =  useAuthStore((state) => state.saveLogin);
 
   const [registerData, setRegisterData] = useState<RegisterRequest>({
     name: "",
     username: "",
-    email: "",
     password: "",
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({
     name: "",
     username: "",
-    email: "",
     password: "",
   });
   const [errorBanner, setErrorBanner] = useState({
@@ -65,18 +64,13 @@ export default function Register({
     setErrors((prev) => ({ ...prev, username: "" }));
   };
 
-  const handleEmailChange = (text: string) => {
-    setRegisterData((prev) => ({ ...prev, email: text }));
-    setErrors((prev) => ({ ...prev, email: "" }));
-  };
-
   const handlePasswordChange = (text: string) => {
     setRegisterData((prev) => ({ ...prev, password: text }));
     setErrors((prev) => ({ ...prev, password: "" }));
   };
 
   const validateForm = () => {
-    const newErrors = { name: "", username: "", email: "", password: "" };
+    const newErrors = { name: "", username: "",  password: "" };
 
     if (!registerData.name.trim()) {
       newErrors.name = "El nombre es obligatorio*";
@@ -85,10 +79,6 @@ export default function Register({
       newErrors.username = "El nombre de usuario es obligatorio*";
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(registerData.email)) {
-      newErrors.email = "El email no es válido*";
-    }
     if (registerData.password.length < 6) {
       newErrors.password = "La contraseña debe tener al menos 6 caracteres*";
     }
@@ -97,18 +87,21 @@ export default function Register({
     return (
       !newErrors.name &&
       !newErrors.username &&
-      !newErrors.email &&
       !newErrors.password
     );
   };
 
   const handleRegister = async () => {
     if (!validateForm()) return;
-
+  
     try {
       setLoading(true);
-      const response = await authService.register(registerData);
-      await saveLogin(response.token, response.user);
+      const response = await authService.register({
+        name: registerData.name.trim(),
+        username: registerData.username.trim(),
+        password: registerData.password,
+      });
+      await saveLogin(response.token, response.user, true);
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Ocurrió un error inesperado";
@@ -160,19 +153,6 @@ export default function Register({
               />
               {errors.username && (
                 <Text style={styles.register__error}>{errors.username}</Text>
-              )}
-            </View>
-
-            <View style={styles.register__field}>
-              <Text style={styles.register__label}>Correo electrónico</Text>
-              <Input
-                placeholder="nombre@ejemplo.com"
-                value={registerData.email}
-                hasError={!!errors.email}
-                onChangeText={handleEmailChange}
-              />
-              {errors.email && (
-                <Text style={styles.register__error}>{errors.email}</Text>
               )}
             </View>
 

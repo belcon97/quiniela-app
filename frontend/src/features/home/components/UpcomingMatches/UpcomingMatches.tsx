@@ -3,7 +3,7 @@ import { styles } from "./UpcomingMatches.styles";
 // Components
 import { MatchCard } from "@/ui/MatchCard/MatchCard";
 // Types
-import type { Match } from "@/shared/types/shared.types";
+import type { Match } from "@/types/shared.types";
 
 interface UpcomingMatchesProps {
   matches: Match[];

@@ -1,7 +1,8 @@
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 // Components
 import { ProfileHeader } from "../ProfileHeader/ProfileHeader";
 import { ProfileStats } from "../ProfileStats/ProfileStats";
+import { FavoriteTeamBadge } from "../FavoriteTeamBadge/FavoriteTeamBadge";
 import { Tabs } from "@/ui/Tabs/Tabs";
 import { PredictionHistoryList } from "../PredictionHistoryList/PredictionHistoryList";
 import { PredictionPendingList } from "../PredictionPendingList/PredictionPendingList";
@@ -15,6 +16,8 @@ interface ProfileViewProps {
   predictionsPending?: Prediction[];
   username: string;
   name: string;
+  favoriteTeam?: string | null;
+  isPublic?: boolean;
 }
 
 export function ProfileView({
@@ -24,25 +27,37 @@ export function ProfileView({
   predictionsPending,
   username,
   name,
+  favoriteTeam,
+  isPublic = false,
 }: ProfileViewProps) {
   const tabs = [
     {
       label: "Historial",
       content: <PredictionHistoryList predictions={predictionsHistory} />,
     },
-    ...(predictionsPending && predictionsPending.length > 0
-      ? [{
-          label: "Predecir",
-          content: <PredictionPendingList predictions={predictionsPending} />,
-        }]
-      : []),
+    {
+      label: "Predicciones",
+      content: (
+        <PredictionPendingList
+          predictions={predictionsPending ?? []}
+          isPublic={isPublic}
+        />
+      ),
+    },
   ];
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.container}>
       <ProfileHeader name={name} username={username} />
+      {favoriteTeam && <FavoriteTeamBadge team={favoriteTeam} />}
       <ProfileStats totalPoints={totalPoints} position={position} />
       <Tabs tabs={tabs} />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});

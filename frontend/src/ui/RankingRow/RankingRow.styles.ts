@@ -55,4 +55,18 @@ export const styles = StyleSheet.create({
     fontFamily: typography.bold,
     color: colors.text,
   },
+  row__position__active: {
+    color: colors.primary,
+    fontFamily: typography.bold,
+  },
+  row__name__active: {
+    color: colors.primary,
+  },
+  row__username__active: {
+    color: colors.primary,
+    opacity: 0.7,
+  },
+  row__points__active: {
+    color: colors.primary,
+  },
 });

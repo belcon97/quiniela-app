@@ -35,10 +35,16 @@ export default function Select({
 
   const selected = options.find((o) => o.value === value);
 
+  // Normaliza acentos y busca por label o code
+  const normalize = (str: string) =>
+    str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
   const filtered = useMemo(() => {
     if (!search.trim()) return options;
+    const query = normalize(search);
     return options.filter((o) =>
-      o.label.toLowerCase().includes(search.toLowerCase()),
+      normalize(o.label).includes(query) ||
+      (o.code && normalize(o.code).includes(query))
     );
   }, [search, options]);
 
@@ -109,7 +115,7 @@ export default function Select({
                     style={styles.select__searchInput}
                     value={search}
                     onChangeText={setSearch}
-                    placeholder="Buscar..."
+                    placeholder="Buscar por nombre o código..."
                     placeholderTextColor="#98A2B3"
                     autoFocus
                   />
@@ -153,6 +159,9 @@ export default function Select({
                     >
                       {item.label}
                     </Text>
+                    {item.code && (
+                      <Text style={styles.select__optionCode}>{item.code}</Text>
+                    )}
                     {isSelected && (
                       <Feather
                         name="check"

@@ -10,18 +10,19 @@ interface PredictionCardProps {
   prediction: Prediction;
 }
 
-function getPointsStyle(points: number) {
+function getPointsStyle(points: number | null) {
+  if (points === null) return styles.card__bar__gray;
   if (points >= 3) return styles.card__bar__green;
   if (points === 1) return styles.card__bar__yellow;
   return styles.card__bar__red;
 }
 
-function getPointsLabel(points: number) {
+function getPointsLabel(points: number | null) {
+  if (points === null) return "PENDIENTE";
   if (points >= 3) return `+${points}PTS`;
   if (points === 1) return "+1PT";
   return "0PTS";
 }
-
 export function PredictionCard({ prediction }: PredictionCardProps) {
   const { match, homeScore, awayScore, points } = prediction;
 
@@ -43,8 +44,9 @@ export function PredictionCard({ prediction }: PredictionCardProps) {
           {match.homeTeam} vs {match.awayTeam}
         </Text>
         <Text style={styles.card__scores}>
-          Pred: {homeScore} - {awayScore} · Final: {match.homeScore} - {match.awayScore}
-        </Text>
+  Pred: {homeScore} - {awayScore} · 
+  Final: {match.homeScore ?? "-"} - {match.awayScore ?? "-"}
+</Text>
         <Text style={styles.card__date}>{formatDate(match.date)}</Text>
       </View>
 

@@ -5,6 +5,7 @@ export const styles = StyleSheet.create({
   container: {
     height: 200,
     justifyContent: "center",
+    paddingVertical: spacing.sm,
   },
 
   list: {

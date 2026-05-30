@@ -114,7 +114,12 @@ export const styles = StyleSheet.create({
   select__check: {
     marginLeft: "auto",
   },
-
+  select__optionCode: {
+    fontSize: 11,
+    fontFamily: "Inter_400Regular",
+    color: "#98A2B3",
+    marginRight: 4,
+  },
   // Divider
   select__divider: {
     height: 1,

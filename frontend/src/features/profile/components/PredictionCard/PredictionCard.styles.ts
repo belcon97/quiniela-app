@@ -75,4 +75,8 @@ export const styles = StyleSheet.create({
   card__bar__red: {
     backgroundColor: colors.tertiary,
   },
+  // Partido aún sin resultado
+  card__bar__gray: {
+    backgroundColor: colors.neutral400,
+  },
 });

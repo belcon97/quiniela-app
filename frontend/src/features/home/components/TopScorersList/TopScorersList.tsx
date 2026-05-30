@@ -6,7 +6,7 @@ import { styles } from "./TopScorersList.styles";
 // Utils
 import { formatPosition } from "@/utils/formatPosition";
 // Types
-import type { TopScorer } from "@/features/topScorer/services/topScorerService";
+import type { TopScorer } from "@/features/topScorer/types/topScorer.types";
 
 interface TopScorersListProps {
   topScorers: TopScorer[];

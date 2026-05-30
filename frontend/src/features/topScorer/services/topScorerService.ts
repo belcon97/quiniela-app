@@ -1,23 +1,5 @@
 import { API_ROUTES } from "@/constants/constants";
-
-// Tipos
-export interface TopScorer {
-  id: string;
-  name: string;
-  team: string;
-  flag: string;
-  goals: number;
-  isWinner: boolean;
-  isActive: boolean;
-}
-
-export interface TopScorerPrediction {
-  id: string;
-  userId: string;
-  topScorerId: string;
-  points: number;
-  topScorer: TopScorer;
-}
+import type { TopScorer, TopScorerPrediction } from "../types/topScorer.types";
 
 export const topScorerService = {
   // Ver lista de candidatos activos

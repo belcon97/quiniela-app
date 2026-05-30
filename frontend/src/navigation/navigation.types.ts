@@ -8,6 +8,7 @@ export type AppStackParams = {
   Profile: { username: string } | undefined;
   Rules: undefined;
   Ranking: undefined;
+  Standings: undefined;
 };
 
 export type AdminStackParams = {

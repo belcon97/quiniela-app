@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/store/authStore";
-// Types
-import type { RankingEntry } from "@/features/home/types/home.types";
-// Services
-import { homeService } from "@/features/home/services/homeService";
+import { rankingService } from "../service/rankingService";
+import type { RankingEntry } from "../types/ranking.types";
 
 export function useRanking() {
   const token = useAuthStore((state) => state.token);
+  const user = useAuthStore((state) => state.user);
 
   const [loading, setLoading] = useState(true);
   const [ranking, setRanking] = useState<RankingEntry[]>([]);
@@ -14,12 +13,14 @@ export function useRanking() {
 
   useEffect(() => {
     const fetchRanking = async () => {
+      if (!token) return;
       try {
         setLoading(true);
-        if (!token) return;
-        const response = await homeService.getHomeData(token);
-        setRanking(response.fullRanking);
-        setMyPosition(response.myPosition);
+        const data = await rankingService.getRanking(token);
+        setRanking(data);
+        // Mi posición la calculamos del ranking que ya tenemos
+        const me = data.find((entry: RankingEntry) => entry.username === user?.username);
+        setMyPosition(me?.position ?? null);
       } catch (error) {
         if (error instanceof Error) console.error(error.message);
       } finally {

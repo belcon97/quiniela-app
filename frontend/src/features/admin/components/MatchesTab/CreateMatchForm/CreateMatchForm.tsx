@@ -218,7 +218,7 @@ export function CreateMatchForm({
         <Text style={styles.errorText}>{formErrors.stadium}</Text>
       )}
 
-      {/* Fecha — web usa input nativo HTML, mobile usa DateTimePicker */}
+      {/* Fecha */}
       <Text style={[styles.label, { marginTop: spacing.sm }]}>Fecha</Text>
       {Platform.OS === "web" ? (
         <View style={[styles.datePicker, !!formErrors.date && styles.datePicker__error]}>
@@ -240,7 +240,6 @@ export function CreateMatchForm({
               color: form.date ? "#101828" : "#98A2B3",
             }}
           />
-          <Feather name="calendar" size={18} color={colors.textPlaceholder} />
         </View>
       ) : (
         <TouchableOpacity
@@ -257,7 +256,7 @@ export function CreateMatchForm({
         <Text style={styles.errorText}>{formErrors.date}</Text>
       )}
 
-      {/* Hora — web usa input nativo HTML, mobile usa DateTimePicker */}
+      {/* Hora */}
       <Text style={[styles.label, { marginTop: spacing.sm }]}>Hora (UTC)</Text>
       {Platform.OS === "web" ? (
         <View style={[styles.datePicker, !!formErrors.time && styles.datePicker__error]}>
@@ -278,7 +277,6 @@ export function CreateMatchForm({
               color: form.time ? "#101828" : "#98A2B3",
             }}
           />
-          <Feather name="clock" size={18} color={colors.textPlaceholder} />
         </View>
       ) : (
         <TouchableOpacity
@@ -295,7 +293,7 @@ export function CreateMatchForm({
         <Text style={styles.errorText}>{formErrors.time}</Text>
       )}
 
-      {/* Date pickers nativos — solo mobile */}
+      {/* Date pickers nativos */}
       {showDatePicker && Platform.OS !== "web" && (
         <DateTimePicker
           value={selectedDate}

@@ -19,10 +19,11 @@ export const profileService = {
     return response.json() as Promise<PrivateProfileData>;
   },
 
-  getPublicProfile: async (username: string): Promise<PublicProfileData> => {
+  getPublicProfile: async (token: string, username: string): Promise<PublicProfileData> => {
     const response = await fetch(`${API_ROUTES.profile}/${username}`, {
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
     if (!response.ok) {
@@ -49,6 +50,33 @@ export const profileService = {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ predictions }),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message);
+    return data;
+  },
+
+  markRulesAsRead: async (token: string) => {
+    const response = await fetch(API_ROUTES.profileRules, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message);
+    return data;
+  },
+
+  updateFavoriteTeam: async (token: string, favoriteTeam: string) => {
+    const response = await fetch(`${API_ROUTES.profile}/favorite-team`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ favoriteTeam }),
     });
     const data = await response.json();
     if (!response.ok) throw new Error(data.message);

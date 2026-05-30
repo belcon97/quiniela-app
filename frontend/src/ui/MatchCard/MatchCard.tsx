@@ -6,7 +6,7 @@ import { colors } from "@/styles/theme";
 // Utils
 import { formatDate } from "@/utils/formatDate";
 // Types
-import type { Match } from "@/shared/types/shared.types";
+import type { Match } from "@/types/shared.types";
 
 interface MatchCardProps {
   match: Match;

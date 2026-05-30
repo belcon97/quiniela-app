@@ -4,7 +4,7 @@ import { colors, spacing, typography } from "@/styles/theme";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.neutral100,
+    backgroundColor:"#ffffff",
   },
 
   // Header

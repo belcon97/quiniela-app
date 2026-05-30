@@ -1,4 +1,4 @@
-import { View, Text, FlatList, ActivityIndicator, Pressable } from "react-native";
+import { View, Text, FlatList, ActivityIndicator } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -36,9 +36,11 @@ export function Ranking() {
 
   if (loading) {
     return (
-      <View style={styles.ranking__loader}>
-        <ActivityIndicator size="large" />
-      </View>
+      <Layout>
+        <View style={styles.ranking__loader}>
+          <ActivityIndicator size="large" />
+        </View>
+      </Layout>
     );
   }
 

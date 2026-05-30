@@ -1,18 +1,13 @@
-import type { Match } from "@/shared/types/shared.types";
-import type { TopScorer } from "@/features/topScorer/services/topScorerService";
-
-export interface RankingEntry {
-  id: string;
-  position: number | null;
-  username: string;
-  name: string;
-  totalPoints: number;
-}
+import type { Match } from "@/types/shared.types";
+import type { RankingEntry } from "@/features/ranking/types/ranking.types";
+import type { TopScorer } from "@/features/topScorer/types/topScorer.types";
 
 export interface HomeData {
   myPosition: number | null;
+  myPoints: number;
   totalPoints: number;
   upcomingMatches: Match[];
   fullRanking: RankingEntry[];
   topScorers: TopScorer[];
+  favoriteTeamMatch: Match | null;
 }

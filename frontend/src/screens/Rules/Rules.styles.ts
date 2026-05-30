@@ -19,12 +19,6 @@ export const styles = StyleSheet.create({
     paddingTop: spacing.md,
     paddingBottom: spacing.lg,
   },
-  rules__back: {
-    width: 40,
-    height: 40,
-    justifyContent: "center",
-    marginBottom: spacing.sm,
-  },
   rules__title: {
     fontSize: typography.xxl,
     fontFamily: typography.headline,

@@ -11,6 +11,7 @@ import profileRoutes from "./routes/profile";
 import rankingRoutes from "./routes/ranking";
 import predictionRoutes from "./routes/predictions";
 import topScorerRoutes from "./routes/topScorer";
+import matchRoutes from "./routes/matches";
 
 // Rutas de admin
 import adminRoutes from "./routes/admin/admin";
@@ -29,6 +30,7 @@ app.use("/profile", requireAuth, profileRoutes);
 app.use("/ranking", requireAuth, rankingRoutes);
 app.use("/predictions", requireAuth, predictionRoutes);
 app.use("/top-scorers", requireAuth, topScorerRoutes);
+app.use("/matches", requireAuth, matchRoutes);
 
 // Solo admin
 app.use("/admin", requireAdmin, adminRoutes);
