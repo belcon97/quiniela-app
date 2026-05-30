@@ -1,4 +1,4 @@
-import { API_ROUTES } from "@/constants";
+import { API_ROUTES } from "@/constants/constants";
 import type { HomeData } from "../types/home.types";
 
 export const homeService = {

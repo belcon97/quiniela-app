@@ -8,6 +8,7 @@ import {
   setTopScorerWinnerRepository,
   getUserTopScorerPredictionsRepository,
   deleteTopScorerRepository,
+  getTopScorersRepository,
 } from "../../repositories/admin/topScorerRepository";
 import prisma from "../../lib/prisma";
 
@@ -99,4 +100,9 @@ export const deleteTopScorerService = async (id: string) => {
 
   await deleteTopScorerRepository(id);
   return { message: "Goleador eliminado correctamente" };
+};
+
+// Listar todos los candidatos
+export const getTopScorersService = async () => {
+  return getTopScorersRepository();
 };

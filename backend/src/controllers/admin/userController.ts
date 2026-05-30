@@ -5,7 +5,7 @@ import {
 } from "../../services/admin/userService";
 
 // Listar todos los usuarios
-export const getUsers = async (res: Response) => {
+export const getUsers = async (req: Request, res: Response) => {
   try {
     const users = await getUsersService();
     res.status(200).json(users);

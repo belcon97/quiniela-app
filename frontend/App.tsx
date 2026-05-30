@@ -26,7 +26,7 @@ export default function App() {
 
   useEffect(() => {
     hydrateStore();
-  }, []);
+  }, [hydrateStore]);
 
   return (
     <SafeAreaProvider>

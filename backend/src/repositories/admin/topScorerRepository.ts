@@ -59,3 +59,10 @@ export const getUserTopScorerPredictionsRepository = async (topScorerId: string)
 export const deleteTopScorerRepository = async (id: string) => {
   return prisma.topScorer.delete({ where: { id } });
 };
+
+// Listar todos los candidatos ordenados por goles
+export const getTopScorersRepository = async () => {
+  return prisma.topScorer.findMany({
+    orderBy: { goals: "desc" },
+  });
+};

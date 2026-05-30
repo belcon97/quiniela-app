@@ -2,40 +2,61 @@ import type { SelectOption } from "@/ui/Select/Select.types";
 
 export const WORLD_CUP_COUNTRIES: SelectOption[] = [
   // Anfitriones
-  { label: "Canadá", value: "canada", icon: "https://flagcdn.com/w80/ca.png" },
+  {
+    label: "Canadá",
+    value: "canada",
+    icon: "https://flagcdn.com/w80/ca.png",
+    code: "CAN",
+  },
   {
     label: "Estados Unidos",
     value: "usa",
     icon: "https://flagcdn.com/w80/us.png",
+    code: "USA",
   },
-  { label: "México", value: "mexico", icon: "https://flagcdn.com/w80/mx.png" },
+  {
+    label: "México",
+    value: "mexico",
+    icon: "https://flagcdn.com/w80/mx.png",
+    code: "MEX",
+  },
 
   // CONMEBOL
   {
     label: "Argentina",
     value: "argentina",
     icon: "https://flagcdn.com/w80/ar.png",
+    code: "ARG",
   },
-  { label: "Brasil", value: "brasil", icon: "https://flagcdn.com/w80/br.png" },
+  {
+    label: "Brasil",
+    value: "brasil",
+    icon: "https://flagcdn.com/w80/br.png",
+    code: "BRA",
+  },
   {
     label: "Colombia",
     value: "colombia",
     icon: "https://flagcdn.com/w80/co.png",
+    code: "COL",
   },
   {
     label: "Ecuador",
     value: "ecuador",
     icon: "https://flagcdn.com/w80/ec.png",
+    code: "ECU",
   },
   {
     label: "Paraguay",
     value: "paraguay",
     icon: "https://flagcdn.com/w80/py.png",
+    code: "PAR",
   },
   {
     label: "Uruguay",
     value: "uruguay",
     icon: "https://flagcdn.com/w80/uy.png",
+    code: "URU",
   },
 
   // UEFA
@@ -43,69 +64,97 @@ export const WORLD_CUP_COUNTRIES: SelectOption[] = [
     label: "Alemania",
     value: "alemania",
     icon: "https://flagcdn.com/w80/de.png",
+    code: "GER",
   },
   {
     label: "Austria",
     value: "austria",
     icon: "https://flagcdn.com/w80/at.png",
+    code: "AUT",
   },
   {
     label: "Bélgica",
     value: "belgica",
     icon: "https://flagcdn.com/w80/be.png",
+    code: "BEL",
   },
   {
     label: "Bosnia y Herzegovina",
     value: "bosnia",
     icon: "https://flagcdn.com/w80/ba.png",
+    code: "BIH",
   },
   {
     label: "Croacia",
     value: "croacia",
     icon: "https://flagcdn.com/w80/hr.png",
+    code: "CRO",
   },
   {
     label: "Escocia",
     value: "escocia",
     icon: "https://flagcdn.com/w80/gb-sct.png",
+    code: "SCO",
   },
-  { label: "España", value: "espana", icon: "https://flagcdn.com/w80/es.png" },
+  {
+    label: "España",
+    value: "espana",
+    icon: "https://flagcdn.com/w80/es.png",
+    code: "ESP",
+  },
   {
     label: "Francia",
     value: "francia",
     icon: "https://flagcdn.com/w80/fr.png",
+    code: "FRA",
   },
   {
     label: "Inglaterra",
     value: "inglaterra",
     icon: "https://flagcdn.com/w80/gb-eng.png",
+    code: "ENG",
   },
   {
     label: "Noruega",
     value: "noruega",
     icon: "https://flagcdn.com/w80/no.png",
+    code: "NOR",
   },
   {
     label: "Países Bajos",
     value: "paises_bajos",
     icon: "https://flagcdn.com/w80/nl.png",
+    code: "NED",
   },
   {
     label: "Portugal",
     value: "portugal",
     icon: "https://flagcdn.com/w80/pt.png",
+    code: "POR",
   },
   {
     label: "República Checa",
     value: "republica_checa",
     icon: "https://flagcdn.com/w80/cz.png",
+    code: "CZE",
   },
-  { label: "Suecia", value: "suecia", icon: "https://flagcdn.com/w80/se.png" },
-  { label: "Suiza", value: "suiza", icon: "https://flagcdn.com/w80/ch.png" },
+  {
+    label: "Suecia",
+    value: "suecia",
+    icon: "https://flagcdn.com/w80/se.png",
+    code: "SWE",
+  },
+  {
+    label: "Suiza",
+    value: "suiza",
+    icon: "https://flagcdn.com/w80/ch.png",
+    code: "SUI",
+  },
   {
     label: "Turquía",
     value: "turquia",
     icon: "https://flagcdn.com/w80/tr.png",
+    code: "TUR",
   },
 
   // CAF - África
@@ -113,64 +162,105 @@ export const WORLD_CUP_COUNTRIES: SelectOption[] = [
     label: "Argelia",
     value: "argelia",
     icon: "https://flagcdn.com/w80/dz.png",
+    code: "ALG",
   },
   {
     label: "Cabo Verde",
     value: "cabo_verde",
     icon: "https://flagcdn.com/w80/cv.png",
+    code: "CPV",
   },
   {
     label: "Costa de Marfil",
     value: "costa_de_marfil",
     icon: "https://flagcdn.com/w80/ci.png",
+    code: "CIV",
   },
-  { label: "Egipto", value: "egipto", icon: "https://flagcdn.com/w80/eg.png" },
-  { label: "Ghana", value: "ghana", icon: "https://flagcdn.com/w80/gh.png" },
+  {
+    label: "Egipto",
+    value: "egipto",
+    icon: "https://flagcdn.com/w80/eg.png",
+    code: "EGY",
+  },
+  {
+    label: "Ghana",
+    value: "ghana",
+    icon: "https://flagcdn.com/w80/gh.png",
+    code: "GHA",
+  },
   {
     label: "Marruecos",
     value: "marruecos",
     icon: "https://flagcdn.com/w80/ma.png",
+    code: "MAR",
   },
   {
     label: "Senegal",
     value: "senegal",
     icon: "https://flagcdn.com/w80/sn.png",
+    code: "SEN",
   },
   {
     label: "Sudáfrica",
     value: "sudafrica",
     icon: "https://flagcdn.com/w80/za.png",
+    code: "RSA",
   },
-  { label: "Túnez", value: "tunez", icon: "https://flagcdn.com/w80/tn.png" },
+  {
+    label: "Túnez",
+    value: "tunez",
+    icon: "https://flagcdn.com/w80/tn.png",
+    code: "TUN",
+  },
 
   // AFC - Asia
   {
     label: "Arabia Saudita",
     value: "arabia_saudita",
     icon: "https://flagcdn.com/w80/sa.png",
+    code: "KSA",
   },
   {
     label: "Australia",
     value: "australia",
     icon: "https://flagcdn.com/w80/au.png",
+    code: "AUS",
   },
   {
     label: "Corea del Sur",
     value: "corea_del_sur",
     icon: "https://flagcdn.com/w80/kr.png",
+    code: "KOR",
   },
-  { label: "Irán", value: "iran", icon: "https://flagcdn.com/w80/ir.png" },
-  { label: "Japón", value: "japon", icon: "https://flagcdn.com/w80/jp.png" },
+  {
+    label: "Irán",
+    value: "iran",
+    icon: "https://flagcdn.com/w80/ir.png",
+    code: "IRN",
+  },
+  {
+    label: "Japón",
+    value: "japon",
+    icon: "https://flagcdn.com/w80/jp.png",
+    code: "JPN",
+  },
   {
     label: "Jordania",
     value: "jordania",
     icon: "https://flagcdn.com/w80/jo.png",
+    code: "JOR",
   },
-  { label: "Qatar", value: "qatar", icon: "https://flagcdn.com/w80/qa.png" },
+  {
+    label: "Qatar",
+    value: "qatar",
+    icon: "https://flagcdn.com/w80/qa.png",
+    code: "QAT",
+  },
   {
     label: "Uzbekistán",
     value: "uzbekistan",
     icon: "https://flagcdn.com/w80/uz.png",
+    code: "UZB",
   },
 
   // CONCACAF
@@ -178,18 +268,31 @@ export const WORLD_CUP_COUNTRIES: SelectOption[] = [
     label: "Curazao",
     value: "curazao",
     icon: "https://flagcdn.com/w80/cw.png",
+    code: "CUW",
   },
-  { label: "Haití", value: "haiti", icon: "https://flagcdn.com/w80/ht.png" },
+  {
+    label: "Haití",
+    value: "haiti",
+    icon: "https://flagcdn.com/w80/ht.png",
+    code: "HAI",
+  },
   {
     label: "Jamaica",
     value: "jamaica",
     icon: "https://flagcdn.com/w80/jm.png",
+    code: "JAM",
   },
-  { label: "Panamá", value: "panama", icon: "https://flagcdn.com/w80/pa.png" },
+  {
+    label: "Panamá",
+    value: "panama",
+    icon: "https://flagcdn.com/w80/pa.png",
+    code: "PAN",
+  },
   {
     label: "Surinam",
     value: "surinam",
     icon: "https://flagcdn.com/w80/sr.png",
+    code: "SUR",
   },
 
   // OFC
@@ -197,10 +300,11 @@ export const WORLD_CUP_COUNTRIES: SelectOption[] = [
     label: "Nueva Zelanda",
     value: "nueva_zelanda",
     icon: "https://flagcdn.com/w80/nz.png",
+    code: "NZL",
   },
 ];
 
-export const WORLD_CUP_PHASES: SelectOption[] = [
+export const WORLD_CUP_PHASES = [
   { label: "Grupo A", value: "Grupo A" },
   { label: "Grupo B", value: "Grupo B" },
   { label: "Grupo C", value: "Grupo C" },

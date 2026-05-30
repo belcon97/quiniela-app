@@ -25,7 +25,7 @@ export const createMatch = async (req: Request, res: Response) => {
 };
 
 // Listar todos los partidos
-export const getMatches = async (res: Response) => {
+export const getMatches = async (req: Request, res: Response) => {
   try {
     const matches = await getMatchesService();
     res.status(200).json(matches);

@@ -11,5 +11,5 @@ export type AppStackParams = {
 };
 
 export type AdminStackParams = {
-  AdminMatches: undefined;
+  AdminDashboard: undefined;
 };

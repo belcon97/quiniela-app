@@ -4,9 +4,9 @@ export type MatchStatus = "pending" | "completed";
 export interface AuthUser {
   id: string;
   name: string;
-  email: string;
   username: string;
   role: Role;
+  favoriteTeam: string | null;
 }
 
 export interface Match {

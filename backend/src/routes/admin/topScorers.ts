@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  getTopScorers,
   createTopScorer,
   updateTopScorerGoals,
   closeTopScorerSelection,
@@ -10,6 +11,7 @@ import {
 
 const router = Router();
 
+router.get("/", getTopScorers);
 router.post("/", createTopScorer);
 router.patch("/:id/goals", updateTopScorerGoals);
 router.patch("/selection/close", closeTopScorerSelection);
