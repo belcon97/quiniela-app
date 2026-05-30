@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import { getRankingService } from "../services/rankingService";
 
 export const getRanking = async (req: Request, res: Response) => {
