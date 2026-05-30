@@ -25,22 +25,26 @@ export function RankingRow({ ranking, isMe, onPress }: RankingRowProps) {
       onPress={onPress}
     >
       {/* Posicion */}
-      <Text style={[
-        styles.row__position,
-        isFirst && styles.row__position__first,
-        isMe && styles.row__position__active,
-      ]}>
+      <Text
+        style={[
+          styles.row__position,
+          isFirst && styles.row__position__first,
+          isMe && styles.row__position__active,
+        ]}
+      >
         {formatPosition(ranking.position)}
       </Text>
 
       {/* Usuario */}
       <View style={styles.row__info}>
-        <Avatar initials={initials} />
+        <Avatar initials={initials} favoriteTeam={ranking.favoriteTeam} />
         <View style={styles.row__userInfo}>
           <Text style={[styles.row__name, isMe && styles.row__name__active]}>
             {ranking.username}
           </Text>
-          <Text style={[styles.row__username, isMe && styles.row__username__active]}>
+          <Text
+            style={[styles.row__username, isMe && styles.row__username__active]}
+          >
             {ranking.name}
           </Text>
         </View>

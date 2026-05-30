@@ -8,7 +8,7 @@ import { Avatar } from "@/ui/Avatar/Avatar";
 // Utils
 import { getInitials } from "@/utils/getInitials";
 // Types
-import type { RankingEntry } from "@/features/home/types/home.types";
+import type { RankingEntry } from "@/features/ranking/types/ranking.types";
 
 interface RankingHeroCardProps {
   entry: RankingEntry;
@@ -26,7 +26,10 @@ export function RankingHeroCard({ entry, onPress }: RankingHeroCardProps) {
         color={colors.secondary}
         style={styles.heroCard__trophy}
       />
-      <Avatar initials={initials} size="large" />
+      <Avatar
+        initials={initials}
+        favoriteTeam={entry.favoriteTeam}
+      />
       <Text style={styles.heroCard__position}>#1</Text>
       <Text style={styles.heroCard__username}>{entry.username}</Text>
       <Text style={styles.heroCard__name}>{entry.name}</Text>

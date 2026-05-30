@@ -48,7 +48,7 @@ export function ProfileView({
 
   return (
     <View style={styles.container}>
-      <ProfileHeader name={name} username={username} />
+      <ProfileHeader name={name} username={username} favoriteTeam={favoriteTeam} />
       {favoriteTeam && <FavoriteTeamBadge team={favoriteTeam} />}
       <ProfileStats totalPoints={totalPoints} position={position} />
       <Tabs tabs={tabs} />

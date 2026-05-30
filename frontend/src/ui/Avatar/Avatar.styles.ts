@@ -2,15 +2,14 @@ import { StyleSheet } from "react-native";
 import { colors, typography, radius } from "@/styles/theme";
 
 export const styles = StyleSheet.create({
-  // Bloque
   avatar: {
     borderRadius: radius.full,
     backgroundColor: colors.primary,
     justifyContent: "center",
     alignItems: "center",
+    overflow: "hidden",
   },
 
-  // Modificadores — tamaño
   avatar__small: {
     width: 28,
     height: 28,
@@ -24,6 +23,11 @@ export const styles = StyleSheet.create({
     height: 56,
     borderWidth: 2,
     borderColor: colors.secondary,
+  },
+
+  // Bandera
+  avatar__flag: {
+    borderRadius: radius.full,
   },
 
   // Texto

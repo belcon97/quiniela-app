@@ -22,6 +22,7 @@ const buildRanking = async (data: RankingData[]) => {
       id: user?.id,
       username: user?.username,
       name: user?.name,
+      favoriteTeam: user?.favoriteTeam ?? null,
       totalPoints: entry._sum.points || 0,
       position: index + 1,
     };

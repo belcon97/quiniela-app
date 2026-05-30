@@ -10,7 +10,10 @@ import {
 import Feather from "@expo/vector-icons/Feather";
 
 // Components
-import {ErrorBanner} from "@/ui/ErrorBanner/ErrorBanner";
+import { ErrorBanner } from "@/ui/ErrorBanner/ErrorBanner";
+import { Avatar } from "@/ui/Avatar/Avatar";
+
+import { getInitials } from "@/utils/getInitials";
 
 // Hooks
 import { useUsers } from "@/features/admin/hooks/useUsers";
@@ -51,7 +54,6 @@ export function UsersTab() {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scroll}>
-
         {deleteSuccess ? (
           <View style={styles.successBanner}>
             <Feather name="check-circle" size={16} color={colors.secondary} />
@@ -76,23 +78,32 @@ export function UsersTab() {
           users.map((user) => (
             <View key={user.id} style={styles.card}>
               <View style={styles.card__info}>
-                <View style={styles.avatar}>
-                  <Text style={styles.avatar__text}>
-                    {user.name.charAt(0).toUpperCase()}
-                  </Text>
-                </View>
+                <Avatar
+                  initials={getInitials(user.name)}
+                  favoriteTeam={user.favoriteTeam}
+                  size="medium"
+                />
+
                 <View style={styles.card__text}>
                   <Text style={styles.card__name}>{user.name}</Text>
                   <Text style={styles.card__username}>@{user.username}</Text>
                 </View>
-                <View style={[
-                  styles.badge,
-                  user.role === "admin" ? styles.badge__admin : styles.badge__user
-                ]}>
-                  <Text style={[
-                    styles.badge__text,
-                    user.role === "admin" ? styles.badge__text_admin : styles.badge__text_user
-                  ]}>
+                <View
+                  style={[
+                    styles.badge,
+                    user.role === "admin"
+                      ? styles.badge__admin
+                      : styles.badge__user,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.badge__text,
+                      user.role === "admin"
+                        ? styles.badge__text_admin
+                        : styles.badge__text_user,
+                    ]}
+                  >
                     {user.role}
                   </Text>
                 </View>
@@ -109,10 +120,14 @@ export function UsersTab() {
                   <Feather
                     name={user.hasReadRules ? "check-circle" : "circle"}
                     size={12}
-                    color={user.hasReadRules ? colors.secondary : colors.textMuted}
+                    color={
+                      user.hasReadRules ? colors.secondary : colors.textMuted
+                    }
                   />
                   <Text style={styles.meta__text}>
-                    {user.hasReadRules ? "Leyó las reglas" : "No leyó las reglas"}
+                    {user.hasReadRules
+                      ? "Leyó las reglas"
+                      : "No leyó las reglas"}
                   </Text>
                 </View>
               </View>
