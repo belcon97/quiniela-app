@@ -1,60 +1,96 @@
-import { View, Text, Image } from "react-native";
+import { View, Text, Pressable } from 'react-native'
+import Feather from '@expo/vector-icons/Feather'
+// Hooks
+import { useTheme } from '@/theme'
+import { useStyles } from '@/shared/hooks/useStyles'
+// Components
+import { Flag } from '@/shared/ui/Flag/Flag'
+import { ScoreInput } from '@/shared/ui/ScoreInput/ScoreInput'
 // Styles
-import { styles } from "./PredictionCard.styles";
-// Utils
-import { formatDate } from "@/utils/formatDate";
-// Types
-import type { Prediction } from "../../types/profile.types";
+import { makeStyles } from './PredictionCard.styles'
+
+interface Team {
+  name:    string
+  flagUrl: string
+}
 
 interface PredictionCardProps {
-  prediction: Prediction;
+  home:              Team
+  away:              Team
+  date:              string
+  homeScore:         number
+  awayScore:         number
+  hasWildcard?:      boolean
+  isWildcardActive?: boolean
+  onHomeChange:      (value: number) => void
+  onAwayChange:      (value: number) => void
+  onWildcard?:       () => void
 }
 
-function getPointsStyle(points: number | null) {
-  if (points === null) return styles.card__bar__gray;
-  if (points >= 3) return styles.card__bar__green;
-  if (points === 1) return styles.card__bar__yellow;
-  return styles.card__bar__red;
-}
-
-function getPointsLabel(points: number | null) {
-  if (points === null) return "PENDIENTE";
-  if (points >= 3) return `+${points}PTS`;
-  if (points === 1) return "+1PT";
-  return "0PTS";
-}
-export function PredictionCard({ prediction }: PredictionCardProps) {
-  const { match, homeScore, awayScore, points } = prediction;
+export function PredictionCard({
+  home,
+  away,
+  date,
+  homeScore,
+  awayScore,
+  hasWildcard      = false,
+  isWildcardActive = false,
+  onHomeChange,
+  onAwayChange,
+  onWildcard,
+}: PredictionCardProps) {
+  const theme  = useTheme()
+  const styles = useStyles(makeStyles)
 
   return (
     <View style={styles.card}>
 
-      {/* Borde de color */}
-      <View style={[styles.card__bar, getPointsStyle(points)]} />
+      {/* Teams + inputs */}
+      <View style={styles.teams}>
 
-      {/* Banderas */}
-      <View style={styles.card__flags}>
-        <Image source={{ uri: match.homeFlag }} style={styles.card__flag} resizeMode="cover" />
-        <Image source={{ uri: match.awayFlag }} style={styles.card__flag} resizeMode="cover" />
+        {/* Home */}
+        <View style={styles.team}>
+          <Flag uri={home.flagUrl} name={home.name} size="lg" />
+          <Text style={styles.teamName}>{home.name}</Text>
+          <ScoreInput value={homeScore} onChange={onHomeChange} />
+        </View>
+
+        {/* Separator */}
+        <Text style={styles.separator}>:</Text>
+
+        {/* Away */}
+        <View style={styles.team}>
+          <Flag uri={away.flagUrl} name={away.name} size="lg" />
+          <Text style={styles.teamName}>{away.name}</Text>
+          <ScoreInput value={awayScore} onChange={onAwayChange} />
+        </View>
+
       </View>
 
-      {/* Info */}
-      <View style={styles.card__info}>
-        <Text style={styles.card__matchName}>
-          {match.homeTeam} vs {match.awayTeam}
-        </Text>
-        <Text style={styles.card__scores}>
-  Pred: {homeScore} - {awayScore} · 
-  Final: {match.homeScore ?? "-"} - {match.awayScore ?? "-"}
-</Text>
-        <Text style={styles.card__date}>{formatDate(match.date)}</Text>
+      {/* Meta */}
+      <View style={styles.meta}>
+        <Feather name="calendar" size={12} color={theme.textSecondary} />
+        <Text style={styles.metaText}>{date}</Text>
       </View>
 
-      {/* Badge puntos */}
-      <View style={[styles.card__badge, getPointsStyle(points)]}>
-        <Text style={styles.card__badgeText}>{getPointsLabel(points)}</Text>
-      </View>
+      {/* Wildcard */}
+      {hasWildcard && (
+        <Pressable
+          onPress={onWildcard}
+          style={[
+            styles.wildcard,
+            isWildcardActive && styles.wildcard_active,
+          ]}
+        >
+          <Text style={[
+            styles.wildcardText,
+            isWildcardActive && styles.wildcardText_active,
+          ]}>
+            ×2 COMODÍN
+          </Text>
+        </Pressable>
+      )}
 
     </View>
-  );
+  )
 }

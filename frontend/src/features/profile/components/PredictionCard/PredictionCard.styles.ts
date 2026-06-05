@@ -1,82 +1,103 @@
-import { StyleSheet } from "react-native";
-import { colors, spacing, radius, typography } from "@/styles/theme";
+// React Native
+import { StyleSheet } from 'react-native'
 
-export const styles = StyleSheet.create({
-  // Bloque
-  card: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.background,
-    borderRadius: radius.lg,
-    marginHorizontal: spacing.md,
-    marginVertical: spacing.xs,
-    padding: spacing.sm,
-    gap: spacing.sm,
-    shadowColor: colors.neutral900,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 3,
-    elevation: 2,
-  },
+// Internos
+import { font, fontSize, space, radius } from '@/theme'
+import type { Theme } from '@/theme'
 
-  // Elementos
-  card__bar: {
-    width: 4,
-    alignSelf: "stretch",
-    borderRadius: radius.sm,
-  },
-  card__flags: {
-    gap: spacing.xs,
-  },
-  card__flag: {
-    width: 28,
-    height: 28,
-    borderRadius: radius.full,
-    overflow: "hidden",
-    backgroundColor: colors.neutral200,
-  },
-  card__info: {
-    flex: 1,
-    gap: 2,
-  },
-  card__matchName: {
-    fontSize: typography.sm,
-    fontFamily: typography.bold,
-    color: colors.text,
-  },
-  card__scores: {
-    fontSize: typography.xs,
-    fontFamily: typography.regular,
-    color: colors.textMuted,
-  },
-  card__date: {
-    fontSize: typography.xs,
-    fontFamily: typography.regular,
-    color: colors.textPlaceholder,
-  },
-  card__badge: {
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: radius.full,
-  },
-  card__badgeText: {
-    fontSize: typography.xs,
-    fontFamily: typography.bold,
-    color: colors.background,
-  },
+export function makeStyles(t: Theme) {
+  return StyleSheet.create({
+    card: {
+      backgroundColor: t.bgElev,
+      borderRadius:    radius.lg,
+      borderWidth:     1,
+      borderColor:     t.border,
+      padding:         space[5],
+      gap:             space[4],
+    },
 
-  // Modificadores — colores de puntos
-  card__bar__green: {
-    backgroundColor: colors.secondary,
-  },
-  card__bar__yellow: {
-    backgroundColor: "#EAB308",
-  },
-  card__bar__red: {
-    backgroundColor: colors.tertiary,
-  },
-  // Partido aún sin resultado
-  card__bar__gray: {
-    backgroundColor: colors.neutral400,
-  },
-});
+    // Teams row
+    teams: {
+      flexDirection:  'row',
+      alignItems:     'flex-end',
+      justifyContent: 'space-between',
+    },
+    team: {
+      alignItems: 'center',
+      gap:        space[2],
+      flex:       1,
+    },
+    teamName: {
+      fontFamily:    font.archivoBold,
+      fontSize:      fontSize.caption,
+      color:         t.textPrimary,
+      textTransform: 'uppercase',
+      textAlign:     'center',
+    },
+
+    // Input
+    input: {
+      width:             76,
+      height:            84,
+      backgroundColor:   t.bgSunken,
+      borderWidth:       2,
+      borderColor:       t.borderStrong,
+      borderRadius:      radius.md,
+      fontFamily:        font.archiveBlack,
+      fontSize:          52,
+      color:             t.textPrimary,
+      textAlign:         'center',       
+      textAlignVertical: 'center',        
+      padding:           0,       
+    },
+    input_filled: {
+      borderColor: t.primary,
+      color:       t.primary,
+    },
+
+    // Separator
+    separator: {
+      fontFamily:    font.archiveBlack,
+      fontSize:      fontSize.displayMd,
+      color:         t.textDisabled,
+      paddingBottom: space[5],
+      textAlign:     'center',
+    },
+
+    // Meta
+    meta: {
+      flexDirection:  'row',
+      alignItems:     'center',
+      justifyContent: 'center',
+      gap:            space[2],
+    },
+    metaText: {
+      fontFamily: font.notoRegular,
+      fontSize:   fontSize.caption,
+      color:      t.textSecondary,
+    },
+
+    // Comodín
+    wildcard: {
+      alignSelf:         'center',
+      paddingVertical:   space[2],
+      paddingHorizontal: space[4],
+      borderRadius:      radius.full,
+      borderWidth:       1,
+      borderColor:       t.border,
+    },
+    wildcard_active: {
+      backgroundColor: t.secondary,
+      borderColor:     t.secondary,
+    },
+    wildcardText: {
+      fontFamily:    font.notoBold,
+      fontSize:      fontSize.bodySm,
+      color:         t.textSecondary,
+      letterSpacing: 0.6,
+    },
+    wildcardText_active: {
+      color: t.secondaryContrast,
+    },
+  })
+}

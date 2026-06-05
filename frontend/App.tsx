@@ -1,43 +1,36 @@
 import { useEffect } from "react";
 import { View, ActivityIndicator } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-
-// Fonts
-import { useAppFonts } from "./src/hooks/useAppFonts";
-// Store
-import { useAuthStore } from "./src/store/authStore";
-// Navigation
-import AppNavigator from "./src/navigation/AppNavigator";
-// Styles
-import { StyleSheet } from "react-native";
-
-export const styles = StyleSheet.create({
-  loader: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
+import { ThemeProvider } from "@/theme";
+import { useAppFonts } from "@/hooks/useAppFonts";
+import { useAuthStore } from "@/store/authStore";
+import AppNavigator from "@/navigation/AppNavigator";
+import { TestScreen } from './src/screens/TestScreen'
 
 export default function App() {
   const fontsLoaded = useAppFonts();
   const hydrateStore = useAuthStore((state) => state.hydrateStore);
   const isHydrated = useAuthStore((state) => state.isHydrated);
 
+  // Carga los datos de la sesion persitidos desde el store
   useEffect(() => {
     hydrateStore();
   }, [hydrateStore]);
 
+  const isReady = fontsLoaded && isHydrated;
+
+
   return (
     <SafeAreaProvider>
-      {/* Espera fonts e hidratación del store antes de renderizar */}
-      {!fontsLoaded || !isHydrated ? (
-        <View style={styles.loader}>
-        <ActivityIndicator />
-      </View>
-      ) : (
-        <AppNavigator />
-      )}
+     <ThemeProvider>
+        {isReady ? (
+          <TestScreen  />
+        ) : (
+          <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <ActivityIndicator />
+          </View>
+        )}
+    </ThemeProvider>
     </SafeAreaProvider>
   );
 }

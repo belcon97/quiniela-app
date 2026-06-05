@@ -1,0 +1,57 @@
+import { View, Text, FlatList } from "react-native";
+import { RankingRow } from "./RankingRow";
+import { useStyles } from "@/shared/hooks/useStyles";
+import type { RankingRowData } from '@/shared/types'
+import { makeStyles } from "./RankingTable.styles";
+
+interface RankingTableProps {
+  data:        RankingRowData[]
+  myUsername?: string
+  myEntry?:    RankingRowData
+  onRowPress?: (username: string) => void
+}
+
+export function RankingTable({
+  data,
+  myUsername,
+  myEntry,
+  onRowPress,
+}: RankingTableProps) {
+  const styles = useStyles(makeStyles);
+
+  const isMeInList = data.some((item) => item.username === myUsername);
+
+  return (
+    <View style={styles.container}>
+      {/* Header columns */}
+      <View style={styles.header}>
+        <Text style={styles.col}>#</Text>
+        <Text style={[styles.col, styles.col_user]}>USUARIO</Text>
+        <Text style={[styles.col, styles.col_pts]}>PTS</Text>
+      </View>
+
+      {/* Row */}
+      <FlatList
+        data={data}
+        keyExtractor={(item) => item.username}
+        scrollEnabled={false}
+        renderItem={({ item }) => (
+          <RankingRow
+            {...item}
+            isMe={item.username === myUsername}
+            onPress={() => onRowPress?.(item.username)}
+          />
+        )}
+        ListFooterComponent={
+          !isMeInList && myEntry ? (
+            <RankingRow
+              {...myEntry}
+              isMe
+              onPress={() => onRowPress?.(myEntry.username)}
+            />
+          ) : null
+        }
+      />
+    </View>
+  );
+}

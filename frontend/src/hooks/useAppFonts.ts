@@ -1,24 +1,25 @@
 import {
   useFonts,
-  Inter_400Regular,
-  Inter_500Medium,
-  Inter_600SemiBold,
-  Inter_700Bold,
-} from "@expo-google-fonts/inter";
+  Archivo_700Bold,
+  Archivo_900Black,
+} from '@expo-google-fonts/archivo'
 import {
-  PlusJakartaSans_400Regular,
-  PlusJakartaSans_700Bold,
-} from "@expo-google-fonts/plus-jakarta-sans";
+  NotoSans_400Regular,
+  NotoSans_500Medium,
+  NotoSans_600SemiBold,
+  NotoSans_700Bold,
+} from '@expo-google-fonts/noto-sans'
 
-export const useAppFonts = () => {
-  const [fontsLoaded] = useFonts({
-    Inter_400Regular,
-    Inter_500Medium,
-    Inter_600SemiBold,
-    Inter_700Bold,
-    PlusJakartaSans_400Regular,
-    PlusJakartaSans_700Bold,
-  });
+export function useAppFonts(): boolean {
+  const [fontsLoaded, fontError] = useFonts({
+    Archivo_700Bold,
+    Archivo_900Black,
+    NotoSans_400Regular,
+    NotoSans_500Medium,
+    NotoSans_600SemiBold,
+    NotoSans_700Bold,
+  })
 
-  return fontsLoaded;
-};
+  // Seguimos con fuente del sistema en el caso de error
+  return fontsLoaded || !!fontError
+}

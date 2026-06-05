@@ -1,68 +1,54 @@
-import { View, Text, Image } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
-import { colors } from "@/styles/theme";
-// Styles
-import { styles } from "./TopScorersList.styles";
-// Utils
-import { formatPosition } from "@/utils/formatPosition";
+import { View } from "react-native";
+// Hooks
+import { useStyles } from "@/shared/hooks/useStyles";
+// Components
+import { SectionHeader } from "@/features/home/components/SectionHeader/SectionHeader";
+import { TopScorerRow } from "@/features/home/components/TopScorerRow/TopScorerRow";
+import { StateView } from '@/shared/ui/StateView/StateView'
 // Types
-import type { TopScorer } from "@/features/topScorer/types/topScorer.types";
+import type { TopScorer } from "@/shared/types";
+// Styles
+import { makeStyles } from "./TopScorersList.styles";
 
 interface TopScorersListProps {
-  topScorers: TopScorer[];
+  scorers: TopScorer[];
+  onViewMore?: () => void;
 }
 
-export function TopScorersList({ topScorers }: TopScorersListProps) {
-  const top3 = topScorers.slice(0, 3);
-
-  if (top3.length === 0) return null;
+export function TopScorersList({ scorers, onViewMore }: TopScorersListProps) {
+  const styles = useStyles(makeStyles)
 
   return (
-    <View style={styles.topScorers}>
+    <View style={styles.container}>
 
       {/* Header */}
-      <View style={styles.topScorers__header}>
-        <MaterialIcons name="emoji-events" size={22} color={colors.primary} />
-        <Text style={styles.topScorers__title}>Top goleadores</Text>
-      </View>
+      <SectionHeader
+        title="TOP GOLEADORES"
+        icon="award"
+        onViewMore={onViewMore}
+      />
 
-      {/* Lista */}
-      <View style={styles.topScorers__container}>
-        {top3.map((scorer, index) => (
-          <View key={scorer.id} style={styles.topScorers__row}>
-
-            {/* Posicion */}
-            <Text style={styles.topScorers__position}>
-              {formatPosition(index + 1)}
-            </Text>
-
-            {/* Bandera */}
-            {scorer.flag ? (
-              <Image
-                source={{ uri: scorer.flag }}
-                style={styles.topScorers__flag}
-                resizeMode="cover"
+      {/* List */}
+      <View style={styles.list}>
+        {scorers.length === 0
+          ? (
+            <StateView
+              icon="award"
+              title="SIN GOLEADORES"
+              message="No hay goleadores registrados aún."
+            />
+          ) : (
+            scorers.map((scorer, index) => (
+              <TopScorerRow
+                key={scorer.id}
+                player={scorer}
+                position={index + 1}
               />
-            ) : (
-              <View style={[styles.topScorers__flag, styles.topScorers__flag__placeholder]} />
-            )}
-
-            {/* Info */}
-            <View style={styles.topScorers__info}>
-              <Text style={styles.topScorers__name}>{scorer.name}</Text>
-              <Text style={styles.topScorers__team}>{scorer.team}</Text>
-            </View>
-
-            {/* Goles */}
-            <View style={styles.topScorers__goals}>
-              <Text style={styles.topScorers__goals__count}>{scorer.goals}</Text>
-              <Text style={styles.topScorers__goals__label}>goles</Text>
-            </View>
-
-          </View>
-        ))}
+            ))
+          )
+        }
       </View>
 
     </View>
-  );
+  )
 }

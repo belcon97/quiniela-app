@@ -1,28 +1,31 @@
 import { Platform } from "react-native";
 import { create } from "zustand";
 import * as SecureStore from "expo-secure-store";
-import type { AuthUser, Match } from "@/types/shared.types";
+import { usePredictionStore } from "./predictionStore";
 
+import type { AuthUser } from "@/shared/types";
+
+// State
 interface AuthState {
   token: string | null;
   user: AuthUser | null;
-  isAuthenticated: boolean;
   isNewUser: boolean;
+
   isHydrated: boolean;
-  pendingMatches: Match[];
-  hasPendingMatches: boolean;
+  isAuthenticated: boolean;
 }
 
+// Actions
 interface AuthActions {
   saveLogin: (token: string, user: AuthUser, isNew?: boolean) => Promise<void>;
   logout: () => Promise<void>;
+
   hydrateStore: () => Promise<void>;
   clearNewUser: () => void;
-  setPendingMatches: (matches: Match[]) => void;
-  setHasPendingMatches: (value: boolean) => void;
   setFavoriteTeam: (team: string | null) => void;
 }
 
+// Storage
 const storage = {
   setItem: async (key: string, value: string) => {
     if (Platform.OS === "web") {
@@ -46,6 +49,7 @@ const storage = {
   },
 };
 
+// Keys
 const STORAGE_KEYS = {
   token: "auth_token",
   user: "auth_user",
@@ -54,11 +58,9 @@ const STORAGE_KEYS = {
 export const useAuthStore = create<AuthState & AuthActions>((set) => ({
   token: null,
   user: null,
-  isAuthenticated: false,
   isNewUser: false,
   isHydrated: false,
-  pendingMatches: [],
-  hasPendingMatches: false,
+  isAuthenticated: false,
 
   saveLogin: async (token, user, isNew = false) => {
     await storage.setItem(STORAGE_KEYS.token, token);
@@ -69,13 +71,9 @@ export const useAuthStore = create<AuthState & AuthActions>((set) => ({
   logout: async () => {
     await storage.removeItem(STORAGE_KEYS.token);
     await storage.removeItem(STORAGE_KEYS.user);
-    set({
-      token: null,
-      user: null,
-      isAuthenticated: false,
-      pendingMatches: [],
-      hasPendingMatches: false,
-    });
+    set({ token: null, user: null, isAuthenticated: false });
+    // Limpia el store de predicciones
+    usePredictionStore.getState().clearPredictions();
   },
 
   hydrateStore: async () => {
@@ -93,11 +91,6 @@ export const useAuthStore = create<AuthState & AuthActions>((set) => ({
   },
 
   clearNewUser: () => set({ isNewUser: false }),
-
-  setPendingMatches: (matches) => set({ pendingMatches: matches }),
-
-  // Indica si el usuario tiene partidos sin predecir
-  setHasPendingMatches: (value) => set({ hasPendingMatches: value }),
 
   setFavoriteTeam: (team) =>
     set((state) => ({

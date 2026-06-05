@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import {
   getUserPublicProfileRepository,
   getUserPrivateProfileRepository,
@@ -6,19 +7,21 @@ import {
   getMatchesWithoutPredictionsRepository,
   getWildcardUsedRepository,
   updateFavoriteTeamRepository,
-  markRulesAsReadRepository
+  markRulesAsReadRepository,
+  getUserByIdRepository,
+  updatePasswordRepository,
 } from "../repositories/profileRepository";
 import { getUserRankingService } from "./rankingService";
 
 // Perfil publico
 // Cualquier usuario logeador puede ver
 export const getUserPublicProfileService = async (username: string) => {
-   // Buscar usuario por username para obtener su id y datos
-   const user = await getUserPublicProfileRepository(username);
-   if (!user) {
-     throw { status: 404, message: "Usuario no encontrado" };
-   }
-   
+  // Buscar usuario por username para obtener su id y datos
+  const user = await getUserPublicProfileRepository(username);
+  if (!user) {
+    throw { status: 404, message: "Usuario no encontrado" };
+  }
+
   // Todas las queries siguientes usan userId, no username
   const userRanking = await getUserRankingService(user.id);
   const predictionsHistory = await getPredictionsHistoryRepository(user.id);
@@ -32,7 +35,7 @@ export const getUserPublicProfileService = async (username: string) => {
     topScorerPrediction: user.topScorerPrediction,
     position: userRanking.position,
     totalPoints: userRanking.totalPoints,
-    
+
     wildcardUsed: !!wildcardUsed,
     predictionsHistory,
     predictionsPending,
@@ -46,11 +49,12 @@ export const getUserPrivateProfileService = async (userId: string) => {
   if (!user) {
     throw { status: 404, message: "Usuario no encontrado" };
   }
-  
+
   const userRanking = await getUserRankingService(userId);
   const predictionsHistory = await getPredictionsHistoryRepository(userId);
   const predictionsPending = await getPredictionsPendingRepository(userId);
-  const matchesWithoutPredictions = await getMatchesWithoutPredictionsRepository(userId);
+  const matchesWithoutPredictions =
+    await getMatchesWithoutPredictionsRepository(userId);
   const wildcardUsed = await getWildcardUsedRepository(userId);
 
   return {
@@ -62,7 +66,7 @@ export const getUserPrivateProfileService = async (userId: string) => {
     topScorerPrediction: user.topScorerPrediction,
     position: userRanking.position,
     totalPoints: userRanking.totalPoints,
-    
+
     wildcardAvailable: !wildcardUsed,
     predictionsHistory,
     predictionsPending,
@@ -71,7 +75,10 @@ export const getUserPrivateProfileService = async (userId: string) => {
 };
 
 // Actualizar equipo favorito
-export const updateFavoriteTeamService = async (userId: string, favoriteTeam: string) => {
+export const updateFavoriteTeamService = async (
+  userId: string,
+  favoriteTeam: string,
+) => {
   if (!favoriteTeam) {
     throw { status: 400, message: "El equipo favorito es obligatorio" };
   }
@@ -84,4 +91,27 @@ export const updateFavoriteTeamService = async (userId: string, favoriteTeam: st
 export const markRulesAsReadService = async (userId: string) => {
   await markRulesAsReadRepository(userId);
   return { message: "Reglas marcadas como leídas" };
+};
+
+export const changePasswordService = async (
+  userId: string,
+  currentPassword: string,
+  newPassword: string,
+) => {
+  const user = await getUserByIdRepository(userId);
+  if (!user) throw { status: 404, message: "Usuario no encontrado" };
+  if (!user.password)
+    throw {
+      status: 400,
+      message: "Este usuario no tiene contraseña configurada",
+    };
+
+  const isValid = await bcrypt.compare(currentPassword, user.password);
+  if (!isValid)
+    throw { status: 401, message: "La contraseña actual es incorrecta" };
+
+  const hashed = await bcrypt.hash(newPassword, 10);
+  await updatePasswordRepository(userId, hashed);
+
+  return { message: "Contraseña actualizada correctamente" };
 };

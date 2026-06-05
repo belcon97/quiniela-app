@@ -39,7 +39,7 @@ export const getMatches = async (req: Request, res: Response) => {
 export const updateMatch = async (req: Request, res: Response) => {
   try {
     const id = req.params.id as string;
-    const { homeTeam, awayTeam, homeFlag, awayFlag, group, stadium, date } =
+    const { homeTeam, awayTeam, homeFlag, awayFlag, group, date } =
       req.body;
 
     if (!id) {
@@ -52,7 +52,6 @@ export const updateMatch = async (req: Request, res: Response) => {
       homeFlag,
       awayFlag,
       group,
-      stadium,
       date,
     });
     res.status(200).json(result);

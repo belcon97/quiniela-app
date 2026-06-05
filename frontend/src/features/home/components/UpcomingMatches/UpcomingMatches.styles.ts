@@ -1,22 +1,11 @@
-import { StyleSheet } from "react-native";
-import { colors, spacing, typography } from "@/styles/theme";
+import { StyleSheet } from 'react-native'
+import { space } from '@/theme'
+import type { Theme } from '@/theme'
 
-export const styles = StyleSheet.create({
-  container: {
-    height: 200,
-    justifyContent: "center",
-    paddingVertical: spacing.sm,
-  },
-
-  list: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    gap: spacing.sm,
-  },
-  empty: {
-    fontSize: typography.sm,
-    color: colors.neutral900,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.lg,
-  },
-});
+export function makeStyles(_t: Theme) {
+  return StyleSheet.create({
+    list: {
+      gap: space[3],
+    },
+  })
+}

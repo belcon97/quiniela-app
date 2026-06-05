@@ -1,29 +1,36 @@
-import { FlatList, View, Text } from "react-native";
-import { styles } from "./UpcomingMatches.styles";
+import { FlatList } from 'react-native'
+// Hooks
+import { useStyles } from '@/shared/hooks/useStyles'
 // Components
-import { MatchCard } from "@/ui/MatchCard/MatchCard";
+import { MatchPreviewCard } from '@/features/home/components/MatchPreviewCard/MatchPreviewCard'
+// Utils
+import { formatMatchDate } from '@/shared/utils/formatDate'
 // Types
-import type { Match } from "@/types/shared.types";
+import type { UpcomingMatch } from '@/shared/types'
+// Styles
+import { makeStyles } from './UpcomingMatches.styles'
 
 interface UpcomingMatchesProps {
-  matches: Match[];
+  matches: UpcomingMatch[]
 }
 
 export function UpcomingMatches({ matches }: UpcomingMatchesProps) {
+  const styles = useStyles(makeStyles)
 
   return (
-    <View style={styles.container}>
-      <FlatList
-        contentContainerStyle={styles.list}
-        data={matches}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <MatchCard match={item} />}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        ListEmptyComponent={
-          <Text style={styles.empty}>No hay partidos próximos</Text>
-        }
-      />
-    </View>
-  );
+    <FlatList
+      data={matches}
+      keyExtractor={match => match.id}
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={styles.list}
+      renderItem={({ item: match }) => (
+        <MatchPreviewCard
+          home={{ name: match.homeTeam, flagUrl: match.homeFlag }}
+          away={{ name: match.awayTeam, flagUrl: match.awayFlag }}
+          date={formatMatchDate(match.date)}
+        />
+      )}
+    />
+  )
 }

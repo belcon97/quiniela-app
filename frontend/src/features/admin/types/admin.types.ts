@@ -1,18 +1,17 @@
-export interface MatchForm {
-  homeTeam: string;
-  homeFlag: string;
-  homeCountryValue: string;
-  awayTeam: string;
-  awayFlag: string;
-  awayCountryValue: string;
-  group: string;
-  stadium: string;
-  date: string;
-  time: string;
+import type { Match, TopScorer } from '@/shared/types'
+
+export interface AdminUser {
+  id:           string
+  username:     string
+  name:         string
+  role:         'user' | 'admin'
+  favoriteTeam: string | null
+  hasReadRules: boolean
 }
 
-export interface ScoreForm {
-  homeScore: string;
-  awayScore: string;
+export interface AdminUsersResponse {
+  users: AdminUser[]
+  total: number
 }
-export type AdminTab = "create" | "matches";
+
+export type { Match, TopScorer }

@@ -2,32 +2,33 @@ import { ExpoConfig, ConfigContext } from "expo/config";
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  name: "frontend",
-  slug: "frontend",
+  name: "ProdeMundial26",
+  slug: "prode-mundial-26",
   version: "1.0.0",
   orientation: "portrait",
-  icon: "./assets/icon.png",
+  icon: "./assets/images/icon.png",
   userInterfaceStyle: "light",
   newArchEnabled: true,
   splash: {
-    image: "./assets/splash-icon.png",
+    image: "./assets/images/icon.png",
     resizeMode: "contain",
-    backgroundColor: "#ffffff",
+    backgroundColor: "#001F5B",
   },
   ios: {
     supportsTablet: true,
+    bundleIdentifier: "com.belcon.quiniela",
   },
   android: {
     package: "com.belcon.quiniela",
     adaptiveIcon: {
-      foregroundImage: "./assets/adaptive-icon.png",
-      backgroundColor: "#ffffff",
+      foregroundImage: "./assets/images/icon.png",
+      backgroundColor: "#001F5B",
     },
     edgeToEdgeEnabled: true,
     predictiveBackGestureEnabled: false,
   },
   web: {
-    favicon: "./assets/favicon.png",
+    favicon: "./assets/images/icon.png",
   },
   plugins: [
     "expo-font",
@@ -39,4 +40,4 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       projectId: "e4129d4a-82c6-4c63-a93d-c19d224cb7e2",
     },
   },
-});
+})

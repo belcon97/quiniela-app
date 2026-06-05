@@ -9,7 +9,6 @@ export const createMatchRepository = async (
     homeFlag: string;
     awayFlag: string;
     group: string;
-    stadium: string;
     date: Date;
   }[]
 ) => {
@@ -39,7 +38,6 @@ export const updateMatchRepository = async (
     homeFlag?: string;
     awayFlag?: string;
     group?: string;
-    stadium?: string;
     date?: Date;
   }
 ) => {

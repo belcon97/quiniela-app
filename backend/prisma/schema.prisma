@@ -46,7 +46,6 @@ model Match {
   awayFlag    String
 
   group       String
-  stadium     String
 
   date        DateTime
 

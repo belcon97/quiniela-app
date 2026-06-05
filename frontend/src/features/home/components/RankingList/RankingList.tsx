@@ -1,85 +1,70 @@
-import { View, Text, Pressable } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
-import { colors } from "@/styles/theme";
-// Styles
-import { styles } from "./RankingList.styles";
+import { View } from "react-native";
+// Hooks
+import { useStyles } from "@/shared/hooks/useStyles";
 // Components
-import { RankingRow } from "@/ui/RankingRow/RankingRow";
-// Store
-import { useAuthStore } from "@/store/authStore";
+import { SectionHeader } from "@/features/home/components/SectionHeader/SectionHeader";
+import { RankingTable } from "@/shared/components/RankingTable/RankingTable";
+import { StateView } from '@/shared/ui/StateView/StateView'
+// Utils
+import { getFlagByTeam } from "@/shared/utils/getFlagByTeam";
 // Types
-import type { RankingEntry } from "@/features/ranking/types/ranking.types";
+import type { RankingEntry, RankingRowData } from '@/shared/types'
+// Styles
+import { makeStyles } from "./RankingList.styles";
 
 interface RankingListProps {
   ranking: RankingEntry[];
-  myPosition: number | null;
-  onUserPress: (username: string) => void;
-  onRankingPress: () => void;
+  myUsername?: string;
+  onViewMore?: () => void;
+  onRowPress?: (username: string) => void;
 }
 
 export function RankingList({
   ranking,
-  myPosition,
-  onUserPress,
-  onRankingPress,
+  myUsername,
+  onViewMore,
+  onRowPress,
 }: RankingListProps) {
-  const user = useAuthStore((state) => state.user);
+  const styles = useStyles(makeStyles)
 
-  const top5 = ranking.slice(0, 5);
-  const isMeInTop5 = top5.some((item) => item.username === user?.username);
-  const myRankingEntry = ranking.find((item) => item.username === user?.username);
+  const rankingRows: RankingRowData[] = ranking.map(entry => ({
+    position: entry.position,
+    name:     entry.name,
+    username: entry.username,
+    flagUrl:  getFlagByTeam(entry.favoriteTeam),
+    points:   entry.totalPoints,
+  }))
+
+  const myEntry = rankingRows.find(row => row.username === myUsername)
 
   return (
-    <View style={styles.rankingList}>
+    <View style={styles.container}>
 
-      {/* Header — título y ver más */}
-      <View style={styles.rankingList__header}>
-        <View style={styles.rankingList__titleRow}>
-          <MaterialIcons name="leaderboard" size={22} color={colors.primary} />
-          <Text style={styles.rankingList__title}>Ranking general</Text>
-        </View>
-        <Pressable onPress={onRankingPress} style={styles.rankingList__seeAll}>
-          <Text style={styles.rankingList__seeAllText}>Ver más</Text>
-          <MaterialIcons name="arrow-forward" size={14} color={colors.primary} />
-        </Pressable>
-      </View>
+      {/* Header */}
+      <SectionHeader
+        title="RANKING GENERAL"
+        icon="bar-chart-2"
+        onViewMore={onViewMore}
+      />
 
-      {/* Contenedor lista */}
-      <View style={styles.rankingList__container}>
-
-        {/* Columnas */}
-        <View style={styles.rankingList__columns}>
-          <Text style={styles.rankingList__column}>POS</Text>
-          <Text style={[styles.rankingList__column, styles.rankingList__column__user]}>USER</Text>
-          <Text style={styles.rankingList__column}>POINTS</Text>
-        </View>
-
-        {/* Top 5 */}
-        {top5.map((item) => (
-          <RankingRow
-            key={item.username}
-            ranking={item}
-            isMe={item.username === user?.username}
-            onPress={() => onUserPress(item.username)}
+      {/* Table */}
+      {ranking.length === 0
+        ? (
+          <StateView
+            icon="bar-chart-2"
+            title="SIN RANKING"
+            message="Todavía no hay puntos registrados."
           />
-        ))}
-
-        {/* Mi posicion si no estoy en top 5 */}
-        {!isMeInTop5 && myRankingEntry && (
-          <RankingRow
-            ranking={myRankingEntry}
-            isMe
-            onPress={() => onUserPress(myRankingEntry.username)}
+        ) : (
+          <RankingTable
+            data={rankingRows}
+            myUsername={myUsername}
+            myEntry={myEntry}
+            onRowPress={onRowPress}
           />
-        )}
+        )
+      }
 
-        {/* Sin posicion */}
-        {myPosition === null && (
-          <Text style={styles.rankingList__empty}>
-            Aún no tenés predicciones cargadas
-          </Text>
-        )}
-      </View>
     </View>
-  );
+  )
 }

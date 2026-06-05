@@ -11,7 +11,7 @@ export const getUserPublicProfileRepository = async (username: string) => {
       name: true,
       favoriteTeam: true,
       topScorerPrediction: {
-        include: { topScorer: true }
+        include: { topScorer: true },
       },
     },
   });
@@ -29,7 +29,7 @@ export const getUserPrivateProfileRepository = async (userId: string) => {
       favoriteTeam: true,
       hasReadRules: true,
       topScorerPrediction: {
-        include: { topScorer: true }
+        include: { topScorer: true },
       },
     },
   });
@@ -73,7 +73,10 @@ export const getWildcardUsedRepository = async (userId: string) => {
 };
 
 // Actualizar equipo favorito
-export const updateFavoriteTeamRepository = async (userId: string, favoriteTeam: string) => {
+export const updateFavoriteTeamRepository = async (
+  userId: string,
+  favoriteTeam: string,
+) => {
   return prisma.user.update({
     where: { id: userId },
     data: { favoriteTeam },
@@ -85,5 +88,22 @@ export const markRulesAsReadRepository = async (userId: string) => {
   return prisma.user.update({
     where: { id: userId },
     data: { hasReadRules: true },
+  });
+};
+
+export const getUserByIdRepository = async (id: string) => {
+  return prisma.user.findUnique({
+    where: { id },
+    select: { id: true, password: true },
+  });
+};
+
+export const updatePasswordRepository = async (
+  id: string,
+  password: string,
+) => {
+  return prisma.user.update({
+    where: { id },
+    data: { password },
   });
 };

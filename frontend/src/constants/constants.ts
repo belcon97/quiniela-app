@@ -16,6 +16,7 @@ export const API_ROUTES = {
   profile: `${BASE_URL}/profile`,
   profileRules: `${BASE_URL}/profile/rules`,
   profileFavoriteTeam: `${BASE_URL}/profile/favorite-team`,
+  profilePassword: `${BASE_URL}/profile/password`,
 
   // Ranking
   ranking: `${BASE_URL}/ranking`,

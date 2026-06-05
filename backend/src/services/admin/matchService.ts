@@ -18,7 +18,6 @@ export const createMatchService = async (
     homeFlag: string;
     awayFlag: string;
     group: string;
-    stadium: string;
     date: Date;
   }[]
 ) => {
@@ -30,7 +29,6 @@ export const createMatchService = async (
       !match.homeFlag.trim() ||
       !match.awayFlag.trim() ||
       !match.group.trim() ||
-      !match.stadium.trim() ||
       !match.date
     ) {
       throw { status: 400, message: "Todos los campos son obligatorios" };
@@ -60,7 +58,6 @@ export const updateMatchService = async (
     homeFlag?: string;
     awayFlag?: string;
     group?: string;
-    stadium?: string;
     date?: Date;
   }
 ) => {

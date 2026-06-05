@@ -82,4 +82,18 @@ export const profileService = {
     if (!response.ok) throw new Error(data.message);
     return data;
   },
+  
+  changePassword: async (token: string, currentPassword: string, newPassword: string) => {
+    const response = await fetch(API_ROUTES.profilePassword, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ currentPassword, newPassword }),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message);
+    return data;
+  },
 };

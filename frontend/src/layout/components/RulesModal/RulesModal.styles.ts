@@ -1,75 +1,124 @@
-import { StyleSheet } from "react-native";
-import { colors, typography, spacing, radius } from "@/styles/theme";
+// React Native
+import { StyleSheet } from 'react-native'
 
-export const styles = StyleSheet.create({
-  // Bloque
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
-    justifyContent: "flex-end",
-  },
+// Internos
+import { font, fontSize, space, radius } from '@/theme'
+import type { Theme } from '@/theme'
 
-  // Elementos
-  sheet: {
-    backgroundColor: colors.background,
-    borderTopLeftRadius: radius.lg,
-    borderTopRightRadius: radius.lg,
-    padding: spacing.lg,
-    maxHeight: "70%",
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: spacing.lg,
-  },
-  title: {
-    fontSize: typography.md,
-    fontFamily: typography.bold,
-    color: colors.text,
-  },
-  rule: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.md,
-    paddingVertical: spacing.sm,
-  },
-  rule__text: {
-    flex: 1,
-    fontSize: typography.sm,
-    fontFamily: typography.regular,
-    color: colors.text,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: colors.neutral200,
-  },
+export function makeStyles(t: Theme) {
+  return StyleSheet.create({
+    overlay: {
+      flex:            1,
+      backgroundColor: 'rgba(0, 0, 0, 0.6)',
+      justifyContent:  'flex-end',
+    },
+    modal: {
+      backgroundColor:      t.bgElev,
+      borderTopLeftRadius:  radius['2xl'],
+      borderTopRightRadius: radius['2xl'],
+      padding:              space[5],
+      gap:                  space[4],
+      paddingBottom:        space[8],
+    },
 
-  // Bloque badge
-  badge: {
-    borderRadius: radius.full,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    minWidth: 56,
-    alignItems: "center",
-  },
-  badge__text: {
-    fontSize: typography.xs,
-    fontFamily: typography.bold,
-  },
+    // Progress bar
+    progressRow: {
+      flexDirection: 'row',
+      gap:           space[2],
+    },
+    progressSegment: {
+      flex:            1,
+      height:          3,
+      borderRadius:    radius.full,
+      backgroundColor: t.border,
+    },
+    progressSegment_active: {
+      backgroundColor: t.secondary,
+    },
 
-  // Bloque fullRulesBtn
-  fullRulesBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: spacing.xs,
-    paddingVertical: spacing.md,
-    marginTop: spacing.sm,
-  },
-  fullRulesBtn__text: {
-    fontSize: typography.sm,
-    fontFamily: typography.semiBold,
-    color: colors.primary,
-  },
-});
+    // Step label
+    stepLabel: {
+      fontFamily:    font.notoBold,
+      fontSize:      fontSize.micro,
+      color:         t.secondary,
+      letterSpacing: 1.28,
+      textTransform: 'uppercase',
+    },
+
+    // Visual
+    visual: {
+      backgroundColor: t.bgSunken,
+      borderRadius:    radius.lg,
+      alignItems:      'center',
+      justifyContent:  'center',
+      paddingVertical: space[8],
+    },
+    badge: {
+      width:          80,
+      height:         80,
+      borderRadius:   radius.full,
+      alignItems:     'center',
+      justifyContent: 'center',
+    },
+    badgeText: {
+      fontFamily: font.archiveBlack,
+      fontSize:   fontSize.h3,
+      textAlign:  'center',
+      lineHeight: 20,
+    },
+
+    // Content
+    title: {
+      fontFamily:    font.archiveBlack,
+      fontSize:      fontSize.h1,
+      color:         t.textPrimary,
+      textTransform: 'uppercase',
+      letterSpacing: -0.56,
+    },
+    description: {
+      fontFamily: font.notoRegular,
+      fontSize:   fontSize.body,
+      color:      t.textSecondary,
+      lineHeight: 24,
+    },
+
+    // Footer
+    footer: {
+      flexDirection: 'row',
+      gap:           space[3],
+    },
+    backBtn: {
+      flex:           1,
+      height:         48,
+      borderRadius:   radius.full,
+      borderWidth:    1.5,
+      borderColor:    t.border,
+      alignItems:     'center',
+      justifyContent: 'center',
+      flexDirection:  'row',
+      gap:            space[2],
+    },
+    backText: {
+      fontFamily:    font.archivoBold,
+      fontSize:      fontSize.bodySm,
+      color:         t.textSecondary,
+      letterSpacing: 0.6,
+    },
+    nextBtn: {
+      flex:            1,
+      height:          48,
+      borderRadius:    radius.full,
+      backgroundColor: t.primary,
+      alignItems:      'center',
+      justifyContent:  'center',
+      flexDirection:   'row',
+      gap:             space[2],
+    },
+    nextText: {
+      fontFamily:    font.archivoBold,
+      fontSize:      fontSize.bodySm,
+      color:         t.primaryContrast,
+      letterSpacing: 0.6,
+    },
+  })
+}
