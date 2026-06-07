@@ -1,26 +1,31 @@
-import { View, Text, TouchableOpacity} from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
-// Styles
-import { styles } from "./Header.styles";
-// Theme
-import { colors } from "@/styles/theme";
+import { View, Text, Pressable } from "react-native";
+import Feather from "@expo/vector-icons/Feather";
+// Hooks
+import { useTheme } from "@/theme";
+import { useStyles } from "@/shared/hooks/useStyles";
 // Store
 import { useAuthStore } from "@/store/authStore";
+// Styles
+import { makeStyles } from "./Header.styles";
 
 interface HeaderWebProps {
   onMenuPress: () => void;
 }
 
 export function HeaderWeb({ onMenuPress }: HeaderWebProps) {
+  const theme = useTheme();
+  const styles = useStyles(makeStyles);
   const user = useAuthStore((state) => state.user);
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={onMenuPress}>
-        <MaterialIcons name="menu" size={28} color={colors.neutral900} />
-      </TouchableOpacity>
-      
-      <Text numberOfLines={1} style={styles.title}>
+      {/* Menu */}
+      <Pressable onPress={onMenuPress}>
+        <Feather name="menu" size={28} color={theme.textPrimary} />
+      </Pressable>
+
+      {/* Title */}
+      <Text style={styles.title} numberOfLines={1}>
         Hola, {user?.username}
       </Text>
     </View>

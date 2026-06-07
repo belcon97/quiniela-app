@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react";
+// Store
 import { useAuthStore } from "@/store/authStore";
+// Services
 import { rankingService } from "../service/rankingService";
-import type { RankingEntry } from "../types/ranking.types";
+// Types
+import type { RankingEntry } from "@/shared/types";
 
 export function useRanking() {
   const token = useAuthStore((state) => state.token);
   const user = useAuthStore((state) => state.user);
 
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [ranking, setRanking] = useState<RankingEntry[]>([]);
   const [myPosition, setMyPosition] = useState<number | null>(null);
 
@@ -18,11 +22,10 @@ export function useRanking() {
         setLoading(true);
         const data = await rankingService.getRanking(token);
         setRanking(data);
-        // Mi posición la calculamos del ranking que ya tenemos
-        const me = data.find((entry: RankingEntry) => entry.username === user?.username);
+        const me = data.find((entry) => entry.username === user?.username);
         setMyPosition(me?.position ?? null);
-      } catch (error) {
-        if (error instanceof Error) console.error(error.message);
+      } catch (err) {
+        if (err instanceof Error) setError(err.message);
       } finally {
         setLoading(false);
       }
@@ -31,5 +34,5 @@ export function useRanking() {
     fetchRanking();
   }, [token]);
 
-  return { ranking, myPosition, loading };
+  return { ranking, myPosition, loading, error };
 }

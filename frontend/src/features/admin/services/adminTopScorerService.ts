@@ -1,9 +1,9 @@
-
-import { API_ROUTES } from "@/constants/constants";
-import type { TopScorer } from "@/features/topScorer/services/topScorerService";
+// Constants
+import { API_ROUTES } from "@/constants/api";
+// Types
+import type { TopScorer } from "@/shared/types";
 
 export const adminTopScorerService = {
-  // Listar todos los candidatos
   getTopScorers: async (token: string): Promise<TopScorer[]> => {
     const response = await fetch(API_ROUTES.adminTopScorers, {
       headers: { Authorization: `Bearer ${token}` },
@@ -13,10 +13,9 @@ export const adminTopScorerService = {
     return data;
   },
 
-  // Crear candidato
   createTopScorer: async (
     token: string,
-    payload: { name: string; team: string; flag: string }
+    payload: { name: string; team: string; flag: string },
   ) => {
     const response = await fetch(API_ROUTES.adminTopScorers, {
       method: "POST",
@@ -31,7 +30,6 @@ export const adminTopScorerService = {
     return data;
   },
 
-  // Actualizar goles
   updateGoals: async (token: string, id: string, goals: number) => {
     const response = await fetch(`${API_ROUTES.adminTopScorers}/${id}/goals`, {
       method: "PATCH",
@@ -46,7 +44,6 @@ export const adminTopScorerService = {
     return data;
   },
 
-  // Eliminar candidato
   deleteTopScorer: async (token: string, id: string) => {
     const response = await fetch(`${API_ROUTES.adminTopScorers}/${id}`, {
       method: "DELETE",
@@ -57,29 +54,32 @@ export const adminTopScorerService = {
     return data;
   },
 
-  // Cerrar período de seleccion
   closeSelection: async (token: string) => {
-    const response = await fetch(`${API_ROUTES.adminTopScorers}/selection/close`, {
-      method: "PATCH",
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await fetch(
+      `${API_ROUTES.adminTopScorers}/selection/close`,
+      {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
     const data = await response.json();
     if (!response.ok) throw new Error(data.message);
     return data;
   },
 
-  // Abrir período de seleccion
   openSelection: async (token: string) => {
-    const response = await fetch(`${API_ROUTES.adminTopScorers}/selection/open`, {
-      method: "PATCH",
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await fetch(
+      `${API_ROUTES.adminTopScorers}/selection/open`,
+      {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
     const data = await response.json();
     if (!response.ok) throw new Error(data.message);
     return data;
   },
 
-  // Cerrar torneo y asignar puntos
   closeTopScorer: async (token: string) => {
     const response = await fetch(`${API_ROUTES.adminTopScorers}/close`, {
       method: "POST",

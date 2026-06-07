@@ -1,17 +1,17 @@
-import type { Match, TopScorer } from '@/shared/types'
+import type { Match, TopScorer } from "@/shared/types";
 
 export interface AdminUser {
-  id:           string
-  username:     string
-  name:         string
-  role:         'user' | 'admin'
-  favoriteTeam: string | null
-  hasReadRules: boolean
+  id: string;
+  username: string;
+  name: string;
+  role: "user" | "admin";
+  favoriteTeam: string | null;
+  hasReadRules: boolean;
 }
 
 export interface AdminUsersResponse {
-  users: AdminUser[]
-  total: number
+  users: AdminUser[];
+  total: number;
 }
 
-export type { Match, TopScorer }
+export type { Match, TopScorer };

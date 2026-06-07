@@ -1,72 +1,83 @@
 import { StyleSheet } from "react-native";
-import { colors, typography, spacing } from "@/styles/theme";
+import { font, fontSize, space } from "@/theme";
+import type { Theme } from "@/theme";
 
-export const styles = StyleSheet.create({
-  register__keyboard: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  register__scroll: {
-    flexGrow: 1,
-  },
-  register: {
-    flex: 1,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.xxl,
-    gap: spacing.xl,
-  },
+export function makeStyles(t: Theme) {
+  return StyleSheet.create({
+    keyboard: {
+      flex: 1,
+      backgroundColor: t.bg,
+    },
+    scroll: {
+      flexGrow: 1,
+    },
 
-  // Header
-  register__header: {
-    gap: spacing.sm,
-  },
-  register__title: {
-    fontFamily: typography.headline,
-    fontSize: typography.xl,
-    color: colors.text,
-  },
-  register__subtitle: {
-    fontFamily: typography.subheadline,
-    fontSize: typography.md,
-    color: colors.textMuted,
-  },
+    // Header
+    header: {
+      height: 260,
+    },
+    headerOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: "rgba(0, 31, 91, 0.4)",
+    },
+    headerContent: {
+      flex: 1,
+      justifyContent: "flex-end",
+      padding: space[6],
+      gap: space[2],
+    },
+    headerTitle: {
+      fontFamily: font.archiveBlack,
+      fontSize: fontSize.displayLg,
+      color: "#FFFFFF",
+      textTransform: "uppercase",
+      letterSpacing: -1,
+    },
+    headerSubtitle: {
+      fontFamily: font.notoRegular,
+      fontSize: fontSize.body,
+      color: "rgba(255, 255, 255, 0.85)",
+      lineHeight: 24,
+    },
 
-  // Form
-  register__form: {
-    gap: spacing.lg,
-  },
-  register__field: {
-    gap: spacing.sm,
-  },
-  register__label: {
-    fontFamily: typography.medium,
-    fontSize: typography.sm,
-    color: colors.text,
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-    marginLeft: spacing.sm,
-  },
-  register__error: {
-    fontFamily: typography.regular,
-    fontSize: typography.xs,
-    color: colors.error,
-    marginLeft: spacing.sm,
-  },
+    // Form
+    form: {
+      flex: 1,
+      backgroundColor: t.bgElev,
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
+      marginTop: -24,
+      padding: space[6],
+      gap: space[5],
+    },
+    fields: {
+      gap: space[4],
+    },
 
-  // Footer
-  register__footer: {
-    alignItems: "center",
-    paddingBottom: spacing.xl,
-  },
-  register__footer_text: {
-    fontFamily: typography.regular,
-    fontSize: typography.sm,
-    color: colors.textMuted,
-  },
-  register__footer_link: {
-    fontFamily: typography.medium,
-    fontSize: typography.sm,
-    color: colors.secondary,
-    textDecorationLine: "underline",
-  },
-});
+    // Error
+    errorText: {
+      fontFamily: font.notoRegular,
+      fontSize: fontSize.bodySm,
+      color: t.semantic.loss,
+      textAlign: "center",
+    },
+
+    // Footer
+    footer: {
+      flexDirection: "row",
+      justifyContent: "center",
+      gap: space[1],
+      paddingBottom: space[4],
+    },
+    footerText: {
+      fontFamily: font.notoRegular,
+      fontSize: fontSize.bodySm,
+      color: t.textSecondary,
+    },
+    footerLink: {
+      fontFamily: font.notoBold,
+      fontSize: fontSize.bodySm,
+      color: t.primary,
+    },
+  });
+}

@@ -1,19 +1,18 @@
-import {
-  View,
-  Text,
-  Pressable,
-  Animated,
-} from "react-native";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { View, Text, Pressable, Animated } from "react-native";
+import Feather from "@expo/vector-icons/Feather";
+import { MaterialIcons } from "@expo/vector-icons";
+// Hooks
+import { useTheme } from "@/theme";
+import { useStyles } from "@/shared/hooks/useStyles";
 import { useNavigationState, useNavigation } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { MaterialIcons } from "@expo/vector-icons";
-// Styles
-import { styles, MENU_WIDTH } from "./Menu.styles";
-// Navigation
-import { ROUTE_CONFIG, NAV_GROUPS } from "@/navigation/navigation.config";
 // Store
 import { useAuthStore } from "@/store/authStore";
+// Navigation
+import { ROUTE_CONFIG, NAV_GROUPS } from "@/navigation/navigation.config";
+// Styles
+import { makeStyles, MENU_WIDTH } from "./Menu.styles";
 // Types
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { AppStackParams } from "@/navigation/navigation.types";
@@ -24,39 +23,31 @@ interface MenuProps {
 }
 
 export function Menu({ isOpen, onClose }: MenuProps) {
+  const theme = useTheme();
+  const styles = useStyles(makeStyles);
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<AppStackParams>>();
   const logout = useAuthStore((state) => state.logout);
 
-  // Detectar ruta activa
+  // Ruta activa
   const currentRoute = useNavigationState((state) => state.routes[state.index]);
   const currentScreen = currentRoute.name;
   const isOwnProfile =
     currentScreen === "Profile" &&
     !(currentRoute.params as { username?: string })?.username;
 
-  function isRouteActive(routeName: keyof AppStackParams): boolean {
+  const isRouteActive = (routeName: keyof AppStackParams): boolean => {
     if (routeName === "Profile") return isOwnProfile;
     return currentScreen === routeName;
-  }
+  };
 
-  // Animacion del menu
+  // Animación
   const translateX = useRef(new Animated.Value(-MENU_WIDTH)).current;
   const [visible, setVisible] = useState(false);
-
-  const panelStyle = [
-    styles.panel,
-    {
-      paddingTop: insets.top + 8,
-      paddingBottom: insets.bottom + 8,
-      transform: [{ translateX }],
-    },
-  ];
 
   useEffect(() => {
     if (isOpen) {
       setVisible(true);
-
       Animated.timing(translateX, {
         toValue: 0,
         duration: 300,
@@ -75,17 +66,28 @@ export function Menu({ isOpen, onClose }: MenuProps) {
 
   return (
     <View style={styles.overlay}>
+      {/* Overlay */}
       <Pressable style={styles.overlay} onPress={onClose} />
 
-      <Animated.View style={panelStyle}>
-
+      {/* Panel */}
+      <Animated.View
+        style={[
+          styles.panel,
+          {
+            paddingTop: insets.top + 8,
+            paddingBottom: insets.bottom + 8,
+            transform: [{ translateX }],
+          },
+        ]}
+      >
+        {/* User section */}
         <View style={styles.userSection}>
           <Pressable onPress={onClose} style={styles.closeButton}>
-            <MaterialIcons name="close" size={28} color="#000" />
+            <Feather name="x" size={26} color={theme.textPrimary} />
           </Pressable>
         </View>
 
-        {/* navegacion */}
+        {/* Nav items */}
         {NAV_GROUPS.drawerWeb.map((routeName) => {
           const { label, icon } = ROUTE_CONFIG[routeName];
           const isActive = isRouteActive(routeName);
@@ -93,25 +95,36 @@ export function Menu({ isOpen, onClose }: MenuProps) {
           return (
             <Pressable
               key={routeName}
-              style={[styles.navItem, isActive ? styles.navItem__active : null]}
+              style={[styles.navItem, isActive && styles.navItem_active]}
               onPress={() => {
                 navigation.navigate(routeName);
                 onClose();
               }}
             >
-              <MaterialIcons name={icon} size={22} color="#000" />
-              <Text style={styles.navItem__text}>{label}</Text>
+              <MaterialIcons
+                name={icon}
+                size={22}
+                color={isActive ? theme.primary : theme.textPrimary}
+              />
+              <Text
+                style={[
+                  styles.navItem_text,
+                  isActive && styles.navItem_text_active,
+                ]}
+              >
+                {label}
+              </Text>
             </Pressable>
           );
         })}
 
+        {/* Footer — logout */}
         <View style={styles.footer}>
           <Pressable style={styles.logoutItem} onPress={logout}>
-            <MaterialIcons name="logout" size={22} color="#ff3b30" />
-            <Text style={styles.logoutItem__text}>Cerrar sesión</Text>
+            <Feather name="log-out" size={22} color={theme.semantic.loss} />
+            <Text style={styles.logoutText}>Cerrar sesión</Text>
           </Pressable>
         </View>
-
       </Animated.View>
     </View>
   );

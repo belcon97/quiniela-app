@@ -2,29 +2,33 @@ import { useState } from "react";
 import {
   View,
   Text,
-  KeyboardAvoidingView,
-  Platform,
+  Pressable,
   ScrollView,
+  KeyboardAvoidingView,
+  ImageBackground,
+  Platform,
 } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
-import { styles } from "./Register.styles";
-
+// Hooks
+import { useStyles } from "@/shared/hooks/useStyles";
 // Components
-import {Button} from "@/ui/Button/Button";
-import Input from "@/ui/Input/Input";
-import {ErrorBanner} from "@/ui/ErrorBanner/ErrorBanner";
-
+import { Input } from "@/shared/ui/Input/Input";
+import { Button } from "@/shared/ui/Button/Button";
 // Services
 import { authService } from "@/features/auth/services/authService";
-
 // Store
 import { useAuthStore } from "@/store/authStore";
-
+// Styles
+import { makeStyles } from "./Register.styles";
 // Types
-import type { RegisterRequest } from "@/features/auth/types/auth.types";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { AuthStackParams } from "@/navigation/navigation.types";
+import type {
+  RegisterForm,
+  RegisterRequest,
+} from "@/features/auth/types/auth.types";
 
+const BG_IMAGE = require("../../../assets/images/teams/default.png");
 
 type RegisterNavigationProp = NativeStackNavigationProp<
   AuthStackParams,
@@ -36,164 +40,147 @@ export default function Register({
 }: {
   navigation: RegisterNavigationProp;
 }) {
-  const saveLogin =  useAuthStore((state) => state.saveLogin);
+  const styles = useStyles(makeStyles);
+  const saveLogin = useAuthStore((state) => state.saveLogin);
 
-  const [registerData, setRegisterData] = useState<RegisterRequest>({
+  const [form, setForm] = useState<RegisterForm>({
     name: "",
     username: "",
     password: "",
+    confirmPassword: "",
   });
-  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({
     name: "",
     username: "",
     password: "",
+    confirmPassword: "",
   });
-  const [errorBanner, setErrorBanner] = useState({
-    visible: false,
-    message: "",
-  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleNameChange = (text: string) => {
-    setRegisterData((prev) => ({ ...prev, name: text }));
-    setErrors((prev) => ({ ...prev, name: "" }));
+  const handleChange = (field: keyof RegisterForm) => (text: string) => {
+    setForm((prev) => ({ ...prev, [field]: text }));
+    setErrors((prev) => ({ ...prev, [field]: "" }));
+    setError("");
   };
 
-  const handleUsernameChange = (text: string) => {
-    setRegisterData((prev) => ({ ...prev, username: text }));
-    setErrors((prev) => ({ ...prev, username: "" }));
-  };
-
-  const handlePasswordChange = (text: string) => {
-    setRegisterData((prev) => ({ ...prev, password: text }));
-    setErrors((prev) => ({ ...prev, password: "" }));
-  };
-
-  const validateForm = () => {
-    const newErrors = { name: "", username: "",  password: "" };
-
-    if (!registerData.name.trim()) {
-      newErrors.name = "El nombre es obligatorio*";
-    }
-    if (!registerData.username.trim()) {
-      newErrors.username = "El nombre de usuario es obligatorio*";
-    }
-
-    if (registerData.password.length < 6) {
-      newErrors.password = "La contraseña debe tener al menos 6 caracteres*";
-    }
-
+  const validate = (): boolean => {
+    const newErrors = {
+      name: "",
+      username: "",
+      password: "",
+      confirmPassword: "",
+    };
+    if (!form.name.trim()) newErrors.name = "El nombre es obligatorio";
+    if (!form.username.trim()) newErrors.username = "El usuario es obligatorio";
+    if (form.password.length < 6) newErrors.password = "Mínimo 6 caracteres";
+    if (form.password !== form.confirmPassword)
+      newErrors.confirmPassword = "Las contraseñas no coinciden";
     setErrors(newErrors);
-    return (
-      !newErrors.name &&
-      !newErrors.username &&
-      !newErrors.password
-    );
+    return !Object.values(newErrors).some((e) => e !== "");
   };
 
   const handleRegister = async () => {
-    if (!validateForm()) return;
-  
+    if (!validate()) return;
     try {
       setLoading(true);
       const response = await authService.register({
-        name: registerData.name.trim(),
-        username: registerData.username.trim(),
-        password: registerData.password,
-      });
+        name: form.name.trim(),
+        username: form.username.trim(),
+        password: form.password,
+      } as RegisterRequest);
       await saveLogin(response.token, response.user, true);
-    } catch (error) {
+    } catch (err) {
       const message =
-        error instanceof Error ? error.message : "Ocurrió un error inesperado";
-      setErrorBanner({ visible: true, message });
+        err instanceof Error ? err.message : "Ocurrió un error inesperado";
+      setError(message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    // behavior difiere por OS: iOS necesita "padding", Android "height"
     <KeyboardAvoidingView
-      style={styles.register__keyboard}
+      style={styles.keyboard}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
+      enabled={Platform.OS !== "web"}
     >
       <ScrollView
-        contentContainerStyle={styles.register__scroll}
+        contentContainerStyle={styles.scroll}
         keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
-        <View style={styles.register}>
-          <View style={styles.register__header}>
-            <Text style={styles.register__title}>Crea tu cuenta</Text>
-            <Text style={styles.register__subtitle}>
-              Únete y comenzá a predecir resultados.
+        {/* Header */}
+        <ImageBackground
+          source={BG_IMAGE}
+          style={styles.header}
+          resizeMode="cover"
+        >
+          <View style={styles.headerOverlay} />
+          <View style={styles.headerContent}>
+            <Text style={styles.headerTitle}>CREÁ TU{"\n"}CUENTA</Text>
+            <Text style={styles.headerSubtitle}>
+              Armá tu liga en minutos. El Mundial se vive prediciendo.
             </Text>
           </View>
+        </ImageBackground>
 
-          <View style={styles.register__form}>
-            <View style={styles.register__field}>
-              <Text style={styles.register__label}>Nombre</Text>
-              <Input
-                placeholder="Tu nombre"
-                value={registerData.name}
-                hasError={!!errors.name}
-                onChangeText={handleNameChange}
-              />
-              {errors.name && (
-                <Text style={styles.register__error}>{errors.name}</Text>
-              )}
-            </View>
-
-            <View style={styles.register__field}>
-              <Text style={styles.register__label}>Nombre de usuario</Text>
-              <Input
-                placeholder="nombre123"
-                value={registerData.username}
-                hasError={!!errors.username}
-                onChangeText={handleUsernameChange}
-              />
-              {errors.username && (
-                <Text style={styles.register__error}>{errors.username}</Text>
-              )}
-            </View>
-
-            <View style={styles.register__field}>
-              <Text style={styles.register__label}>Contraseña</Text>
-              <Input
-                placeholder="mínimo 6 caracteres"
-                value={registerData.password}
-                hasError={!!errors.password}
-                onChangeText={handlePasswordChange}
-                secureTextEntry
-              />
-              {errors.password && (
-                <Text style={styles.register__error}>{errors.password}</Text>
-              )}
-            </View>
+        {/* Form */}
+        <View style={styles.form}>
+          <View style={styles.fields}>
+            <Input
+              label="NOMBRE"
+              placeholder="Tu nombre"
+              value={form.name}
+              onChangeText={handleChange("name")}
+              error={errors.name}
+              icon={<Feather name="user" size={18} color="gray" />}
+            />
+            <Input
+              label="USUARIO"
+              placeholder="tu_usuario"
+              value={form.username}
+              onChangeText={handleChange("username")}
+              error={errors.username}
+              autoCapitalize="none"
+              icon={<Feather name="at-sign" size={18} color="gray" />}
+            />
+            <Input
+              label="CONTRASEÑA"
+              placeholder="••••••"
+              value={form.password}
+              onChangeText={handleChange("password")}
+              error={errors.password}
+              secureTextEntry
+              icon={<Feather name="lock" size={18} color="gray" />}
+            />
+            <Input
+              label="REPETIR CONTRASEÑA"
+              placeholder="••••••"
+              value={form.confirmPassword}
+              onChangeText={handleChange("confirmPassword")}
+              error={errors.confirmPassword}
+              secureTextEntry
+              icon={<Feather name="lock" size={18} color="gray" />}
+            />
           </View>
-          <ErrorBanner
-            message={errorBanner.message}
-            visible={errorBanner.visible}
-            onHide={() => setErrorBanner({ visible: false, message: "" })}
-          />
+
+          {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
           <Button
             onPress={handleRegister}
-            variant="primary"
             disabled={loading}
-            icon={<Feather name="arrow-right" size={14} color="white" />}
+            icon={<Feather name="check" size={16} color="#fff" />}
+            iconPosition="right"
           >
-            {loading ? "Cargando..." : "Regístrate"}
+            {loading ? "CARGANDO..." : "CREAR CUENTA"}
           </Button>
 
-          <View style={styles.register__footer}>
-            <Text style={styles.register__footer_text}>
-              ¿Ya tenés una cuenta?{" "}
-              <Text
-                style={styles.register__footer_link}
-                onPress={() => navigation.navigate("Login")}
-              >
-                Inicia sesión
-              </Text>
-            </Text>
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>¿Ya tenés cuenta?</Text>
+            <Pressable onPress={() => navigation.navigate("Login")}>
+              <Text style={styles.footerLink}>Ingresá</Text>
+            </Pressable>
           </View>
         </View>
       </ScrollView>

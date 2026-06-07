@@ -1,15 +1,23 @@
-import { useEffect, useState, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
+// Store
 import { useAuthStore } from "@/store/authStore";
-import type { PrivateProfileData } from "../types/profile.types";
+import { usePredictionStore } from "@/store/predictionStore";
+// Services
 import { profileService } from "../services/profileService";
+// Types
+import type { PrivateProfileData } from "../types/profile.types";
 
 export function usePrivateProfile() {
   const token = useAuthStore((state) => state.token);
-  const setPendingMatches = useAuthStore((state) => state.setPendingMatches);
-  const setHasPendingMatches = useAuthStore((state) => state.setHasPendingMatches);
+  const setPendingMatches = usePredictionStore(
+    (state) => state.setPendingMatches,
+  );
 
   const [loading, setLoading] = useState(true);
-  const [privateData, setPrivateData] = useState<PrivateProfileData | null>(null);
+  const [privateData, setPrivateData] = useState<PrivateProfileData | null>(
+    null,
+  );
+  const [error, setError] = useState<string | null>(null);
 
   const fetchPrivateProfileData = useCallback(async () => {
     if (!token) return;
@@ -17,15 +25,13 @@ export function usePrivateProfile() {
       setLoading(true);
       const profile = await profileService.getPrivateProfile(token);
       setPrivateData(profile);
-      // Sincronizar partidos pendientes con el store
       setPendingMatches(profile.matchesWithoutPredictions);
-      setHasPendingMatches(profile.matchesWithoutPredictions.length > 0);
-    } catch (error) {
-      if (error instanceof Error) console.error(error.message);
+    } catch (err) {
+      if (err instanceof Error) setError(err.message);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     fetchPrivateProfileData();
@@ -34,6 +40,7 @@ export function usePrivateProfile() {
   return {
     privateData,
     loading,
+    error,
     refetch: fetchPrivateProfileData,
   };
 }

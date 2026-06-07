@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/store/authStore";
 // Types
-import type { HomeData } from "../types/home.types";
+import type { HomeResponse } from '../types/home.types'
 // Services
 import { homeService } from "../services/homeService";
 
@@ -9,7 +9,7 @@ export function useHome() {
   const token = useAuthStore((state) => state.token);
 
   const [loading, setLoading] = useState(true);
-  const [homeData, setHomeData] = useState<HomeData | null>(null);
+  const [homeData, setHomeData] = useState<HomeResponse  | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {

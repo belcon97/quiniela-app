@@ -1,69 +1,93 @@
 import { StyleSheet } from "react-native";
+import { font, fontSize, space } from "@/theme";
+import type { Theme } from "@/theme";
 
-import { colors, spacing, typography } from "@/styles/theme";
-export const styles = StyleSheet.create({
-  login__keyboard: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  login__scroll: {
-    flexGrow: 1,
-  },
-  login: {
-    flex: 1,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.xxl,
-    gap: spacing.xl,
-  },
-  // Header
-  login__header: {
-    gap: spacing.sm,
-  },
-  login__title: {
-    fontFamily: typography.headline,
-    fontSize: typography.xxl,
-    color: colors.text,
-  },
-  login__subtitle: {
-    fontFamily: typography.subheadline,
-    fontSize: typography.md,
-    color: colors.textMuted,
-  },
-  // Form
-  login__form: {
-    gap: spacing.lg,
-  },
-  login__field: {
-    gap: spacing.sm,
-  },
-  login__label: {
-    fontFamily: typography.medium,
-    fontSize: typography.sm,
-    color: colors.text,
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-    marginLeft: spacing.sm,
-  },
-  login__error: {
-    fontFamily: typography.regular,
-    fontSize: typography.xs,
-    color: colors.error,
-    marginLeft: spacing.sm,
-  },
-  // Footer
-  login__footer: {
-    alignItems: "center",
-    paddingBottom: spacing.xl,
-  },
-  login__footer_text: {
-    fontFamily: typography.regular,
-    fontSize: typography.sm,
-    color: colors.textMuted,
-  },
-  login__footer_link: {
-    fontFamily: typography.medium,
-    fontSize: typography.sm,
-    color: colors.secondary,
-    textDecorationLine: "underline",
-  },
-});
+export function makeStyles(t: Theme) {
+  return StyleSheet.create({
+    keyboard: {
+      flex: 1,
+      backgroundColor: t.bg,
+    },
+    scroll: {
+      flexGrow: 1,
+    },
+
+    // Header
+    header: {
+      height: 260,
+    },
+    headerOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: "rgba(0, 31, 91, 0.4)",
+    },
+    headerContent: {
+      flex: 1,
+      justifyContent: "flex-end",
+      padding: space[6],
+      gap: space[2],
+    },
+    headerTitle: {
+      fontFamily: font.archiveBlack,
+      fontSize: fontSize.displayLg,
+      color: "#FFFFFF",
+      textTransform: "uppercase",
+      letterSpacing: -1,
+    },
+    headerSubtitle: {
+      fontFamily: font.notoRegular,
+      fontSize: fontSize.body,
+      color: "rgba(255, 255, 255, 0.85)",
+      lineHeight: 24,
+    },
+
+    // Form
+    form: {
+      flex: 1,
+      backgroundColor: t.bgElev,
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
+      marginTop: -24,
+      padding: space[6],
+      gap: space[5],
+    },
+    fields: {
+      gap: space[4],
+    },
+
+    // Forgot password
+    forgotPassword: {
+      alignSelf: "flex-end",
+    },
+    forgotPasswordText: {
+      fontFamily: font.notoBold,
+      fontSize: fontSize.bodySm,
+      color: t.primary,
+    },
+
+    // Error
+    errorText: {
+      fontFamily: font.notoRegular,
+      fontSize: fontSize.bodySm,
+      color: t.semantic.loss,
+      textAlign: "center",
+    },
+
+    // Footer
+    footer: {
+      flexDirection: "row",
+      justifyContent: "center",
+      gap: space[1],
+      paddingBottom: space[4],
+    },
+    footerText: {
+      fontFamily: font.notoRegular,
+      fontSize: fontSize.bodySm,
+      color: t.textSecondary,
+    },
+    footerLink: {
+      fontFamily: font.notoBold,
+      fontSize: fontSize.bodySm,
+      color: t.primary,
+    },
+  });
+}

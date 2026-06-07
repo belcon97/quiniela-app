@@ -1,11 +1,18 @@
 import prisma from "../lib/prisma";
 
-// Traer todos los usuarios agrupados por puntos de mayor a menor
+// Traer todos los puntos agrupados por usuario
 export const getAllUserPointsRepository = async () => {
   return prisma.prediction.groupBy({
     by: ["userId"],
     _sum: { points: true },
-    orderBy: { _sum: { points: "desc" } },
+  });
+};
+
+// Traer todos los usuarios con rol user
+export const getAllUsersRepository = async () => {
+  return prisma.user.findMany({
+    where: { role: "user" },
+    select: { id: true, username: true, name: true, favoriteTeam: true },
   });
 };
 

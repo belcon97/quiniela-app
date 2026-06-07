@@ -4,11 +4,11 @@ import { useStyles } from "@/shared/hooks/useStyles";
 // Components
 import { SectionHeader } from "@/features/home/components/SectionHeader/SectionHeader";
 import { RankingTable } from "@/shared/components/RankingTable/RankingTable";
-import { StateView } from '@/shared/ui/StateView/StateView'
+import { StateView } from "@/shared/ui/StateView/StateView";
 // Utils
 import { getFlagByTeam } from "@/shared/utils/getFlagByTeam";
 // Types
-import type { RankingEntry, RankingRowData } from '@/shared/types'
+import type { RankingEntry, RankingRowData } from "@/shared/types";
 // Styles
 import { makeStyles } from "./RankingList.styles";
 
@@ -25,21 +25,20 @@ export function RankingList({
   onViewMore,
   onRowPress,
 }: RankingListProps) {
-  const styles = useStyles(makeStyles)
+  const styles = useStyles(makeStyles);
 
-  const rankingRows: RankingRowData[] = ranking.map(entry => ({
+  const rankingRows: RankingRowData[] = ranking.map((entry) => ({
     position: entry.position,
-    name:     entry.name,
+    name: entry.name,
     username: entry.username,
-    flagUrl:  getFlagByTeam(entry.favoriteTeam),
-    points:   entry.totalPoints,
-  }))
+    flagUrl: getFlagByTeam(entry.favoriteTeam),
+    points: entry.totalPoints,
+  }));
 
-  const myEntry = rankingRows.find(row => row.username === myUsername)
+  const myEntry = rankingRows.find((row) => row.username === myUsername);
 
   return (
     <View style={styles.container}>
-
       {/* Header */}
       <SectionHeader
         title="RANKING GENERAL"
@@ -48,23 +47,20 @@ export function RankingList({
       />
 
       {/* Table */}
-      {ranking.length === 0
-        ? (
-          <StateView
-            icon="bar-chart-2"
-            title="SIN RANKING"
-            message="Todavía no hay puntos registrados."
-          />
-        ) : (
-          <RankingTable
-            data={rankingRows}
-            myUsername={myUsername}
-            myEntry={myEntry}
-            onRowPress={onRowPress}
-          />
-        )
-      }
-
+      {ranking.length === 0 ? (
+        <StateView
+          icon="bar-chart-2"
+          title="SIN RANKING"
+          message="Todavía no hay puntos registrados."
+        />
+      ) : (
+        <RankingTable
+          data={rankingRows}
+          myUsername={myUsername}
+          myEntry={myEntry}
+          onRowPress={onRowPress}
+        />
+      )}
     </View>
-  )
+  );
 }

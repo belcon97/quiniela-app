@@ -1,5 +1,5 @@
-import { API_ROUTES } from "@/constants/constants";
-import type { Match } from "@/types/shared.types";
+import { API_ROUTES } from "@/constants/api";
+import type { Match } from '@/shared/types'
 
 export const standingsService = {
   // Traer todos los partidos

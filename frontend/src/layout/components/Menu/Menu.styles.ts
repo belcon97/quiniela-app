@@ -1,68 +1,81 @@
 import { StyleSheet, Dimensions } from "react-native";
+import { font, fontSize, space, radius } from "@/theme";
+import type { Theme } from "@/theme";
 
-const MENU_WIDTH = Dimensions.get("window").width * 0.75;
+export const MENU_WIDTH = Dimensions.get("window").width * 0.75;
 
-export const styles = StyleSheet.create({
-  overlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    zIndex: 10,
-  },
+export function makeStyles(t: Theme) {
+  return StyleSheet.create({
+    overlay: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
+      zIndex: 10,
+    },
+    panel: {
+      position: "absolute",
+      top: 0,
+      bottom: 0,
+      left: 0,
+      width: MENU_WIDTH,
+      backgroundColor: t.bgElev,
+      zIndex: 11,
+      paddingHorizontal: space[6],
+    },
 
-  panel: {
-    position: "absolute",
-    top: 0,
-    bottom: 0,
-    left: 0,
-    width: MENU_WIDTH,
-    backgroundColor: "#fff",
-    zIndex: 11,
-    paddingHorizontal: 24,
-  },
-  userSection: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingBottom: 24,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
-    marginBottom: 24,
-  },
-  closeButton: {
-    marginLeft: "auto",
-  },
-  navItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    paddingVertical: 14,
-    borderRadius: 8,
-    paddingHorizontal: 8,
-  },
-  navItem__active: {
-    backgroundColor: "#f5f5f5",
-  },
-  navItem__text: {
-    fontSize: 15,
-    fontWeight: "500",
-  },
-  footer: {
-    marginTop: "auto",
-    paddingBottom: 8,
-  },
-  logoutItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  logoutItem__text: {
-    fontSize: 15,
-    color: "#ff3b30",
-    fontWeight: "500",
-  },
-});
+    // User section
+    userSection: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingBottom: space[5],
+      borderBottomWidth: 1,
+      borderBottomColor: t.borderFaint,
+      marginBottom: space[5],
+    },
+    closeButton: {
+      marginLeft: "auto",
+    },
 
-export { MENU_WIDTH };
+    // Nav items
+    navItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: space[3],
+      paddingVertical: space[4],
+      borderRadius: radius.md,
+      paddingHorizontal: space[2],
+    },
+    navItem_active: {
+      backgroundColor: t.primarySoft,
+    },
+    navItem_text: {
+      fontFamily: font.notoRegular,
+      fontSize: fontSize.body,
+      color: t.textPrimary,
+    },
+    navItem_text_active: {
+      fontFamily: font.notoBold,
+      color: t.primary,
+    },
+
+    // Footer
+    footer: {
+      marginTop: "auto",
+      paddingBottom: space[2],
+    },
+    logoutItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: space[3],
+      paddingVertical: space[4],
+    },
+    logoutText: {
+      fontFamily: font.notoRegular,
+      fontSize: fontSize.body,
+      color: t.semantic.loss,
+    },
+  });
+}

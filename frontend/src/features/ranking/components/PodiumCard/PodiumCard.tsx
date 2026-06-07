@@ -1,4 +1,8 @@
-import { View, Text } from "react-native";
+import { View, Text, Pressable } from "react-native";
+// Navigation
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { AppStackParams } from "@/navigation/navigation.types";
 // Hooks
 import { useStyles } from "@/shared/hooks/useStyles";
 // Components
@@ -6,7 +10,6 @@ import { Flag } from "@/shared/ui/Flag/Flag";
 import { Avatar } from "@/shared/ui/Avatar/Avatar";
 // Types
 import type { RankingEntry } from "@/shared/types";
-
 // Styles
 import { makeStyles } from "./PodiumCard.styles";
 
@@ -23,12 +26,18 @@ interface PodiumCardProps {
 
 export function PodiumCard({ entry, flagUrl }: PodiumCardProps) {
   const styles = useStyles(makeStyles);
+  const navigation = useNavigation<NativeStackNavigationProp<AppStackParams>>();
 
   const medalColor = MEDAL_COLORS[entry.position];
   const isFirst = entry.position === 1;
 
   return (
-    <View style={[styles.card, isFirst && styles.card_first]}>
+    <Pressable
+      style={[styles.card, isFirst && styles.card_first]}
+      onPress={() =>
+        navigation.navigate("Profile", { username: entry.username })
+      }
+    >
       {/* Medalla */}
       <View style={[styles.medal, { backgroundColor: medalColor }]}>
         <Text style={styles.medalText}>{entry.position}</Text>
@@ -51,6 +60,6 @@ export function PodiumCard({ entry, flagUrl }: PodiumCardProps) {
       {/* Puntos */}
       <Text style={styles.points}>{entry.totalPoints}</Text>
       <Text style={styles.pointsLabel}>PTS</Text>
-    </View>
+    </Pressable>
   );
 }

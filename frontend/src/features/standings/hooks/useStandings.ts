@@ -1,26 +1,27 @@
 import { useEffect, useState } from "react";
+// Store
 import { useAuthStore } from "@/store/authStore";
+// Services
 import { standingsService } from "../services/standingsService";
-import { calculateGroupStandings, calculateKnockoutPhases } from "@/utils/calculateStandings";
-import type { GroupStanding, KnockoutPhase } from "../types/standings.types";
+// Types
+import type { Match } from "@/shared/types";
 
 export function useStandings() {
   const token = useAuthStore((state) => state.token);
 
   const [loading, setLoading] = useState(true);
-  const [groupStandings, setGroupStandings] = useState<GroupStanding[]>([]);
-  const [knockoutPhases, setKnockoutPhases] = useState<KnockoutPhase[]>([]);
+  const [matches, setMatches] = useState<Match[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchStandings = async () => {
       if (!token) return;
       try {
         setLoading(true);
-        const matches = await standingsService.getMatches(token);
-        setGroupStandings(calculateGroupStandings(matches));
-        setKnockoutPhases(calculateKnockoutPhases(matches));
+        const data = await standingsService.getMatches(token);
+        setMatches(data);
       } catch (error) {
-        if (error instanceof Error) console.error(error.message);
+        if (error instanceof Error) setError(error.message);
       } finally {
         setLoading(false);
       }
@@ -29,5 +30,5 @@ export function useStandings() {
     fetchStandings();
   }, [token]);
 
-  return { groupStandings, knockoutPhases, loading };
+  return { matches, loading, error };
 }

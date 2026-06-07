@@ -1,31 +1,43 @@
-import { View, Text, TouchableOpacity } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { MaterialIcons } from "@expo/vector-icons";
+import { View, Text, Pressable } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
-// Styles
-import { styles } from "./Header.styles";
-// Theme
-import { colors } from "@/styles/theme";
+// Navigation
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+// Hooks
+import { useTheme, space } from "@/theme";
+import { useStyles } from "@/shared/hooks/useStyles";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 // Store
 import { useAuthStore } from "@/store/authStore";
+// Styles
+import { makeStyles } from "./Header.styles";
+// Types
+import type { AppStackParams } from "@/navigation/navigation.types";
 
-interface HeaderAppProps {
-  onRulesPress: () => void;
-}
-
-export function HeaderApp({ onRulesPress }: HeaderAppProps) {
+export function HeaderApp() {
+  const theme = useTheme();
+  const styles = useStyles(makeStyles);
   const insets = useSafeAreaInsets();
+  const navigation = useNavigation<NativeStackNavigationProp<AppStackParams>>();
   const user = useAuthStore((state) => state.user);
-
-  const containerStyle = [styles.container, { paddingTop: insets.top + 8 }];
+  const logout = useAuthStore((state) => state.logout);
 
   return (
-    <View style={containerStyle}>
-      <Feather name="help-circle" size={26} color={colors.primary} onPress={onRulesPress} />
-      <Text numberOfLines={1} style={styles.title}>
+    <View style={[styles.container, { paddingTop: insets.top + space[2] }]}>
+      {/* Rules */}
+      <Pressable onPress={() => navigation.navigate("Rules")}>
+        <Feather name="help-circle" size={26} color={theme.primary} />
+      </Pressable>
+
+      {/* Title */}
+      <Text style={styles.title} numberOfLines={1}>
         Hola, {user?.username}
       </Text>
-      <MaterialIcons name="person" size={26} color={colors.primary} />
+
+      {/* Logout */}
+      <Pressable style={styles.profileBtn} onPress={logout}>
+        <Feather name="log-out" size={26} color={theme.primary} />
+      </Pressable>
     </View>
   );
 }

@@ -1,40 +1,32 @@
 import { StyleSheet } from "react-native";
+import { font, fontSize, space } from "@/theme";
+import type { Theme } from "@/theme";
 
-export const styles = StyleSheet.create({
-  // Bloque
-  container: {
-    flexDirection: "row",
-    borderTopWidth: 1,
-    borderTopColor: "#E5E7EB",
-    backgroundColor: "#FFFFFF",
-  },
-
-  // Elementos
-  tab: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingTop: 10,
-    paddingBottom: 6,
-    gap: 2,
-  },
-
-  // Modificadores — icon
-  icon__active: {
-    color: "#6366F1",
-  },
-  icon__inactive: {
-    color: "#9CA3AF",
-  },
-
-  // Modificadores — label
-  label__active: {
-    fontSize: 11,
-    color: "#6366F1",
-    fontWeight: "600",
-  },
-  label__inactive: {
-    fontSize: 11,
-    color: "#9CA3AF",
-  },
-});
+export function makeStyles(t: Theme) {
+  return StyleSheet.create({
+    container: {
+      flexDirection: "row",
+      borderTopWidth: 1,
+      borderTopColor: t.border,
+      backgroundColor: t.bgElev,
+    },
+    tab: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      paddingTop: space[3],
+      paddingBottom: space[2],
+      gap: 2,
+    },
+    label_active: {
+      fontFamily: font.notoBold,
+      fontSize: fontSize.micro,
+      color: t.primary,
+    },
+    label_inactive: {
+      fontFamily: font.notoRegular,
+      fontSize: fontSize.micro,
+      color: t.textSecondary,
+    },
+  });
+}

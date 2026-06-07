@@ -1,39 +1,118 @@
-import { View, Text, ActivityIndicator } from "react-native";
-import { styles } from "./Standings.styles";
-import { Layout } from "@/layout/Layout";
-import { Tabs } from "@/ui/Tabs/Tabs";
+import { useState } from "react";
+import { View, ScrollView } from "react-native";
+// Hooks
+import { useAuthStore } from "@/store/authStore";
 import { useStandings } from "@/features/standings/hooks/useStandings";
-import { GroupsTab } from "@/features/standings/components/GroupsTab/GroupsTab";
-import { KnockoutTab } from "@/features/standings/components/KnockoutTab/KnockoutTab";
+import { useStyles } from "@/shared/hooks/useStyles";
+// Components
+import { Layout } from "@/layout/Layout";
+import { TabSwitch } from "@/shared/ui/TabSwitch/TabSwitch";
+import { StandingGroup } from "@/features/standings/components/StandingGroup/StandingGroup";
+import { LoadingState } from "@/shared/ui/LoadingState/LoadingState";
+import { StateView } from "@/shared/ui/StateView/StateView";
+// Utils
+import { groupByKey } from "@/shared/utils/groupByKey";
+import { calculateStandings } from "@/shared/utils/calculateStandings";
+import { sortGroups } from "@/shared/utils/sortGroups";
+// Styles
+import { makeStyles } from "./Standings.styles";
+// Types
+import type { GroupStanding } from "@/features/standings/types/standing.types";
+
+const TABS = ["FASE DE GRUPOS", "ELIMINATORIA"];
+
+const GROUP_PHASES = [
+  "Grupo A",
+  "Grupo B",
+  "Grupo C",
+  "Grupo D",
+  "Grupo E",
+  "Grupo F",
+  "Grupo G",
+  "Grupo H",
+  "Grupo I",
+  "Grupo J",
+  "Grupo K",
+  "Grupo L",
+];
+
+const KNOCKOUT_PHASES = [
+  "Dieciseisavos",
+  "Octavos",
+  "Cuartos",
+  "Semifinal",
+  "Final",
+];
 
 export function Standings() {
-  const { groupStandings, knockoutPhases, loading } = useStandings();
+  const styles = useStyles(makeStyles);
+  const user = useAuthStore((state) => state.user);
+  const { matches, loading, error } = useStandings();
 
-  if (loading) {
-    return (
-      <Layout>
-        <View style={styles.loader}>
-          <ActivityIndicator size="large" />
-        </View>
-      </Layout>
-    );
-  }
+  const [activeTab, setActiveTab] = useState(0);
 
-  const tabs = [
-    { label: "Fase de grupos", content: <GroupsTab groupStandings={groupStandings} /> },
-    { label: "Eliminatoria", content: <KnockoutTab knockoutPhases={knockoutPhases} /> },
-  ];
+  const grouped = groupByKey(matches, "group");
+
+  // Fase de grupos
+  const groupPhases: GroupStanding[] = sortGroups(
+    Object.keys(grouped).filter((g) => GROUP_PHASES.includes(g)),
+  ).map((groupName) => ({
+    group: groupName,
+    matches: grouped[groupName],
+    teams: calculateStandings(grouped[groupName]),
+  }));
+
+  // Eliminatoria
+  const knockoutPhases: GroupStanding[] = sortGroups(
+    Object.keys(grouped).filter((g) => KNOCKOUT_PHASES.includes(g)),
+  ).map((groupName) => ({
+    group: groupName,
+    matches: grouped[groupName],
+    teams: calculateStandings(grouped[groupName]),
+  }));
+
+  const activePhases = activeTab === 0 ? groupPhases : knockoutPhases;
 
   return (
     <Layout>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.header__title}>Tabla de</Text>
-          <Text style={styles.header__title}>Posiciones</Text>
-          <Text style={styles.header__subtitle}>MUNDIAL 2026</Text>
+      {/* Loading */}
+      {loading && <LoadingState />}
+
+      {/* Error */}
+      {!loading && error && (
+        <StateView icon="wifi-off" title="ERROR" message={error} />
+      )}
+
+      {/* Content */}
+      {!loading && !error && (
+        <View style={styles.screen}>
+          {/* Tabs */}
+          <View style={styles.tabs}>
+            <TabSwitch
+              options={TABS}
+              activeIndex={activeTab}
+              onChange={setActiveTab}
+            />
+          </View>
+
+          <ScrollView
+            contentContainerStyle={styles.content}
+            showsVerticalScrollIndicator={false}
+          >
+            {activePhases.length === 0 && (
+              <StateView icon="calendar" title="SIN PARTIDOS" />
+            )}
+
+            {activePhases.map((group) => (
+              <StandingGroup
+                key={group.group}
+                group={group}
+                favoriteTeam={user?.favoriteTeam}
+              />
+            ))}
+          </ScrollView>
         </View>
-        <Tabs tabs={tabs} />
-      </View>
+      )}
     </Layout>
   );
 }

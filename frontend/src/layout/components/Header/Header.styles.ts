@@ -1,24 +1,29 @@
 import { StyleSheet } from "react-native";
+import { font, fontSize, space } from "@/theme";
+import type { Theme } from "@/theme";
 
-export const styles = StyleSheet.create({
-  // Bloque
-  container: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    paddingTop: 8,
-    backgroundColor: "#fff",
-  },
-
-  // Elementos
-  title: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    textAlign: "center",
-    fontSize: 16,
-    fontWeight: "600",
-    pointerEvents: "none",
-  },
-});
+export function makeStyles(t: Theme) {
+  return StyleSheet.create({
+    container: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: space[5],
+      paddingBottom: space[3],
+      paddingTop: space[2],
+      backgroundColor: t.bgElev,
+    },
+    title: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      textAlign: "center",
+      fontFamily: font.archivoBold,
+      fontSize: fontSize.body,
+      color: t.textPrimary,
+      pointerEvents: "none",
+    },
+    profileBtn: {
+      marginLeft: "auto",
+    },
+  });
+}

@@ -1,7 +1,10 @@
 import { useState } from "react";
+// Store
 import { useAuthStore } from "@/store/authStore";
-import * as adminMatchService from "../services/adminMatchService";
-import type { Match } from "@/types/shared.types";
+// Services
+import * as adminMatchService from "@/features/admin/services/adminMatchService";
+// Types
+import type { Match } from "@/shared/types";
 
 export function useMatches() {
   const { token } = useAuthStore();
@@ -24,7 +27,6 @@ export function useMatches() {
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState("");
 
-
   const fetchMatches = async () => {
     if (!token) return;
     setLoading(true);
@@ -39,15 +41,12 @@ export function useMatches() {
     }
   };
 
-
-
   const handleCreate = async (matchData: {
     homeTeam: string;
     homeFlag: string;
     awayTeam: string;
     awayFlag: string;
     group: string;
-    stadium: string;
     date: Date;
   }) => {
     if (!token) return;
@@ -57,7 +56,7 @@ export function useMatches() {
     try {
       const result = await adminMatchService.createMatch(token, matchData);
       setCreateSuccess(result.message);
-      setLoaded(false); // fuerza refetch cuando vaya a la lista
+      setLoaded(false);
     } catch (error) {
       if (error instanceof Error) setCreateError(error.message);
     } finally {
@@ -65,24 +64,29 @@ export function useMatches() {
     }
   };
 
-
   const handleUpdateScore = async (
     id: string,
     homeScore: number,
-    awayScore: number
+    awayScore: number,
+    penaltyWinner?: "home" | "away",
   ) => {
     if (!token) return;
     setUpdating(true);
     setUpdateError("");
     try {
-      await adminMatchService.updateMatchScore(token, id, homeScore, awayScore);
-      // Actualiza el estado local sin refetch
+      await adminMatchService.updateMatchScore(
+        token,
+        id,
+        homeScore,
+        awayScore,
+        penaltyWinner,
+      );
       setMatches((prev) =>
         prev.map((match) =>
           match.id === id
             ? { ...match, homeScore, awayScore, status: "completed" }
-            : match
-        )
+            : match,
+        ),
       );
     } catch (error) {
       if (error instanceof Error) setUpdateError(error.message);
@@ -90,7 +94,6 @@ export function useMatches() {
       setUpdating(false);
     }
   };
-
 
   const handleDelete = async (id: string) => {
     if (!token) return;
@@ -117,12 +120,10 @@ export function useMatches() {
     updateError,
     deleting,
     deleteError,
-
     fetchMatches,
     handleCreate,
     handleUpdateScore,
     handleDelete,
-
     clearCreateError: () => setCreateError(""),
     clearUpdateError: () => setUpdateError(""),
     clearDeleteError: () => setDeleteError(""),

@@ -1,48 +1,41 @@
 import { useState } from "react";
-import {
-  View,
-  Text,
-  Modal,
-  Pressable,
-  Image,
-  FlatList,
-  ActivityIndicator,
-} from "react-native";
-import { styles } from "./FavoriteTeamPicker.styles";
-import { colors } from "@/styles/theme";
-import { WORLD_CUP_COUNTRIES } from "@/data/worldCup2026";
-import { profileService } from "../../services/profileService";
+import { View, Text } from "react-native";
+import Feather from "@expo/vector-icons/Feather";
+// Hooks
+import { useStyles } from "@/shared/hooks/useStyles";
 import { useAuthStore } from "@/store/authStore";
-import type { SelectOption } from "@/ui/Select/Select.types";
+// Components
+import { Button } from "@/shared/ui/Button/Button";
+import { SelectField } from "@/shared/ui/SelectField/SelectField";
+import { CountryPicker } from "@/shared/components/CountryPicker/CountryPicker";
+// Services
+import { profileService } from "@/features/profile/services/profileService";
+// Styles
+import { makeStyles } from "./FavoriteTeamPicker.styles";
+// Types
+import type { CountryOption } from "@/shared/types";
 
 interface FavoriteTeamPickerProps {
-  visible: boolean;
-  onClose: () => void;
-  onSaved: () => void;
+  onDone: () => void;
 }
 
-export function FavoriteTeamPicker({
-  visible,
-  onClose,
-  onSaved,
-}: FavoriteTeamPickerProps) {
-  const { token } = useAuthStore();
+export function FavoriteTeamPicker({ onDone }: FavoriteTeamPickerProps) {
+  const styles = useStyles(makeStyles);
+  const token = useAuthStore((state) => state.token);
   const setFavoriteTeam = useAuthStore((state) => state.setFavoriteTeam);
 
-  const [selected, setSelected] = useState<SelectOption | null>(null);
+  const [country, setCountry] = useState<CountryOption | null>(null);
+  const [pickerVisible, setPickerVisible] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
   const handleSave = async () => {
-    if (!selected || !token) return;
-    setSaving(true);
-    setError("");
+    if (!country || !token) return;
     try {
-      await profileService.updateFavoriteTeam(token, selected.label);
-      // Actualiza el store para que home tenga el dato inmediatamente
-      setFavoriteTeam(selected.label);
-      onSaved();
-      onClose();
+      setSaving(true);
+      await profileService.updateFavoriteTeam(token, country.label);
+      setFavoriteTeam(country.label);
+      onDone();
     } catch (err) {
       if (err instanceof Error) setError(err.message);
     } finally {
@@ -51,77 +44,44 @@ export function FavoriteTeamPicker({
   };
 
   return (
-    <Modal visible={visible} transparent animationType="slide">
-      <View style={styles.overlay}>
-        <View style={styles.modal}>
-
-          {/* Header */}
-          <View style={styles.header}>
-            <Text style={styles.title}>¿Cuál es tu equipo favorito?</Text>
-            <Text style={styles.subtitle}>
-              Te mostraremos un contador con el tiempo que falta para su próximo partido.
-            </Text>
-          </View>
-
-          {/* Lista de países */}
-          <FlatList
-            data={WORLD_CUP_COUNTRIES}
-            keyExtractor={(item) => item.value}
-            style={styles.list}
-            renderItem={({ item }) => (
-              <Pressable
-                style={[
-                  styles.option,
-                  selected?.value === item.value && styles.option__active,
-                ]}
-                onPress={() => setSelected(item)}
-              >
-                {item.icon && (
-                  <Image
-                    source={{ uri: item.icon }}
-                    style={styles.flag}
-                    resizeMode="cover"
-                  />
-                )}
-                <Text style={[
-                  styles.option__label,
-                  selected?.value === item.value && styles.option__label_active,
-                ]}>
-                  {item.label}
-                </Text>
-                {item.code && (
-                  <Text style={styles.option__code}>{item.code}</Text>
-                )}
-              </Pressable>
-            )}
-          />
-
-          {/* Error */}
-          {error ? <Text style={styles.error}>{error}</Text> : null}
-
-          {/* Botones */}
-          <View style={styles.buttons}>
-            <Pressable style={styles.skipBtn} onPress={onClose}>
-              <Text style={styles.skipBtn__text}>Omitir por ahora</Text>
-            </Pressable>
-            <Pressable
-              style={[
-                styles.saveBtn,
-                (!selected || saving) && styles.saveBtn__disabled,
-              ]}
-              onPress={handleSave}
-              disabled={!selected || saving}
-            >
-              {saving ? (
-                <ActivityIndicator color={colors.background} size="small" />
-              ) : (
-                <Text style={styles.saveBtn__text}>Guardar</Text>
-              )}
-            </Pressable>
-          </View>
-
-        </View>
+    <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.title}>TU EQUIPO{"\n"}FAVORITO</Text>
+        <Text style={styles.subtitle}>
+          Elegí el equipo que vas a seguir. Vas a ver su próximo partido en tu
+          inicio.
+        </Text>
       </View>
-    </Modal>
+
+      {/* Selector */}
+      <SelectField
+        placeholder="Seleccioná tu equipo"
+        value={country?.label}
+        flagUrl={country?.icon}
+        onPress={() => setPickerVisible(true)}
+      />
+
+      {/* Error */}
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+      {/* Botón */}
+      <Button
+        onPress={handleSave}
+        disabled={!country || saving}
+        icon={<Feather name="check" size={16} color="#fff" />}
+        iconPosition="right"
+      >
+        {saving ? "GUARDANDO..." : "CONFIRMAR EQUIPO"}
+      </Button>
+
+      {/* Country Picker */}
+      <CountryPicker
+        visible={pickerVisible}
+        title="TU EQUIPO FAVORITO"
+        onSelect={(c) => setCountry(c)}
+        onClose={() => setPickerVisible(false)}
+      />
+    </View>
   );
 }

@@ -21,7 +21,8 @@ interface ProfileHeaderProps {
   banner: ImageSourcePropType;
   wildcardAvailable: boolean;
   totalPoints: number;
-  position: number;
+  position: number | null;
+  topScorerName: string | null;
 }
 
 export function ProfileHeader({
@@ -34,6 +35,7 @@ export function ProfileHeader({
   wildcardAvailable,
   totalPoints,
   position,
+  topScorerName,
 }: ProfileHeaderProps) {
   const styles = useStyles(makeStyles);
 
@@ -51,49 +53,58 @@ export function ProfileHeader({
       <View style={styles.content}>
         {/* User row */}
         <View style={styles.userRow}>
-          {/* Flag o Avatar */}
           {favoriteTeam && flagUrl ? (
             <Flag uri={flagUrl} name={favoriteTeam} size="lg" />
           ) : (
             <Avatar name={name} size="lg" />
           )}
-
-          {/* Info */}
           <View style={styles.userInfo}>
             <Text style={styles.name}>{name}</Text>
             <Text style={styles.role}>{username}</Text>
           </View>
         </View>
 
-        {/* Wildcard badge */}
-        <View
-          style={[
-            styles.wildcard,
-            wildcardAvailable
-              ? styles.wildcard_active
-              : styles.wildcard_inactive,
-          ]}
-        >
-          <Text style={styles.wildcardBadge}>×2</Text>
-          <Text style={styles.wildcardLabel}>COMODÍN</Text>
-          <Text style={styles.wildcardStatus}>
-            {wildcardAvailable ? "ACTIVO" : "INACTIVO"}
-          </Text>
+        {/* Badges row */}
+        <View style={styles.badges}>
+          {/* Wildcard */}
+          <View
+            style={[
+              styles.badge,
+              wildcardAvailable ? styles.badge_active : styles.badge_inactive,
+            ]}
+          >
+            <Text style={styles.badgeIcon}>×2</Text>
+            <Text style={styles.badgeLabel}>COMODÍN</Text>
+            <Text style={styles.badgeStatus}>
+              {wildcardAvailable ? "ACTIVO" : "INACTIVO"}
+            </Text>
+          </View>
+
+          {/* Goleador */}
+          <View
+            style={[
+              styles.badge,
+              topScorerName ? styles.badge_active : styles.badge_inactive,
+            ]}
+          >
+            <Text style={styles.badgeIcon}>⚽</Text>
+            <Text style={styles.badgeLabel}>GOLEADOR</Text>
+            <Text style={styles.badgeStatus} numberOfLines={1}>
+              {topScorerName ?? "SIN ELEGIR"}
+            </Text>
+          </View>
         </View>
 
         {/* Stats row */}
         <View style={styles.statsRow}>
-          {/* Puntos */}
           <View style={styles.statBox}>
             <Text style={styles.statLabel}>Puntos</Text>
             <Text style={styles.statValue}>{totalPoints}</Text>
           </View>
-
-          {/* Ranking */}
           <View style={styles.statBox}>
             <Text style={styles.statLabel}>Ranking General</Text>
             <Text style={[styles.statValue, styles.statValue_ranking]}>
-              #{position}
+              {position !== null ? `#${position}` : "—"}
             </Text>
           </View>
         </View>

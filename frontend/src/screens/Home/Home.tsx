@@ -1,69 +1,95 @@
-import { ScrollView, ActivityIndicator, View } from "react-native";
+import { ScrollView } from "react-native";
+// Navigation
 import { useNavigation } from "@react-navigation/native";
-// Styles
-import { styles } from "./Home.styles";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+// Hooks
+import { useStyles } from "@/shared/hooks/useStyles";
+import { useAuthStore } from "@/store/authStore";
+import { useHome } from "@/features/home/hooks/useHome";
 // Components
 import { Layout } from "@/layout/Layout";
 import { UpcomingMatches } from "@/features/home/components/UpcomingMatches/UpcomingMatches";
+import { FavoriteTeamCard } from "@/features/home/components/FavoriteTeamCard/FavoriteTeamCard";
 import { RankingList } from "@/features/home/components/RankingList/RankingList";
 import { TopScorersList } from "@/features/home/components/TopScorersList/TopScorersList";
-import { FavoriteTeamBanner } from "@/features/home/components/FavoriteTeamBanner/FavoriteTeamBanner";
-
-// Hooks
-import { useHome } from "@/features/home/hooks/useHome";
-// Store
-import { useAuthStore } from "@/store/authStore";
+import { LoadingState } from "@/shared/ui/LoadingState/LoadingState";
+import { StateView } from "@/shared/ui/StateView/StateView";
+// Utils
+import { getTeamBanner, WORLD_CUP_COUNTRIES } from "@/data/worldCup2026";
+// Styles
+import { makeStyles } from "./Home.styles";
 // Types
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { AppStackParams } from "@/navigation/navigation.types";
 
 export function Home() {
+  const styles = useStyles(makeStyles);
   const navigation = useNavigation<NativeStackNavigationProp<AppStackParams>>();
-  const { data, loading } = useHome();
   const user = useAuthStore((state) => state.user);
+  const { data, loading, error } = useHome();
 
-  // Detectar si tocas tu perfil o un usuario
-  const handleUserPress = (username: string) => {
-    if (username === user?.username) {
-      navigation.navigate("Profile", undefined);
-    } else {
-      navigation.navigate("Profile", { username });
-    }
-  };
-  
-  const handleRankingPress = () => navigation.navigate("Ranking");
+  const favoriteTeam = user?.favoriteTeam ?? null;
 
-  if (loading) {
-    return (
-      <Layout>
-        <View style={styles.loader}>
-          <ActivityIndicator size="large" />
-        </View>
-      </Layout>
-    );
-  }
+  const country = WORLD_CUP_COUNTRIES.find(
+    (c) => c.label.toLowerCase() === favoriteTeam?.toLowerCase(),
+  );
+
+  const banner = getTeamBanner(country?.value ?? "");
+
+  const rival = data?.favoriteTeamMatch
+    ? data.favoriteTeamMatch.homeTeam.toLowerCase() ===
+      favoriteTeam?.toLowerCase()
+      ? data.favoriteTeamMatch.awayTeam
+      : data.favoriteTeamMatch.homeTeam
+    : null;
 
   return (
     <Layout>
-      <ScrollView style={styles.scrollView}>
-        <UpcomingMatches matches={data?.upcomingMatches ?? []} />
-  
-        {data?.favoriteTeamMatch && user?.favoriteTeam && (
-          <FavoriteTeamBanner
-            match={data.favoriteTeamMatch}
-            teamName={user.favoriteTeam}
+      {/* Loading */}
+      {loading && <LoadingState />}
+
+      {/* Error */}
+      {!loading && error && (
+        <StateView icon="wifi-off" title="ERROR" message={error} />
+      )}
+
+      {/* Content */}
+      {!loading && !error && data && (
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}
+        >
+
+          {/* Upcoming Matches */}
+          {data.upcomingMatches.length > 0 && (
+            <UpcomingMatches matches={data.upcomingMatches} />
+          )}
+
+          {/* Favorite Team Card */}
+          {favoriteTeam && data.favoriteTeamMatch && rival && (
+            <FavoriteTeamCard
+              favoriteTeam={favoriteTeam}
+              flagUrl={country?.icon ?? ""}
+              banner={banner}
+              rival={rival}
+              matchDate={data.favoriteTeamMatch.date}
+            />
+          )}
+          
+          {/* Ranking */}
+          <RankingList
+            ranking={data.fullRanking}
+            myUsername={user?.username}
+            onViewMore={() => navigation.navigate("Ranking")}
           />
-        )}
-  
-        <RankingList
-          ranking={data?.fullRanking ?? []}
-          myPosition={data?.myPosition ?? null}
-          onUserPress={handleUserPress}
-          onRankingPress={handleRankingPress}
-        />
-  
-        <TopScorersList topScorers={data?.topScorers ?? []} />
-      </ScrollView>
+
+          {/* Top Scorers */}
+          <TopScorersList
+            scorers={data.topScorers}
+            onViewMore={() => navigation.navigate("Standings")}
+          />
+        </ScrollView>
+      )}
     </Layout>
   );
 }

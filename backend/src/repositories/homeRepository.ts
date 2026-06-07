@@ -14,7 +14,6 @@ export const getUpcomingMatchesRepository = async () => {
       awayTeam: true,
       homeFlag: true,
       awayFlag: true,
-      stadium: true,
       date: true,
     },
   });
@@ -36,7 +35,6 @@ export const getNextMatchByTeamRepository = async (team: string) => {
       homeFlag: true,
       awayFlag: true,
       date: true,
-      stadium: true,
     },
   });
 };

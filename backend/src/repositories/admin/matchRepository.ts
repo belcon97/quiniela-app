@@ -10,7 +10,7 @@ export const createMatchRepository = async (
     awayFlag: string;
     group: string;
     date: Date;
-  }[]
+  }[],
 ) => {
   return prisma.match.createMany({ data: matches });
 };
@@ -39,7 +39,7 @@ export const updateMatchRepository = async (
     awayFlag?: string;
     group?: string;
     date?: Date;
-  }
+  },
 ) => {
   return prisma.match.update({
     where: { id },
@@ -54,11 +54,13 @@ export const updateMatchScoreRepository = async (
     homeScore: number;
     awayScore: number;
     penaltyWinner?: PenaltyWinner;
-  }
+  },
 ) => {
+  const { penaltyWinner, ...matchData } = data;
+
   return prisma.match.update({
     where: { id },
-    data: { ...data, status: MatchStatus.completed },
+    data: { ...matchData, status: MatchStatus.completed },
   });
 };
 
@@ -72,7 +74,7 @@ export const getMatchPredictionsRepository = async (matchId: string) => {
 // Actualizar puntos de una predicción
 export const updatePredictionPointsRepository = async (
   id: string,
-  points: number
+  points: number,
 ) => {
   return prisma.prediction.update({
     where: { id },

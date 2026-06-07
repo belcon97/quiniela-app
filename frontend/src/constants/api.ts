@@ -8,10 +8,10 @@ export const API_ROUTES = {
 
   // Home
   home: `${BASE_URL}/home`,
-  
+
   // Standings
   matches: `${BASE_URL}/matches`,
-  
+
   // Profile
   profile: `${BASE_URL}/profile`,
   profileRules: `${BASE_URL}/profile/rules`,
@@ -20,7 +20,7 @@ export const API_ROUTES = {
 
   // Ranking
   ranking: `${BASE_URL}/ranking`,
-  
+
   // Predictions
   predictions: `${BASE_URL}/predictions`,
 

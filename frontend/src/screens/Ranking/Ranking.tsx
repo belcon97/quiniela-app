@@ -1,110 +1,104 @@
-import { View, Text, FlatList, ActivityIndicator } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useNavigation } from "@react-navigation/native";
-import { MaterialIcons } from "@expo/vector-icons";
-import { colors } from "@/styles/theme";
-// Styles
-import { styles } from "./Ranking.styles";
-// Components
-import { Layout } from "@/layout/Layout";
-import { RankingHeroCard } from "@/ui/RankingHeroCard/RankingHeroCard";
-import { RankingRow } from "@/ui/RankingRow/RankingRow";
+import { View } from 'react-native'
 // Hooks
-import { useRanking } from "@/features/ranking/hooks/useRanking";
-// Store
-import { useAuthStore } from "@/store/authStore";
+import { useAuthStore } from '@/store/authStore'
+import { useRanking } from '@/features/ranking/hooks/useRanking'
+import { useStyles } from '@/shared/hooks/useStyles'
+// Components
+import { Layout } from '@/layout/Layout'
+import { PodiumCard } from '@/features/ranking/components/PodiumCard/PodiumCard'
+import { RankingRow } from '@/features/ranking/components/RankingRow/RankingRow'
+import { MyPositionBar } from '@/features/ranking/components/MyPositionBar/MyPositionBar'
+import { LoadingState } from '@/shared/ui/LoadingState/LoadingState'
+import { StateView } from '@/shared/ui/StateView/StateView'
+import { ScrollView } from 'react-native'
+import { Text } from 'react-native'
+// Utils
+import { getFlagByTeam } from '@/shared/utils/getFlagByTeam'
+// Styles
+import { makeStyles } from './Ranking.styles'
 // Types
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import type { AppStackParams } from "@/navigation/navigation.types";
-import type { RankingEntry } from "@/features/home/types/home.types";
+import type { Theme } from '@/theme'
 
 export function Ranking() {
-  const insets = useSafeAreaInsets();
-  const navigation = useNavigation<NativeStackNavigationProp<AppStackParams>>();
-  const { ranking, myPosition, loading } = useRanking();
-  const user = useAuthStore((state) => state.user);
+  const styles   = useStyles(makeStyles)
+  const user     = useAuthStore(state => state.user)
+  const { ranking, loading, error } = useRanking()
 
-  const containerStyle = [styles.ranking, { paddingTop: insets.top }];
+  const podium  = ranking
+    .filter(entry => entry.position <= 3)
+    .sort((a, b) => {
+      const order: Record<number, number> = { 1: 1, 2: 0, 3: 2 }
+      return order[a.position] - order[b.position]
+    })
 
-  const handleUserPress = (username: string) => {
-    if (username === user?.username) {
-      navigation.navigate("Profile", undefined);
-    } else {
-      navigation.navigate("Profile", { username });
-    }
-  };
-
-  if (loading) {
-    return (
-      <Layout>
-        <View style={styles.ranking__loader}>
-          <ActivityIndicator size="large" />
-        </View>
-      </Layout>
-    );
-  }
-
-  const first = ranking[0];
-  const rest = ranking.slice(1);
+  const rest    = ranking.filter(entry => entry.position > 3)
+  const myEntry = ranking.find(entry => entry.username === user?.username)
 
   return (
     <Layout>
-      
-    <View style={containerStyle}>
 
-      <FlatList
-        data={rest}
-        keyExtractor={(item) => item.username}
-        contentContainerStyle={styles.ranking__list}
-        ListHeaderComponent={
-          <View>
+      {/* Loading */}
+      {loading && <LoadingState />}
 
-            {/* Header */}
-            <View style={styles.ranking__header}>
-              <View style={styles.ranking__headerText}>
-                <Text style={styles.ranking__title}>Global</Text>
-                <Text style={styles.ranking__title}>Ranking</Text>
-                <Text style={styles.ranking__subtitle}>
-                  Seguí tu posición y competí con todos los participantes.
-                </Text>
-              </View>
-            </View>
+      {/* Error */}
+      {!loading && error && (
+        <StateView icon="wifi-off" title="ERROR" message={error} />
+      )}
 
-            {/* Hero #1 */}
-            {first && (
-              <RankingHeroCard
-                entry={first}
-                onPress={() => handleUserPress(first.username)}
-              />
-            )}
+      {/* Content */}
+      {!loading && !error && (
+        <View style={styles.screen}>
+          <ScrollView
+            contentContainerStyle={styles.content}
+            showsVerticalScrollIndicator={false}
+          >
 
-            {/* Mi posicion */}
-            {myPosition !== null && (
-              <View style={styles.ranking__myPosition}>
-                <Text style={styles.ranking__myPositionText}>
-                  Tu posición actual: #{myPosition}
-                </Text>
+            {/* Podio */}
+            {podium.length > 0 && (
+              <View style={styles.podium}>
+                {podium.map(entry => (
+                  <PodiumCard
+                    key={entry.id}
+                    entry={entry}
+                    flagUrl={getFlagByTeam(entry.favoriteTeam)}
+                  />
+                ))}
               </View>
             )}
 
-          </View>
-        }
-        ListEmptyComponent={
-          <View style={styles.ranking__empty}>
-            <MaterialIcons name="group" size={40} color={colors.neutral400} />
-            <Text style={styles.ranking__emptyText}>No hay participantes aún</Text>
-          </View>
-        }
-        renderItem={({ item }: { item: RankingEntry }) => (
-          <RankingRow
-            ranking={item}
-            isMe={item.username === user?.username}
-            onPress={() => handleUserPress(item.username)}
-          />
-        )}
-      />
+            {/* Clasificación */}
+            {rest.length > 0 && (
+              <>
+                <Text style={styles.sectionLabel}>CLASIFICACIÓN · PTS</Text>
+                <View style={styles.list}>
+                  {rest.map(entry => (
+                    <RankingRow
+                      key={entry.id}
+                      entry={entry}
+                      flagUrl={getFlagByTeam(entry.favoriteTeam)}
+                    />
+                  ))}
+                </View>
+              </>
+            )}
 
-    </View>
+            {ranking.length === 0 && (
+              <StateView icon="bar-chart-2" title="SIN RANKING" />
+            )}
+
+          </ScrollView>
+
+          {/* Mi posición */}
+          {myEntry && (
+            <MyPositionBar
+              entry={myEntry}
+              flagUrl={getFlagByTeam(myEntry.favoriteTeam)}
+            />
+          )}
+
+        </View>
+      )}
+
     </Layout>
-  );
+  )
 }

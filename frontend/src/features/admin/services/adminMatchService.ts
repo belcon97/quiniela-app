@@ -1,5 +1,6 @@
-import { API_ROUTES } from "@/constants/constants";
-import type { Match } from "@/types/shared.types";
+import { API_ROUTES } from "@/constants/api";
+// Types
+import type { Match } from "@/shared/types";
 
 // Listar todos los partidos
 export const getMatches = async (token: string): Promise<Match[]> => {
@@ -20,9 +21,8 @@ export const createMatch = async (
     awayTeam: string;
     awayFlag: string;
     group: string;
-    stadium: string;
     date: Date;
-  }
+  },
 ) => {
   const response = await fetch(API_ROUTES.adminMatches, {
     method: "POST",
@@ -42,7 +42,8 @@ export const updateMatchScore = async (
   token: string,
   id: string,
   homeScore: number,
-  awayScore: number
+  awayScore: number,
+  penaltyWinner?: "home" | "away",
 ) => {
   const response = await fetch(`${API_ROUTES.adminMatches}/${id}/score`, {
     method: "PATCH",
@@ -50,7 +51,7 @@ export const updateMatchScore = async (
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ homeScore, awayScore }),
+    body: JSON.stringify({ homeScore, awayScore, penaltyWinner }),
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data.message);

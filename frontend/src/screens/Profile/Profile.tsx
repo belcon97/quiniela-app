@@ -1,21 +1,24 @@
-import { useRoute } from "@react-navigation/native";
+// Hooks
+import { useAuthStore } from "@/store/authStore";
 // Components
 import { Layout } from "@/layout/Layout";
-import { PrivateProfile } from "@/features/profile/components/PrivateProfile/PrivateProfile";
-import { PublicProfile } from "@/features/profile/components/PublicProfile/PublicProfile";
+import { PrivateProfile } from "./PrivateProfile";
+import { PublicProfile } from "./PublicProfile";
 // Types
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { AppStackParams } from "@/navigation/navigation.types";
 
-type ProfileRoute = NativeStackScreenProps<AppStackParams, "Profile">["route"];
+type ProfileScreenProps = NativeStackScreenProps<AppStackParams, "Profile">;
 
-export function Profile() {
-  const route = useRoute<ProfileRoute>();
+export function Profile({ route }: ProfileScreenProps) {
+  const myUsername = useAuthStore((state) => state.user?.username);
   const username = route.params?.username;
+
+  const isOwn = !username || username === myUsername;
 
   return (
     <Layout>
-      {username ? <PublicProfile username={username} /> : <PrivateProfile />}
+      {isOwn ? <PrivateProfile /> : <PublicProfile username={username!} />}
     </Layout>
   );
 }

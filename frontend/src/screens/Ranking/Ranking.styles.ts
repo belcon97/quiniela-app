@@ -1,74 +1,37 @@
 import { StyleSheet } from "react-native";
-import { colors, spacing, radius, typography } from "@/styles/theme";
+import { font, fontSize, space } from "@/theme";
+import type { Theme } from "@/theme";
 
-export const styles = StyleSheet.create({
-  // Bloque
-  ranking: {
-    flex: 1,
-    backgroundColor: colors.neutral100,
-  },
+export function makeStyles(t: Theme) {
+  return StyleSheet.create({
+    screen: {
+      flex: 1,
+      backgroundColor: t.bg,
+    },
+    content: {
+      padding: space[5],
+      gap: space[4],
+      paddingBottom: space[10],
+    },
 
-  // Loader
-  ranking__loader: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
+    // Podio
+    podium: {
+      flexDirection: "row",
+      alignItems: "flex-end",
+      justifyContent: "center",
+      gap: space[4],
+      paddingVertical: space[4],
+    },
 
-  // Header
-  ranking__header: {
-    paddingHorizontal: spacing.md,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.lg,
-  },
-  ranking__headerText: {
-    gap: spacing.xs,
-  },
-  ranking__title: {
-    fontSize: typography.xxl,
-    fontFamily: typography.headline,
-    color: colors.text,
-    lineHeight: 38,
-  },
-  ranking__subtitle: {
-    fontSize: typography.sm,
-    fontFamily: typography.regular,
-    color: colors.textMuted,
-    marginTop: spacing.sm,
-  },
-
-  // Lista
-  ranking__list: {
-    paddingHorizontal: spacing.md,
-    paddingBottom: spacing.xl,
-  },
-
-  // Mi posicion
-  ranking__myPosition: {
-    backgroundColor: "rgba(0, 166, 81, 0.1)",
-    borderRadius: radius.md,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    marginBottom: spacing.sm,
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: colors.secondary,
-  },
-  ranking__myPositionText: {
-    fontSize: typography.sm,
-    fontFamily: typography.semiBold,
-    color: colors.secondary,
-  },
-
-  // Empty
-  ranking__empty: {
-    alignItems: "center",
-    gap: spacing.sm,
-    paddingVertical: spacing.xl,
-  },
-  ranking__emptyText: {
-    fontSize: typography.sm,
-    fontFamily: typography.regular,
-    color: colors.neutral400,
-  },
-});
+    // Clasificación
+    sectionLabel: {
+      fontFamily: font.notoBold,
+      fontSize: fontSize.micro,
+      color: t.textSecondary,
+      letterSpacing: 1.28,
+    },
+    list: {
+      gap: space[3],
+    },
+  });
+}

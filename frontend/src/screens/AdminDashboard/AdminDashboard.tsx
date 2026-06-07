@@ -1,66 +1,94 @@
 import { useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { View, Text, Pressable, ImageBackground, Platform } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
-
+// Hooks
+import { useStyles } from "@/shared/hooks/useStyles";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 // Store
 import { useAuthStore } from "@/store/authStore";
-
-// Features
+// Components
 import { MatchesTab } from "@/features/admin/components/MatchesTab/MatchesTab";
 import { TopScorersTab } from "@/features/admin/components/TopScorersTab/TopScorersTab";
 import { UsersTab } from "@/features/admin/components/UsersTab/UsersTab";
-
 // Styles
-import { styles } from "./AdminDashboard.styles";
+import { makeStyles } from "./AdminDashboard.styles";
 
-type Tab = "matches" | "topScorers" | "users";
+const BG_IMAGE = require("../../../assets/images/teams/default.png");
 
-const TABS: { key: Tab; label: string }[] = [
-  { key: "matches", label: "Partidos" },
-  { key: "topScorers", label: "Goleadores" },
-  { key: "users", label: "Usuarios" },
+type MainTab = "matches" | "topScorers" | "users";
+
+const MAIN_TABS: { key: MainTab; label: string }[] = [
+  { key: "matches", label: "PARTIDOS" },
+  { key: "topScorers", label: "GOLEADORES" },
+  { key: "users", label: "USUARIOS" },
 ];
 
 export default function AdminDashboard() {
-  const { logout } = useAuthStore();
+  const styles = useStyles(makeStyles);
   const insets = useSafeAreaInsets();
-  const [activeTab, setActiveTab] = useState<Tab>("matches");
+  const logout = useAuthStore((state) => state.logout);
+
+  const [activeTab, setActiveTab] = useState<MainTab>("matches");
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.screen, { paddingTop: insets.top }]}>
       {/* Header */}
-      <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
-        <View>
-          <Text style={styles.header__title}>Panel Admin</Text>
-          <Text style={styles.header__subtitle}>Mundial 2026</Text>
+      {Platform.OS === "web" ? (
+        <View style={[styles.header, styles.headerWeb]}>
+          <View style={styles.headerOverlay} pointerEvents="none" />
+          <View style={styles.headerRow}>
+            <View style={styles.headerText}>
+              <Text style={styles.headerTitle}>PANEL ADMIN</Text>
+              <Text style={styles.headerSubtitle}>Mundial 2026</Text>
+            </View>
+            <Pressable onPress={logout}>
+              <Feather name="log-out" size={22} color="#FFFFFF" />
+            </Pressable>
+          </View>
         </View>
-        <TouchableOpacity onPress={logout} style={styles.header__logout}>
-          <Feather name="log-out" size={20} color="rgba(255,255,255,0.7)" />
-        </TouchableOpacity>
-      </View>
+      ) : (
+        <ImageBackground
+          source={BG_IMAGE}
+          style={styles.header}
+          resizeMode="cover"
+        >
+          <View style={styles.headerOverlay} pointerEvents="none" />
+          <View style={styles.headerRow}>
+            <View style={styles.headerText}>
+              <Text style={styles.headerTitle}>PANEL ADMIN</Text>
+              <Text style={styles.headerSubtitle}>Mundial 2026</Text>
+            </View>
+            <Pressable onPress={logout}>
+              <Feather name="log-out" size={22} color="#FFFFFF" />
+            </Pressable>
+          </View>
+        </ImageBackground>
+      )}
 
-      {/* Tabs */}
-      <View style={styles.tabs}>
-        {TABS.map((tab) => (
-          <TouchableOpacity
+      {/* Main tabs */}
+      <View style={styles.mainTabs}>
+        {MAIN_TABS.map((tab) => (
+          <Pressable
             key={tab.key}
-            style={[styles.tab, activeTab === tab.key && styles.tab__active]}
+            style={[
+              styles.mainTab,
+              activeTab === tab.key && styles.mainTab_active,
+            ]}
             onPress={() => setActiveTab(tab.key)}
           >
             <Text
               style={[
-                styles.tab__label,
-                activeTab === tab.key && styles.tab__label_active,
+                styles.mainTabText,
+                activeTab === tab.key && styles.mainTabText_active,
               ]}
             >
               {tab.label}
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         ))}
       </View>
 
-      {/* Contenido */}
+      {/* Content */}
       <View style={styles.content}>
         {activeTab === "matches" && <MatchesTab />}
         {activeTab === "topScorers" && <TopScorersTab />}

@@ -1,4 +1,4 @@
-import { API_ROUTES } from "@/constants/constants";
+import { API_ROUTES } from "@/constants/api";
 import type { RankingEntry } from "../types/ranking.types";
 
 export const rankingService = {

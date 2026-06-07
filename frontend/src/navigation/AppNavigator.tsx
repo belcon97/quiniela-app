@@ -1,35 +1,35 @@
 import { useEffect } from "react";
+// Navigation
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useAuthStore } from "../store/authStore";
+// Store
+import { useAuthStore } from "@/store/authStore";
+import { usePredictionStore } from "@/store/predictionStore";
+// Auth
+import Login from "@/screens/Login/Login";
+import Register from "@/screens/Register/Register";
+// App
+import { Home } from "@/screens/Home/Home";
+import { Standings } from "@/screens/Standings/Standings";
+import { Profile } from "@/screens/Profile/Profile";
+import { Rules } from "@/screens/Rules/Rules";
+import { Ranking } from "@/screens/Ranking/Ranking";
+// Admin
+import AdminDashboard from "@/screens/AdminDashboard/AdminDashboard";
+// Services
+import { profileService } from "@/features/profile/services/profileService";
+// Types
 import type {
   AuthStackParams,
   AppStackParams,
   AdminStackParams,
 } from "./navigation.types";
 
-// Auth
-import Login from "../screens/Login/Login";
-import Register from "../screens/Register/Register";
-
-// App
-import { Home } from "../screens/Home/Home";
-import { Standings } from "../screens/Standings/Standings";
-import { Profile } from "../screens/Profile/Profile";
-import { Rules } from "../screens/Rules/Rules";
-import { Ranking } from "../screens/Ranking/Ranking";
-
-// Admin
-import AdminDashboard from "../screens/AdminDashboard/AdminDashboard";
-
-// Services
-import { profileService } from "@/features/profile/services/profileService";
-
 const AuthStack = createNativeStackNavigator<AuthStackParams>();
 const AppStack = createNativeStackNavigator<AppStackParams>();
 const AdminStack = createNativeStackNavigator<AdminStackParams>();
 
-// Auth
+// Auth Stack
 function AuthStackScreen() {
   return (
     <AuthStack.Navigator screenOptions={{ headerShown: false }}>
@@ -39,7 +39,7 @@ function AuthStackScreen() {
   );
 }
 
-// App
+// App Stack
 function AppStackScreen() {
   const isNewUser = useAuthStore((state) => state.isNewUser);
   const clearNewUser = useAuthStore((state) => state.clearNewUser);
@@ -62,7 +62,7 @@ function AppStackScreen() {
   );
 }
 
-// Admin
+// Admin Stack
 function AdminStackScreen() {
   return (
     <AdminStack.Navigator screenOptions={{ headerShown: false }}>
@@ -71,16 +71,15 @@ function AdminStackScreen() {
   );
 }
 
+// App Navigator
 export default function AppNavigator() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const user = useAuthStore((state) => state.user);
   const token = useAuthStore((state) => state.token);
-  const setPendingMatches = useAuthStore((state) => state.setPendingMatches);
-  const setHasPendingMatches = useAuthStore(
-    (state) => state.setHasPendingMatches,
+  const setPendingMatches = usePredictionStore(
+    (state) => state.setPendingMatches,
   );
 
-  // Al autenticarse cargamos el perfil para inicializar hasPendingMatches en el store
   useEffect(() => {
     if (!isAuthenticated || !token || user?.role === "admin") return;
 
@@ -88,9 +87,8 @@ export default function AppNavigator() {
       try {
         const profile = await profileService.getPrivateProfile(token);
         setPendingMatches(profile.matchesWithoutPredictions);
-        setHasPendingMatches(profile.matchesWithoutPredictions.length > 0);
       } catch (error) {
-        console.error(error);
+        console.error("Error al inicializar store:", error);
       }
     };
 

@@ -34,78 +34,21 @@ export function makeStyles(t: Theme) {
     closeBtn: {
       padding: space[1],
     },
-    subtitle: {
-      fontFamily: font.notoRegular,
-      fontSize: fontSize.bodySm,
-      color: t.textSecondary,
-      marginTop: -space[3],
-    },
-    scoreboard: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
+    fields: {
       gap: space[4],
     },
-    teamSection: {
-      alignItems: "center",
-      gap: space[3],
-    },
-    teamLabel: {
-      fontFamily: font.archivoBold,
-      fontSize: fontSize.caption,
-      color: t.textSecondary,
-      textTransform: "uppercase",
-      letterSpacing: 1,
-    },
-    separator: {
-      fontFamily: font.archiveBlack,
-      fontSize: fontSize.displayMd,
-      color: t.textDisabled,
-      marginTop: space[4],
-    },
-
-    // Penales
-    penalty: {
-      gap: space[3],
-      paddingVertical: space[2],
-      borderTopWidth: 1,
-      borderTopColor: t.borderFaint,
-    },
-    penaltyLabel: {
-      fontFamily: font.notoBold,
-      fontSize: fontSize.caption,
-      color: t.textSecondary,
-      letterSpacing: 1,
+    errorText: {
+      fontFamily: font.notoRegular,
+      fontSize: fontSize.bodySm,
+      color: t.semantic.loss,
       textAlign: "center",
     },
-    penaltyBtns: {
-      flexDirection: "row",
-      gap: space[3],
-    },
-    penaltyBtn: {
-      flex: 1,
-      paddingVertical: space[3],
-      paddingHorizontal: space[3],
-      borderRadius: radius.full,
-      borderWidth: 1,
-      borderColor: t.border,
-      alignItems: "center",
-    },
-    penaltyBtn_active: {
-      backgroundColor: t.primary,
-      borderColor: t.primary,
-    },
-    penaltyBtnText: {
-      fontFamily: font.notoBold,
-      fontSize: fontSize.caption,
-      color: t.textSecondary,
-      textTransform: "uppercase",
+    successText: {
+      fontFamily: font.notoRegular,
+      fontSize: fontSize.bodySm,
+      color: t.semantic.win,
       textAlign: "center",
     },
-    penaltyBtnText_active: {
-      color: "#FFFFFF",
-    },
-
     footer: {
       flexDirection: "row",
       gap: space[3],
@@ -129,16 +72,19 @@ export function makeStyles(t: Theme) {
       flex: 1,
       height: 48,
       borderRadius: radius.full,
-      backgroundColor: t.secondary,
+      backgroundColor: t.primary,
       alignItems: "center",
       justifyContent: "center",
       flexDirection: "row",
       gap: space[2],
     },
+    saveBtn_disabled: {
+      opacity: 0.5,
+    },
     saveText: {
       fontFamily: font.archivoBold,
       fontSize: fontSize.bodySm,
-      color: t.secondaryContrast,
+      color: "#FFFFFF",
       letterSpacing: 0.6,
     },
   });

@@ -5,7 +5,6 @@ import { ThemeProvider } from "@/theme";
 import { useAppFonts } from "@/hooks/useAppFonts";
 import { useAuthStore } from "@/store/authStore";
 import AppNavigator from "@/navigation/AppNavigator";
-import { TestScreen } from './src/screens/TestScreen'
 
 export default function App() {
   const fontsLoaded = useAppFonts();
@@ -19,18 +18,19 @@ export default function App() {
 
   const isReady = fontsLoaded && isHydrated;
 
-
   return (
     <SafeAreaProvider>
-     <ThemeProvider>
+      <ThemeProvider>
         {isReady ? (
-          <TestScreen  />
+          <AppNavigator />
         ) : (
-          <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+          <View
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          >
             <ActivityIndicator />
           </View>
         )}
-    </ThemeProvider>
+      </ThemeProvider>
     </SafeAreaProvider>
   );
 }

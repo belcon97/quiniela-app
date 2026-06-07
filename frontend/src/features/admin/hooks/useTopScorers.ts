@@ -1,38 +1,41 @@
 import { useState } from "react";
+// Store
 import { useAuthStore } from "@/store/authStore";
-import { adminTopScorerService } from "../services/adminTopScorerService";
-import type { TopScorer } from "@/features/topScorer/services/topScorerService";
+// Services
+import { adminTopScorerService } from "@/features/admin/services/adminTopScorerService";
+// Types
+import type { TopScorer } from "@/shared/types";
 
 export function useTopScorers() {
   const { token } = useAuthStore();
 
-  // Lista
+  // Lista 
   const [topScorers, setTopScorers] = useState<TopScorer[]>([]);
   const [loading, setLoading] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
-  // Crear
+  // Crear 
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState("");
   const [createSuccess, setCreateSuccess] = useState("");
 
-  // Actualizar goles
+  // Actualizar goles 
   const [updating, setUpdating] = useState(false);
   const [updateError, setUpdateError] = useState("");
 
-  // Eliminar
+  // Eliminar 
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState("");
 
-  // Período de seleccion
+  // Período de selección 
   const [togglingSelection, setTogglingSelection] = useState(false);
   const [selectionError, setSelectionError] = useState("");
   const [selectionSuccess, setSelectionSuccess] = useState("");
-  // Cerrar torneo
+
+  // Cerrar torneo 
   const [closing, setClosing] = useState(false);
   const [closeError, setCloseError] = useState("");
   const [closeSuccess, setCloseSuccess] = useState("");
-
 
   const fetchTopScorers = async () => {
     if (!token) return;
@@ -48,7 +51,6 @@ export function useTopScorers() {
     }
   };
 
-
   const handleCreate = async (payload: {
     name: string;
     team: string;
@@ -59,7 +61,10 @@ export function useTopScorers() {
     setCreateError("");
     setCreateSuccess("");
     try {
-      const result = await adminTopScorerService.createTopScorer(token, payload);
+      const result = await adminTopScorerService.createTopScorer(
+        token,
+        payload,
+      );
       setCreateSuccess(result.message);
       setLoaded(false);
     } catch (error) {
@@ -69,7 +74,6 @@ export function useTopScorers() {
     }
   };
 
-
   const handleUpdateGoals = async (id: string, goals: number) => {
     if (!token) return;
     setUpdating(true);
@@ -77,7 +81,9 @@ export function useTopScorers() {
     try {
       await adminTopScorerService.updateGoals(token, id, goals);
       setTopScorers((prev) =>
-        prev.map((s) => (s.id === id ? { ...s, goals } : s))
+        prev.map((scorer) =>
+          scorer.id === id ? { ...scorer, goals } : scorer,
+        ),
       );
     } catch (error) {
       if (error instanceof Error) setUpdateError(error.message);
@@ -86,21 +92,19 @@ export function useTopScorers() {
     }
   };
 
-
   const handleDelete = async (id: string) => {
     if (!token) return;
     setDeleting(true);
     setDeleteError("");
     try {
       await adminTopScorerService.deleteTopScorer(token, id);
-      setTopScorers((prev) => prev.filter((s) => s.id !== id));
+      setTopScorers((prev) => prev.filter((scorer) => scorer.id !== id));
     } catch (error) {
       if (error instanceof Error) setDeleteError(error.message);
     } finally {
       setDeleting(false);
     }
   };
-
 
   const handleToggleSelection = async (isActive: boolean) => {
     if (!token) return;
@@ -112,15 +116,15 @@ export function useTopScorers() {
         ? await adminTopScorerService.closeSelection(token)
         : await adminTopScorerService.openSelection(token);
       setSelectionSuccess(result.message);
-      // Actualiza isActive en todos los goleadores
-      setTopScorers((prev) => prev.map((s) => ({ ...s, isActive: !isActive })));
+      setTopScorers((prev) =>
+        prev.map((scorer) => ({ ...scorer, isActive: !isActive })),
+      );
     } catch (error) {
       if (error instanceof Error) setSelectionError(error.message);
     } finally {
       setTogglingSelection(false);
     }
   };
-
 
   const handleCloseTopScorer = async () => {
     if (!token) return;
@@ -155,14 +159,12 @@ export function useTopScorers() {
     closing,
     closeError,
     closeSuccess,
-
     fetchTopScorers,
     handleCreate,
     handleUpdateGoals,
     handleDelete,
     handleToggleSelection,
     handleCloseTopScorer,
-
     clearCreateError: () => setCreateError(""),
     clearCreateSuccess: () => setCreateSuccess(""),
     clearUpdateError: () => setUpdateError(""),
