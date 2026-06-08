@@ -7,7 +7,6 @@ import {
   KeyboardAvoidingView,
   ImageBackground,
   Platform,
-  StyleSheet,
 } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 // Hooks
@@ -100,8 +99,7 @@ export default function Login({
           <View style={styles.headerContent}>
             <Text style={styles.headerTitle}>INGRESÁ</Text>
             <Text style={styles.headerSubtitle}>
-              Tu quiniela del Mundial. Pronosticá, sumá puntos y ganá la liga
-              con tus amigos.
+            Bienvenidos al Prode del Mundial 2026. Pronostica, suma puntos y gana.
             </Text>
           </View>
         </ImageBackground>

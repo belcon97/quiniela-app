@@ -43,6 +43,17 @@ export function FavoriteTeamPicker({ onDone }: FavoriteTeamPickerProps) {
     }
   };
 
+  const handleSkip = async () => {
+    if (!token) return;
+    try {
+      await profileService.updateFavoriteTeam(token, "nobody");
+      setFavoriteTeam("nobody");
+      onDone();
+    } catch (err) {
+      if (err instanceof Error) setError(err.message);
+    }
+  };
+
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -65,7 +76,6 @@ export function FavoriteTeamPicker({ onDone }: FavoriteTeamPickerProps) {
       {/* Error */}
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-      {/* Botón */}
       <Button
         onPress={handleSave}
         disabled={!country || saving}
@@ -74,6 +84,11 @@ export function FavoriteTeamPicker({ onDone }: FavoriteTeamPickerProps) {
       >
         {saving ? "GUARDANDO..." : "CONFIRMAR EQUIPO"}
       </Button>
+      {/* Botón */}
+      <Button variant="outline" onPress={handleSkip}>
+        Omitir por ahora
+      </Button>
+
 
       {/* Country Picker */}
       <CountryPicker

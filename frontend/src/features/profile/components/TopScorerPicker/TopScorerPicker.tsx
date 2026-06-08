@@ -81,9 +81,8 @@ export function TopScorerPicker({ onDone }: TopScorerPickerProps) {
       <View style={styles.header}>
         <Text style={styles.title}>GOLEADOR{"\n"}DEL TORNEO</Text>
         <Text style={styles.subtitle}>
-          Elegí quién será el máximo goleador del Mundial 2026. Si acertás,
-          sumás 3 puntos extra.
-        </Text>
+        El goleador lo deben colocar de forma obligatoria antes del primer partido, el cual no tendrá cambio luego de ser seleccionado, si tu goleador no esta en esta lista contactanos al privado.
+        </Text> 
       </View>
 
       {/* Lista */}

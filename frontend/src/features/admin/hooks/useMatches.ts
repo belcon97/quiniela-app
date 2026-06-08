@@ -68,19 +68,12 @@ export function useMatches() {
     id: string,
     homeScore: number,
     awayScore: number,
-    penaltyWinner?: "home" | "away",
   ) => {
     if (!token) return;
     setUpdating(true);
     setUpdateError("");
     try {
-      await adminMatchService.updateMatchScore(
-        token,
-        id,
-        homeScore,
-        awayScore,
-        penaltyWinner,
-      );
+      await adminMatchService.updateMatchScore(token, id, homeScore, awayScore);
       setMatches((prev) =>
         prev.map((match) =>
           match.id === id
@@ -109,6 +102,20 @@ export function useMatches() {
     }
   };
 
+  const handleUpdateDate = async (id: string, date: Date) => {
+    if (!token) return;
+    try {
+      await adminMatchService.updateMatch(token, id, { date });
+      setMatches((prev) =>
+        prev.map((match) =>
+          match.id === id ? { ...match, date: date.toISOString() } : match,
+        ),
+      );
+    } catch (error) {
+      if (error instanceof Error) console.error(error.message);
+    }
+  };
+
   return {
     matches,
     loading,
@@ -123,6 +130,7 @@ export function useMatches() {
     fetchMatches,
     handleCreate,
     handleUpdateScore,
+    handleUpdateDate,
     handleDelete,
     clearCreateError: () => setCreateError(""),
     clearUpdateError: () => setUpdateError(""),

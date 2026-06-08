@@ -336,13 +336,21 @@ export const WORLD_CUP_PHASES = [
 ];
 
 const TEAM_BANNERS: Record<string, ImageSourcePropType> = {
-  argentina: require("../../assets/images/teams/arg.webp"),
-  brasil: require("../../assets/images/teams/bra.webp"),
-  francia: require("../../assets/images/teams/fra.webp"),
-  espana: require("../../assets/images/teams/esp.webp"),
+  argentina: require("../../assets/images/teams/arg.png"),
+  brasil: require("../../assets/images/teams/bra.png"),
+  francia: require("../../assets/images/teams/fra.png"),
+  espana: require("../../assets/images/teams/esp.png"),
+  inglaterra: require("../../assets/images/teams/eng.png"),
+  japon: require("../../assets/images/teams/jpn.png"),
+  alemania: require("../../assets/images/teams/gen.png"),
+  belgica: require("../../assets/images/teams/bel.png"),
+  uruguay: require("../../assets/images/teams/uru.png"),
+  paises_bajos: require("../../assets/images/teams/ned.png"),
+  costa_de_marfil: require("../../assets/images/teams/civ.png"),
+  portugal: require("../../assets/images/teams/por.png"),
 };
 
-const DEFAULT_BANNER = require("../../assets/images/teams/default.webp");
+const DEFAULT_BANNER = require("../../assets/images/teams/default.png");
 
 export function getTeamBanner(value: string): ImageSourcePropType {
   return TEAM_BANNERS[value] ?? DEFAULT_BANNER;

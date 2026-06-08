@@ -1,21 +1,21 @@
-import { StyleSheet } from 'react-native'
-import { radius, space, fontSize, font, palette } from '@/theme'
-import type { Theme } from '@/theme'
+import { StyleSheet } from "react-native";
+import { radius, space, fontSize, font, palette } from "@/theme";
+import type { Theme } from "@/theme";
 
 export function makeStyles(t: Theme) {
   return StyleSheet.create({
     badge: {
-      flexDirection:     'row',
-      alignItems:        'center',
-      gap:               space[1],
-      paddingVertical:   5,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: space[1],
+      paddingVertical: 5,
       paddingHorizontal: space[2],
-      borderRadius:      radius.xs,
+      borderRadius: radius.xs,
     },
     label: {
-      fontFamily:    font.notoBold,
-      fontSize:      fontSize.micro,
-      fontWeight:    '700',
+      fontFamily: font.notoBold,
+      fontSize: fontSize.micro,
+      fontWeight: "700",
       letterSpacing: 1,
     },
 
@@ -33,25 +33,30 @@ export function makeStyles(t: Theme) {
       backgroundColor: t.semantic.lossSoft,
     },
     partial: {
-      backgroundColor: 'rgba(255, 194, 14, 0.18)',
+      backgroundColor: "rgba(255, 194, 14, 0.18)",
     },
     final: {
       backgroundColor: t.bgOverlay2,
     },
+    wildcard: {
+      backgroundColor: 'rgba(123, 47, 181, 0.15)',
+    },
+    label_wildcard: { 
+      color: palette.purple 
+    },
 
-
-    label_live:    { color: '#FFFFFF' },
-    label_soon:    { color: '#FFFFFF' },
-    label_win:     { color: t.semantic.win },
-    label_loss:    { color: t.semantic.loss },
+    label_live: { color: "#FFFFFF" },
+    label_soon: { color: "#FFFFFF" },
+    label_win: { color: t.semantic.win },
+    label_loss: { color: t.semantic.loss },
     label_partial: { color: palette.gold },
-    label_final:   { color: t.textDisabled },
+    label_final: { color: t.textDisabled },
 
     pulse: {
-      width:         7,
-      height:        7,
-      borderRadius:  radius.full,
-      backgroundColor: '#FFFFFF',
+      width: 7,
+      height: 7,
+      borderRadius: radius.full,
+      backgroundColor: "#FFFFFF",
     },
-  })
+  });
 }

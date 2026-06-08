@@ -42,6 +42,7 @@ export function Home() {
       : data.favoriteTeamMatch.homeTeam
     : null;
 
+    console.log(user?.favoriteTeam)
   return (
     <Layout>
       {/* Loading */}
@@ -59,7 +60,6 @@ export function Home() {
           contentContainerStyle={styles.content}
           showsVerticalScrollIndicator={false}
         >
-
           {/* Upcoming Matches */}
           {data.upcomingMatches.length > 0 && (
             <UpcomingMatches matches={data.upcomingMatches} />
@@ -75,19 +75,23 @@ export function Home() {
               matchDate={data.favoriteTeamMatch.date}
             />
           )}
-          
+
           {/* Ranking */}
           <RankingList
             ranking={data.fullRanking}
             myUsername={user?.username}
             onViewMore={() => navigation.navigate("Ranking")}
+            onRowPress={(username) => {
+              if (username === user?.username) {
+                navigation.navigate("Profile", undefined);
+              } else {
+                navigation.navigate("Profile", { username });
+              }
+            }}
           />
 
           {/* Top Scorers */}
-          <TopScorersList
-            scorers={data.topScorers}
-            onViewMore={() => navigation.navigate("Standings")}
-          />
+          <TopScorersList scorers={data.topScorers} />
         </ScrollView>
       )}
     </Layout>

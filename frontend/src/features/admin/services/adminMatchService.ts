@@ -43,7 +43,6 @@ export const updateMatchScore = async (
   id: string,
   homeScore: number,
   awayScore: number,
-  penaltyWinner?: "home" | "away",
 ) => {
   const response = await fetch(`${API_ROUTES.adminMatches}/${id}/score`, {
     method: "PATCH",
@@ -51,7 +50,7 @@ export const updateMatchScore = async (
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ homeScore, awayScore, penaltyWinner }),
+    body: JSON.stringify({ homeScore, awayScore }),
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data.message);
@@ -67,4 +66,26 @@ export const deleteMatch = async (token: string, id: string) => {
   const data = await response.json();
   if (!response.ok) throw new Error(data.message);
   return data;
+};
+
+// Actualizar datos del partido (fecha, etc.)
+export const updateMatch = async (
+  token: string,
+  id: string,
+  data: {
+    date?: Date;
+    group?: string;
+  },
+) => {
+  const response = await fetch(`${API_ROUTES.adminMatches}/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  const result = await response.json();
+  if (!response.ok) throw new Error(result.message);
+  return result;
 };

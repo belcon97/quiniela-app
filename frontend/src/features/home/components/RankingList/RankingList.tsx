@@ -35,7 +35,9 @@ export function RankingList({
     points: entry.totalPoints,
   }));
 
+  const top5 = rankingRows.slice(0, 5);
   const myEntry = rankingRows.find((row) => row.username === myUsername);
+  const isInTop5 = top5.some((row) => row.username === myUsername);
 
   return (
     <View style={styles.container}>
@@ -55,9 +57,9 @@ export function RankingList({
         />
       ) : (
         <RankingTable
-          data={rankingRows}
+          data={top5}
           myUsername={myUsername}
-          myEntry={myEntry}
+          myEntry={isInTop5 ? undefined : myEntry}
           onRowPress={onRowPress}
         />
       )}

@@ -95,7 +95,7 @@ export function TopScorerPrediction() {
         // Sin predicción — form
         <View>
           <Text style={styles.topScorer__subtitle}>
-            Elegí quién será el máximo goleador. Vale +3 pts si acertás.
+          El goleador lo deben colocar de forma obligatoria antes del primer partido el cual no tendrá cambio luego de ser seleccionado, nosotros colocamos algunas opciones si desean colocar alguno que no este nos avisan por privado y lo agregamos. Al finalizar el mundial sabremos el máximo goleador los que lo lleguen acertar tendrá una sumatoria de 3 puntos.
           </Text>
 
           {/* Candidatos */}

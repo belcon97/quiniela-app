@@ -2,12 +2,9 @@ import { useState } from "react";
 import { Modal, View, Text, Pressable, StyleSheet } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import { BlurView } from "expo-blur";
-// Hooks
 import { useTheme } from "@/theme";
 import { useStyles } from "@/shared/hooks/useStyles";
-// Components
 import { ScoreInput } from "@/shared/ui/ScoreInput/ScoreInput";
-// Styles
 import { makeStyles } from "./ResultModal.styles";
 
 interface ResultModalProps {
@@ -16,18 +13,13 @@ interface ResultModalProps {
   awayTeam: string;
   group: string;
   onClose: () => void;
-  onConfirm: (
-    homeScore: number,
-    awayScore: number,
-    penaltyWinner?: "home" | "away",
-  ) => void;
+  onConfirm: (homeScore: number, awayScore: number) => void;
 }
 
 export function ResultModal({
   visible,
   homeTeam,
   awayTeam,
-  group,
   onClose,
   onConfirm,
 }: ResultModalProps) {
@@ -36,21 +28,9 @@ export function ResultModal({
 
   const [homeScore, setHomeScore] = useState(0);
   const [awayScore, setAwayScore] = useState(0);
-  const [penaltyWinner, setPenaltyWinner] = useState<"home" | "away" | null>(
-    null,
-  );
-
-  // Eliminatoria si NO empieza con "Grupo"
-  const isKnockout = !group.toLowerCase().startsWith("grupo");
-  const isTied = homeScore === awayScore;
-  const showPenaltyPicker = isKnockout && isTied;
 
   const handleConfirm = () => {
-    onConfirm(
-      homeScore,
-      awayScore,
-      showPenaltyPicker ? (penaltyWinner ?? undefined) : undefined,
-    );
+    onConfirm(homeScore, awayScore);
     onClose();
   };
 
@@ -69,20 +49,15 @@ export function ResultModal({
       >
         <Pressable style={styles.overlay} onPress={onClose}>
           <Pressable style={styles.card} onPress={(e) => e.stopPropagation()}>
-            {/* Header */}
             <View style={styles.header}>
               <Text style={styles.title}>ACTUALIZAR{"\n"}RESULTADO</Text>
               <Pressable onPress={onClose} style={styles.closeBtn}>
                 <Feather name="x" size={22} color={theme.textSecondary} />
               </Pressable>
             </View>
-
-            {/* Subtitle */}
             <Text style={styles.subtitle}>
               {homeTeam} vs {awayTeam}
             </Text>
-
-            {/* Scoreboard */}
             <View style={styles.scoreboard}>
               <View style={styles.teamSection}>
                 <Text style={styles.teamLabel}>{homeTeam}</Text>
@@ -94,51 +69,6 @@ export function ResultModal({
                 <ScoreInput value={awayScore} onChange={setAwayScore} />
               </View>
             </View>
-
-            {/* Penales */}
-            {showPenaltyPicker && (
-              <View style={styles.penalty}>
-                <Text style={styles.penaltyLabel}>¿QUIÉN GANA EN PENALES?</Text>
-                <View style={styles.penaltyBtns}>
-                  <Pressable
-                    style={[
-                      styles.penaltyBtn,
-                      penaltyWinner === "home" && styles.penaltyBtn_active,
-                    ]}
-                    onPress={() => setPenaltyWinner("home")}
-                  >
-                    <Text
-                      style={[
-                        styles.penaltyBtnText,
-                        penaltyWinner === "home" &&
-                          styles.penaltyBtnText_active,
-                      ]}
-                    >
-                      {homeTeam}
-                    </Text>
-                  </Pressable>
-                  <Pressable
-                    style={[
-                      styles.penaltyBtn,
-                      penaltyWinner === "away" && styles.penaltyBtn_active,
-                    ]}
-                    onPress={() => setPenaltyWinner("away")}
-                  >
-                    <Text
-                      style={[
-                        styles.penaltyBtnText,
-                        penaltyWinner === "away" &&
-                          styles.penaltyBtnText_active,
-                      ]}
-                    >
-                      {awayTeam}
-                    </Text>
-                  </Pressable>
-                </View>
-              </View>
-            )}
-
-            {/* Footer */}
             <View style={styles.footer}>
               <Pressable style={styles.cancelBtn} onPress={onClose}>
                 <Text style={styles.cancelText}>CANCELAR</Text>

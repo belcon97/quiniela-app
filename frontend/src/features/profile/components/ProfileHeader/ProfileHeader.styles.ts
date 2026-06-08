@@ -4,17 +4,21 @@ import type { Theme } from "@/theme";
 
 const IMAGE_OVERLAY = "rgba(0, 0, 0, 0.35)";
 const TEXT_ON_IMAGE = "#FFFFFF";
-const TEXT_ON_IMAGE_MUTED = "rgba(255, 255, 255, 0.7)";
+const TEXT_ON_IMAGE_MUTED = "#FFFFFF";
 
 export function makeStyles(_t: Theme) {
   return StyleSheet.create({
     container: {
-      height: 280,
+      width: '100%',
+      height: 220,
       borderRadius: radius.xl,
       overflow: "hidden",
     },
     bg: {
       flex: 1,
+      
+      width: '100%',
+      height: '100%',
       justifyContent: "flex-end",
     },
     overlay: {
@@ -94,7 +98,7 @@ export function makeStyles(_t: Theme) {
     },
     statBox: {
       flex: 1,
-      backgroundColor: "rgba(255, 255, 255, 0.15)",
+      backgroundColor: "rgba(132, 124, 124, 0.39)",
       borderRadius: radius.md,
       padding: space[3],
       gap: 2,

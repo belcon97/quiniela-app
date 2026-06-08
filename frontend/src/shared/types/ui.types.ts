@@ -1,5 +1,4 @@
-export type BadgeVariant = 'live' | 'soon' | 'win' | 'partial' | 'loss' | 'final'
-
+export type BadgeVariant = 'live' | 'soon' | 'win' | 'partial' | 'loss' | 'final' | 'wildcard'
 
 export interface RankingRowData {
   position:     number

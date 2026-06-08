@@ -1,4 +1,3 @@
-import { PenaltyWinner } from "@prisma/client";
 import {
   createMatchRepository,
   getMatchesRepository,
@@ -19,7 +18,7 @@ export const createMatchService = async (
     awayFlag: string;
     group: string;
     date: Date;
-  }[]
+  }[],
 ) => {
   // Validar que cada partido tenga todos los campos
   for (const match of matches) {
@@ -59,7 +58,7 @@ export const updateMatchService = async (
     awayFlag?: string;
     group?: string;
     date?: Date;
-  }
+  },
 ) => {
   // Verificar que el partido existe
   const match = await getMatchByIdRepository(id);
@@ -76,10 +75,9 @@ export const updateMatchScoreService = async (
   data: {
     homeScore: number;
     awayScore: number;
-    penaltyWinner?: PenaltyWinner;
-  }
+  },
 ) => {
-  const { homeScore, awayScore, penaltyWinner } = data;
+  const { homeScore, awayScore } = data;
 
   // Verificar que el partido existe
   const match = await getMatchByIdRepository(id);
@@ -92,9 +90,6 @@ export const updateMatchScoreService = async (
     throw { status: 400, message: "Este partido ya tiene resultado cargado" };
   }
 
-  // Determinar si es fase de grupos o eliminatoria
-  const isGroupStage = match.group.toLowerCase().startsWith("grupo");
-
   // Calcular puntos para cada prediccion
   const predictions = await getMatchPredictionsRepository(id);
 
@@ -102,53 +97,31 @@ export const updateMatchScoreService = async (
     predictions.map(async (prediction) => {
       let points = 0;
 
-      if (isGroupStage) {
-        // Ganador real
-        const realWinner =
-          homeScore > awayScore ? "home" : awayScore > homeScore ? "away" : "draw";
-
-        // Ganador predicho
-        const predictionWinner =
-          prediction.homeScore > prediction.awayScore
-            ? "home"
-            : prediction.awayScore > prediction.homeScore
+      // Ganador real
+      const realWinner =
+        homeScore > awayScore
+          ? "home"
+          : awayScore > homeScore
             ? "away"
             : "draw";
 
-        // Resultado exacto → 3 puntos
-        if (prediction.homeScore === homeScore && prediction.awayScore === awayScore) {
-          points = 3;
+      // Ganador predicho
+      const predictionWinner =
+        prediction.homeScore > prediction.awayScore
+          ? "home"
+          : prediction.awayScore > prediction.homeScore
+            ? "away"
+            : "draw";
+
+      // Resultado exacto → 3 puntos
+      if (
+        prediction.homeScore === homeScore &&
+        prediction.awayScore === awayScore
+      ) {
+        points = 3;
         // Ganador correcto → 1 punto
-        } else if (realWinner === predictionWinner) {
-          points = 1;
-        }
-      } else {
-        // Fase eliminatoria — penaltyWinner desempata
-        const realWinner =
-          homeScore > awayScore
-            ? "home"
-            : awayScore > homeScore
-            ? "away"
-            : penaltyWinner ?? null;
-
-        const predictionWinner =
-          prediction.homeScore > prediction.awayScore
-            ? "home"
-            : prediction.awayScore > prediction.homeScore
-            ? "away"
-            : prediction.penaltyWinner ?? null;
-
-        // Resultado exacto + penales correctos → 3 puntos
-        if (
-          prediction.homeScore === homeScore &&
-          prediction.awayScore === awayScore &&
-          predictionWinner === realWinner
-        ) {
-          points = 3;
-        // Solo ganador correcto → 1 punto
-        } else if (predictionWinner === realWinner) {
-          points = 1;
-        }
+      } else if (realWinner === predictionWinner) {
+        points = 1;
       }
 
       // Aplicar comodin — duplica los puntos
@@ -157,11 +130,11 @@ export const updateMatchScoreService = async (
       }
 
       await updatePredictionPointsRepository(prediction.id, points);
-    })
+    }),
   );
 
   // Actualizar el partido con el resultado
-  await updateMatchScoreRepository(id, { homeScore, awayScore, penaltyWinner });
+  await updateMatchScoreRepository(id, { homeScore, awayScore });
 
   return { message: "Resultado cargado correctamente" };
 };

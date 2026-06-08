@@ -11,7 +11,6 @@ import { CountryPicker } from "@/shared/components/CountryPicker/CountryPicker";
 import { StateView } from "@/shared/ui/StateView/StateView";
 import { LoadingState } from "@/shared/ui/LoadingState/LoadingState";
 import { ConfirmModal } from "@/shared/ui/ConfirmModal/ConfirmModal";
-
 import { AdminSubTabs } from "@/features/admin/components/AdminSubTabs/AdminSubTabs";
 import { TopScorerCard } from "@/features/admin/components/TopScorerCard/TopScorerCard";
 import { GoalsModal } from "@/features/admin/components/GoalsModal/GoalsModal";
@@ -34,11 +33,18 @@ export function TopScorersTab() {
     creating,
     createError,
     createSuccess,
-    deleting,
+    togglingSelection,
+    selectionError,
+    selectionSuccess,
+    closing,
+    closeError,
+    closeSuccess,
     fetchTopScorers,
     handleCreate,
     handleUpdateGoals,
     handleDelete,
+    handleToggleSelection,
+    handleCloseTopScorer,
   } = useTopScorers();
 
   const [subTab, setSubTab] = useState("create");
@@ -116,7 +122,7 @@ export function TopScorersTab() {
           </>
         )}
 
-        {/* Lista de goleadores  */}
+        {/* Lista de goleadores */}
         {subTab === "list" && (
           <>
             {loading && <LoadingState />}
@@ -125,15 +131,76 @@ export function TopScorersTab() {
               <StateView icon="award" title="SIN GOLEADORES" />
             )}
 
-            {!loading &&
-              topScorers.map((scorer) => (
-                <TopScorerCard
-                  key={scorer.id}
-                  player={scorer}
-                  onGoals={() => setScorerToEdit(scorer)}
-                  onDelete={() => setScorerToDelete(scorer)}
-                />
-              ))}
+            {!loading && topScorers.length > 0 && (
+              <>
+                {topScorers.map((scorer) => (
+                  <TopScorerCard
+                    key={scorer.id}
+                    player={scorer}
+                    onGoals={() => setScorerToEdit(scorer)}
+                    onDelete={() => setScorerToDelete(scorer)}
+                  />
+                ))}
+
+                {/* Período de selección */}
+                <View style={styles.formSection}>
+                  <Button
+                    variant="outline"
+                    onPress={() =>
+                      handleToggleSelection(topScorers[0]?.isActive ?? true)
+                    }
+                    disabled={togglingSelection}
+                  >
+                    {togglingSelection
+                      ? "PROCESANDO..."
+                      : topScorers[0]?.isActive
+                        ? "CERRAR SELECCIÓN"
+                        : "ABRIR SELECCIÓN"}
+                  </Button>
+
+                  {selectionError ? (
+                    <Text
+                      style={[styles.feedbackText, styles.feedbackText_error]}
+                    >
+                      {selectionError}
+                    </Text>
+                  ) : null}
+                  {selectionSuccess ? (
+                    <Text
+                      style={[styles.feedbackText, styles.feedbackText_success]}
+                    >
+                      {selectionSuccess}
+                    </Text>
+                  ) : null}
+                </View>
+
+                {/* Finalizar torneo */}
+                <View style={styles.formSection}>
+                  <Button
+                    variant="danger"
+                    onPress={handleCloseTopScorer}
+                    disabled={closing}
+                  >
+                    {closing ? "CERRANDO..." : "FINALIZAR TORNEO"}
+                  </Button>
+
+                  {closeError ? (
+                    <Text
+                      style={[styles.feedbackText, styles.feedbackText_error]}
+                    >
+                      {closeError}
+                    </Text>
+                  ) : null}
+                  {closeSuccess ? (
+                    <Text
+                      style={[styles.feedbackText, styles.feedbackText_success]}
+                    >
+                      {closeSuccess}
+                    </Text>
+                  ) : null}
+                </View>
+              </>
+            )}
           </>
         )}
       </ScrollView>

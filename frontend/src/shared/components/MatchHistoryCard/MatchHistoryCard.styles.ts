@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { radius, space, fontSize, font } from "@/theme";
+import { font, fontSize, space, radius, palette } from "@/theme";
 import type { Theme } from "@/theme";
 
 export function makeStyles(t: Theme) {
@@ -14,10 +14,23 @@ export function makeStyles(t: Theme) {
       padding: space[4],
       gap: space[3],
     },
+
     card_win: { borderLeftWidth: 4, borderLeftColor: t.semantic.win },
     card_partial: { borderLeftWidth: 4, borderLeftColor: t.semantic.draw },
     card_loss: { borderLeftWidth: 4, borderLeftColor: t.semantic.loss },
     card_soon: { borderLeftWidth: 4, borderLeftColor: t.primary },
+    card_wildcardWin: {
+      borderLeftWidth: 4,
+      borderLeftColor: palette.purple,
+      borderTopWidth: 4,
+      borderTopColor: palette.purple,
+    },
+    card_wildcardPartial: {
+      borderLeftWidth: 4,
+      borderLeftColor: palette.purple,
+      borderTopWidth: 4,
+      borderTopColor: palette.purple,
+    },
 
     flags: {
       position: "relative",
@@ -48,6 +61,12 @@ export function makeStyles(t: Theme) {
       fontFamily: font.notoRegular,
       fontSize: fontSize.caption,
       color: t.textSecondary,
+    },
+    wildcardLabel: {
+      fontFamily: font.notoBold,
+      fontSize: fontSize.micro,
+      color: palette.purple,
+      letterSpacing: 0.5,
     },
   });
 }

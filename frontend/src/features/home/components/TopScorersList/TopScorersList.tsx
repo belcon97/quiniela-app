@@ -12,10 +12,9 @@ import { makeStyles } from "./TopScorersList.styles";
 
 interface TopScorersListProps {
   scorers: TopScorer[];
-  onViewMore?: () => void;
 }
 
-export function TopScorersList({ scorers, onViewMore }: TopScorersListProps) {
+export function TopScorersList({ scorers }: TopScorersListProps) {
   const styles = useStyles(makeStyles)
 
   return (
@@ -25,7 +24,6 @@ export function TopScorersList({ scorers, onViewMore }: TopScorersListProps) {
       <SectionHeader
         title="TOP GOLEADORES"
         icon="award"
-        onViewMore={onViewMore}
       />
 
       {/* List */}

@@ -1,80 +1,91 @@
-import { View, Text } from 'react-native'
-import Feather from '@expo/vector-icons/Feather'
+import { View, Text } from "react-native";
+import Feather from "@expo/vector-icons/Feather";
 // Hooks
-import { useTheme } from '@/theme'
-import { useStyles } from '@/shared/hooks/useStyles'
+import { useTheme } from "@/theme";
+import { useStyles } from "@/shared/hooks/useStyles";
 // Components
-import { Flag } from '@/shared/ui/Flag/Flag'
-import { Button } from '@/shared/ui/Button/Button'
+import { Flag } from "@/shared/ui/Flag/Flag";
+import { Button } from "@/shared/ui/Button/Button";
 // Types
-import type { Match } from '@/shared/types'
+import type { Match } from "@/shared/types";
 // Styles
-import { makeStyles } from './MatchResultCard.styles'
+import { makeStyles } from "./MatchResultCard.styles";
 
 interface MatchResultCardProps {
-  match:     Match
-  date:      string
-  onEdit:    () => void
-  onDelete:  () => void
+  match: Match;
+  date: string;
+  onEdit: () => void;
+  onEditDate: () => void;
+  onDelete: () => void;
 }
 
 export function MatchResultCard({
   match,
   date,
   onEdit,
+  onEditDate,
   onDelete,
 }: MatchResultCardProps) {
-  const theme  = useTheme()
-  const styles = useStyles(makeStyles)
+  const theme = useTheme();
+  const styles = useStyles(makeStyles);
 
-  const isFinal = match.status === 'completed' ||
-    (match.homeScore !== null && match.awayScore !== null)
+  const isFinal =
+    match.status === "completed" ||
+    (match.homeScore !== null && match.awayScore !== null);
 
   return (
     <View style={styles.card}>
-
       {/* Badge */}
       <View style={[styles.badge, isFinal && styles.badge_final]}>
         <Text style={[styles.badgeText, isFinal && styles.badgeText_final]}>
-          {isFinal ? `FINAL · ${match.homeScore}-${match.awayScore}` : 'PENDIENTE'}
+          {isFinal
+            ? `FINAL · ${match.homeScore}-${match.awayScore}`
+            : "PENDIENTE"}
         </Text>
       </View>
 
       {/* Match */}
       <View style={styles.match}>
-
-        {/* Home */}
         <View style={styles.team}>
           <Flag uri={match.homeFlag} name={match.homeTeam} size="md" />
           <Text style={styles.teamName}>{match.homeTeam}</Text>
         </View>
-
-        {/* VS */}
         <Text style={styles.vs}>VS</Text>
-
-        {/* Away */}
         <View style={styles.team}>
           <Flag uri={match.awayFlag} name={match.awayTeam} size="md" />
           <Text style={styles.teamName}>{match.awayTeam}</Text>
         </View>
-
       </View>
 
       {/* Date */}
       <Text style={styles.date}>{date}</Text>
 
       {/* Actions */}
-      {!isFinal && (
-        <View style={styles.actions}>
-          <View style={styles.actionBtn}>
-            <Button
-              variant="outline"
-              icon={<Feather name="edit-2" size={16} color={theme.textPrimary} />}
-              onPress={onEdit}
-            >
-              Resultado
-            </Button>
-          </View>
+      <View style={styles.actions}>
+        {/* Resultado — siempre visible */}
+        <View style={styles.actionBtn}>
+          <Button
+            variant="outline"
+            icon={<Feather name="edit-2" size={16} color={theme.textPrimary} />}
+            onPress={onEdit}
+          >
+            Resultado
+          </Button>
+        </View>
+
+        {/* Horario — siempre visible */}
+        <View style={styles.actionBtn}>
+          <Button
+            variant="outline"
+            icon={<Feather name="clock" size={16} color={theme.textPrimary} />}
+            onPress={onEditDate}
+          >
+            Horario
+          </Button>
+        </View>
+
+        {/* Eliminar — solo partidos pendientes */}
+        {!isFinal && (
           <View style={styles.actionBtn}>
             <Button
               variant="danger"
@@ -84,9 +95,8 @@ export function MatchResultCard({
               Eliminar
             </Button>
           </View>
-        </View>
-      )}
-
+        )}
+      </View>
     </View>
-  )
+  );
 }

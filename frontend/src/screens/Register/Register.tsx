@@ -120,7 +120,7 @@ export default function Register({
           <View style={styles.headerContent}>
             <Text style={styles.headerTitle}>CREÁ TU{"\n"}CUENTA</Text>
             <Text style={styles.headerSubtitle}>
-              Armá tu liga en minutos. El Mundial se vive prediciendo.
+              Armá tu liga en minutos. 
             </Text>
           </View>
         </ImageBackground>

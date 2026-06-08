@@ -39,7 +39,6 @@ interface PendingPrediction {
   homeScore: string;
   awayScore: string;
   isWildcard: boolean;
-  penaltyWinner: "home" | "away" | null;
 }
 
 export function PrivateProfile() {
@@ -80,7 +79,6 @@ export function PrivateProfile() {
         homeScore: "",
         awayScore: "",
         isWildcard: false,
-        penaltyWinner: null,
       };
     });
     setPredictions(initial);
@@ -95,7 +93,8 @@ export function PrivateProfile() {
   const groupMatches = grouped[activeGroup] ?? [];
   const wildcardUsed = Object.values(predictions).some((p) => p.isWildcard);
 
-  const favoriteTeam = user?.favoriteTeam ?? null;
+  const favoriteTeam =
+    user?.favoriteTeam === "nobody" ? null : (user?.favoriteTeam ?? null);
   const country = WORLD_CUP_COUNTRIES.find(
     (c) => c.label.toLowerCase() === favoriteTeam?.toLowerCase(),
   );
@@ -126,21 +125,12 @@ export function PrivateProfile() {
     });
   };
 
-  const handlePenaltyWinner = (matchId: string, winner: "home" | "away") => {
-    setPredictions((prev) => ({
-      ...prev,
-      [matchId]: { ...prev[matchId], penaltyWinner: winner },
-    }));
-  };
-
   const handleSavePredictions = async () => {
     if (!token) return;
-
     const filled = Object.values(predictions).filter(
       (p) => p.homeScore.trim() !== "" && p.awayScore.trim() !== "",
     );
     if (filled.length === 0) return;
-
     try {
       setSaving(true);
       await profileService.createPredictions(
@@ -150,10 +140,8 @@ export function PrivateProfile() {
           homeScore: Number(p.homeScore),
           awayScore: Number(p.awayScore),
           isWildcard: p.isWildcard,
-          penaltyWinner: p.penaltyWinner ?? undefined,
         })),
       );
-
       const currentIndex = groups.indexOf(activeGroup);
       const nextGroup = groups[currentIndex + 1];
       setTimeout(() => {
@@ -283,7 +271,6 @@ export function PrivateProfile() {
         {privateData.matchesWithoutPredictions.length > 0 && (
           <View style={styles.padded}>
             <Text style={styles.sectionLabel}>PREDICCIONES PENDIENTES</Text>
-
             {groups.length === 0 ? (
               <StateView
                 icon="check-circle"
@@ -292,7 +279,6 @@ export function PrivateProfile() {
               />
             ) : (
               <>
-                {/* Chips */}
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                   <View style={styles.chips}>
                     {groups.map((g) => (
@@ -307,7 +293,6 @@ export function PrivateProfile() {
                   </View>
                 </ScrollView>
 
-                {/* Cards */}
                 {groupMatches.map((match: Match) => {
                   const pred = predictions[match.id];
                   if (!pred) return null;
@@ -321,7 +306,6 @@ export function PrivateProfile() {
                       isWildcard={pred.isWildcard}
                       wildcardUsed={wildcardUsed}
                       wildcardAvailable={privateData.wildcardAvailable}
-                      penaltyWinner={pred.penaltyWinner}
                       onHomeChange={(v) =>
                         handleScoreChange(match.id, "homeScore", v)
                       }
@@ -329,12 +313,10 @@ export function PrivateProfile() {
                         handleScoreChange(match.id, "awayScore", v)
                       }
                       onWildcard={() => handleWildcard(match.id)}
-                      onPenaltyWinner={(w) => handlePenaltyWinner(match.id, w)}
                     />
                   );
                 })}
 
-                {/* Guardar */}
                 <Button
                   onPress={handleSavePredictions}
                   disabled={saving}
@@ -348,7 +330,7 @@ export function PrivateProfile() {
           </View>
         )}
 
-        {/*  Accions  */}
+        {/* Acciones */}
         <View style={styles.actionBtn}>
           <Button
             variant="outline"
@@ -369,7 +351,6 @@ export function PrivateProfile() {
         </View>
       </ScrollView>
 
-      {/* Modal */}
       <ChangePasswordModal
         visible={showChangePassword}
         onClose={() => setShowChangePassword(false)}

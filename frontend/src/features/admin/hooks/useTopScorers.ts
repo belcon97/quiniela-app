@@ -81,9 +81,9 @@ export function useTopScorers() {
     try {
       await adminTopScorerService.updateGoals(token, id, goals);
       setTopScorers((prev) =>
-        prev.map((scorer) =>
-          scorer.id === id ? { ...scorer, goals } : scorer,
-        ),
+        prev
+          .map((scorer) => scorer.id === id ? { ...scorer, goals } : scorer)
+          .sort((a, b) => b.goals - a.goals)
       );
     } catch (error) {
       if (error instanceof Error) setUpdateError(error.message);

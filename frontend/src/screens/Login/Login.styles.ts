@@ -38,6 +38,7 @@ export function makeStyles(t: Theme) {
       fontSize: fontSize.body,
       color: "rgba(255, 255, 255, 0.85)",
       lineHeight: 24,
+      marginBottom: 24,
     },
 
     // Form
@@ -76,18 +77,18 @@ export function makeStyles(t: Theme) {
     footer: {
       flexDirection: "row",
       justifyContent: "center",
-      gap: space[1],
+      gap: space[2],
       paddingBottom: space[4],
     },
     footerText: {
       fontFamily: font.notoRegular,
-      fontSize: fontSize.bodySm,
+      fontSize: fontSize.bodyLg,
       color: t.textSecondary,
     },
     footerLink: {
       fontFamily: font.notoBold,
-      fontSize: fontSize.bodySm,
-      color: t.primary,
+      fontSize: fontSize.bodyLg,
+      color: t.secondary,
     },
   });
 }

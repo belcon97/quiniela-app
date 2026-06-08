@@ -35,12 +35,12 @@ export const RULES_STEPS: RuleStep[] = [
     badgeTextColor: "#166534",
     title: "GOLEADOR DEL TORNEO",
     description:
-      "Si acertás el goleador del torneo al inicio de la quiniela, sumás 3 puntos adicionales.",
+      "Si acertás el goleador del torneo al inicio del Prode, sumás 3 puntos adicionales.",
   },
   {
     id: 5,
     badge: "⚖️",
-    badgeColor: "rgba(255, 255, 255, 0.1)",
+    badgeColor: "rgba(229, 229, 229, 0.1)",
     badgeTextColor: "#9AA1AD",
     title: "EMPATES Y FASE ELIMINATORIA",
     description:

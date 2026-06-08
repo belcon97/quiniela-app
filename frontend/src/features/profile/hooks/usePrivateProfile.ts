@@ -12,6 +12,9 @@ export function usePrivateProfile() {
   const setPendingMatches = usePredictionStore(
     (state) => state.setPendingMatches,
   );
+  const setMyPredictions = usePredictionStore(
+    (state) => state.setMyPredictions,
+  );
 
   const [loading, setLoading] = useState(true);
   const [privateData, setPrivateData] = useState<PrivateProfileData | null>(
@@ -26,6 +29,11 @@ export function usePrivateProfile() {
       const profile = await profileService.getPrivateProfile(token);
       setPrivateData(profile);
       setPendingMatches(profile.matchesWithoutPredictions);
+      // Guardamos todas las predicciones del usuario en el store
+      setMyPredictions([
+        ...profile.predictionsHistory,
+        ...profile.predictionsPending,
+      ]);
     } catch (err) {
       if (err instanceof Error) setError(err.message);
     } finally {

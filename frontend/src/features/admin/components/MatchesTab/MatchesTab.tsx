@@ -6,14 +6,12 @@ import { useStyles } from "@/shared/hooks/useStyles";
 import { useMatches } from "@/features/admin/hooks/useMatches";
 // Components
 import { Button } from "@/shared/ui/Button/Button";
-import { Input } from "@/shared/ui/Input/Input";
 import { SelectField } from "@/shared/ui/SelectField/SelectField";
 import { CountryPicker } from "@/shared/components/CountryPicker/CountryPicker";
 import { StateView } from "@/shared/ui/StateView/StateView";
 import { LoadingState } from "@/shared/ui/LoadingState/LoadingState";
 import { ConfirmModal } from "@/shared/ui/ConfirmModal/ConfirmModal";
 import { Chip } from "@/shared/ui/Chip/Chip";
-
 import { AdminSubTabs } from "@/features/admin/components/AdminSubTabs/AdminSubTabs";
 import { MatchResultCard } from "@/features/admin/components/MatchResultCard/MatchResultCard";
 import { ResultModal } from "@/features/admin/components/ResultModal/ResultModal";
@@ -49,6 +47,7 @@ export function MatchesTab() {
     handleCreate,
     handleUpdateScore,
     handleDelete,
+    handleUpdateDate,
     clearUpdateError,
   } = useMatches();
 
@@ -56,6 +55,14 @@ export function MatchesTab() {
   const [selectedGroup, setSelectedGroup] = useState("");
   const [matchToEdit, setMatchToEdit] = useState<Match | null>(null);
   const [matchToDelete, setMatchToDelete] = useState<Match | null>(null);
+
+  // Estado para editar fecha
+  const [matchToEditDate, setMatchToEditDate] = useState<Match | null>(null);
+  const [editDate, setEditDate] = useState("");
+  const [editTime, setEditTime] = useState("");
+  const [editSelectedDate, setEditSelectedDate] = useState(new Date());
+  const [showEditDatePicker, setShowEditDatePicker] = useState(false);
+  const [showEditTimePicker, setShowEditTimePicker] = useState(false);
 
   // Pickers
   const [homePickerVisible, setHomePickerVisible] = useState(false);
@@ -88,7 +95,7 @@ export function MatchesTab() {
 
     const finalDate =
       Platform.OS === "web"
-        ? new Date(`${date}T${time}:00.000Z`)
+        ? new Date(`${date}T${time}:00`) // ← hora local, sin Z
         : selectedDate;
 
     if (!finalDate || isNaN(finalDate.getTime())) return;
@@ -113,7 +120,7 @@ export function MatchesTab() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/*  Crear partido  */}
+        {/* Crear partido */}
         {subTab === "create" && (
           <>
             {/* Equipo local */}
@@ -149,9 +156,8 @@ export function MatchesTab() {
                 onPress={() => setGroupPickerVisible(true)}
               />
 
-              {/* Fecha y hora  */}
+              {/* Fecha y hora */}
               {Platform.OS === "web" ? (
-                // Web
                 <View style={styles.formRow}>
                   <View style={styles.formRowItem}>
                     <Text style={styles.formTitle}>FECHA</Text>
@@ -175,7 +181,7 @@ export function MatchesTab() {
                     />
                   </View>
                   <View style={styles.formRowItem}>
-                    <Text style={styles.formTitle}>HORA (UTC)</Text>
+                    <Text style={styles.formTitle}>HORA (LOCAL)</Text>
                     {/* @ts-ignore */}
                     <input
                       type="time"
@@ -197,9 +203,8 @@ export function MatchesTab() {
                   </View>
                 </View>
               ) : (
-                // Mobile
                 <View style={styles.formSection}>
-                  <Text style={styles.formTitle}>FECHA Y HORA (UTC)</Text>
+                  <Text style={styles.formTitle}>FECHA Y HORA (LOCAL)</Text>
 
                   <Pressable
                     style={styles.dateField}
@@ -228,10 +233,10 @@ export function MatchesTab() {
                         setShowDatePicker(false);
                         if (selected) {
                           const updated = new Date(selectedDate);
-                          updated.setUTCFullYear(
-                            selected.getUTCFullYear(),
-                            selected.getUTCMonth(),
-                            selected.getUTCDate(),
+                          updated.setFullYear(
+                            selected.getFullYear(),
+                            selected.getMonth(),
+                            selected.getDate(),
                           );
                           setSelectedDate(updated);
                         }
@@ -249,9 +254,9 @@ export function MatchesTab() {
                         setShowTimePicker(false);
                         if (selected) {
                           const updated = new Date(selectedDate);
-                          updated.setUTCHours(
-                            selected.getUTCHours(),
-                            selected.getUTCMinutes(),
+                          updated.setHours(
+                            selected.getHours(),
+                            selected.getMinutes(),
                           );
                           setSelectedDate(updated);
                         }
@@ -280,7 +285,7 @@ export function MatchesTab() {
           </>
         )}
 
-        {/* Lista de partidos  */}
+        {/* Lista de partidos */}
         {subTab === "list" && (
           <>
             {loading && <LoadingState />}
@@ -311,6 +316,19 @@ export function MatchesTab() {
                     match={match}
                     date={formatMatchDate(match.date)}
                     onEdit={() => setMatchToEdit(match)}
+                    onEditDate={() => {
+                      setMatchToEditDate(match);
+                      const d = new Date(match.date);
+                      setEditSelectedDate(d);
+                      // Convertimos a hora local para mostrar en el input
+                      const localDate = new Date(
+                        d.getTime() - d.getTimezoneOffset() * 60000,
+                      );
+                      setEditDate(localDate.toISOString().split("T")[0]);
+                      setEditTime(
+                        localDate.toISOString().split("T")[1].slice(0, 5),
+                      );
+                    }}
                     onDelete={() => setMatchToDelete(match)}
                   />
                 ))}
@@ -320,21 +338,19 @@ export function MatchesTab() {
         )}
       </ScrollView>
 
-      {/* Pickers  */}
+      {/* Pickers */}
       <CountryPicker
         visible={homePickerVisible}
         title="EQUIPO LOCAL"
         onSelect={(country) => setHomeTeam(country)}
         onClose={() => setHomePickerVisible(false)}
       />
-
       <CountryPicker
         visible={awayPickerVisible}
         title="EQUIPO VISITANTE"
         onSelect={(country) => setAwayTeam(country)}
         onClose={() => setAwayPickerVisible(false)}
       />
-
       <GroupPicker
         visible={groupPickerVisible}
         selected={group}
@@ -349,13 +365,8 @@ export function MatchesTab() {
           homeTeam={matchToEdit.homeTeam}
           awayTeam={matchToEdit.awayTeam}
           group={matchToEdit.group ?? ""}
-          onConfirm={async (homeScore, awayScore, penaltyWinner) => {
-            await handleUpdateScore(
-              matchToEdit.id,
-              homeScore,
-              awayScore,
-              penaltyWinner,
-            );
+          onConfirm={async (homeScore, awayScore) => {
+            await handleUpdateScore(matchToEdit.id, homeScore, awayScore);
             setMatchToEdit(null);
             clearUpdateError();
           }}
@@ -379,6 +390,113 @@ export function MatchesTab() {
           }}
           onClose={() => setMatchToDelete(null)}
         />
+      )}
+
+      {/* Edit Date Modal */}
+      {matchToEditDate && (
+        <ConfirmModal
+          visible={!!matchToEditDate}
+          title="EDITAR HORARIO"
+          subtitle={`${matchToEditDate.homeTeam} vs ${matchToEditDate.awayTeam}`}
+          confirmLabel="GUARDAR"
+          showTrashIcon={false}
+          onConfirm={async () => {
+            const finalDate =
+              Platform.OS === "web"
+                ? new Date(`${editDate}T${editTime}:00`) // ← hora local, sin Z
+                : editSelectedDate;
+            await handleUpdateDate(matchToEditDate.id, finalDate);
+            setMatchToEditDate(null);
+          }}
+          onClose={() => setMatchToEditDate(null)}
+        >
+          {Platform.OS === "web" ? (
+            <View style={styles.formRow}>
+              <View style={styles.formRowItem}>
+                {/* @ts-ignore */}
+                <input
+                  type="date"
+                  value={editDate}
+                  onChange={(e: any) => setEditDate(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "12px 16px",
+                    borderRadius: "8px",
+                    border: "1px solid #E5E7EB",
+                    fontSize: "14px",
+                    fontFamily: "inherit",
+                    backgroundColor: "#F9FAFB",
+                    color: "#111827",
+                    boxSizing: "border-box",
+                    outline: "none",
+                  }}
+                />
+              </View>
+              <View style={styles.formRowItem}>
+                {/* @ts-ignore */}
+                <input
+                  type="time"
+                  value={editTime}
+                  onChange={(e: any) => setEditTime(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "12px 16px",
+                    borderRadius: "8px",
+                    border: "1px solid #E5E7EB",
+                    fontSize: "14px",
+                    fontFamily: "inherit",
+                    backgroundColor: "#F9FAFB",
+                    color: "#111827",
+                    boxSizing: "border-box",
+                    outline: "none",
+                  }}
+                />
+              </View>
+            </View>
+          ) : (
+            <View>
+              <Pressable
+                style={styles.dateField}
+                onPress={() => setShowEditDatePicker(true)}
+              >
+                <Text style={styles.dateFieldText}>
+                  {formatDateLabel(editSelectedDate)}
+                </Text>
+              </Pressable>
+              <Pressable
+                style={styles.dateField}
+                onPress={() => setShowEditTimePicker(true)}
+              >
+                <Text style={styles.dateFieldText}>
+                  {formatTimeLabel(editSelectedDate)}
+                </Text>
+              </Pressable>
+              {showEditDatePicker && (
+                <DateTimePicker
+                  value={editSelectedDate}
+                  mode="date"
+                  display="default"
+                  onChange={(_, selected) => {
+                    setShowEditDatePicker(false);
+                    if (selected) setEditSelectedDate(selected);
+                  }}
+                />
+              )}
+              {showEditTimePicker && (
+                <DateTimePicker
+                  value={editSelectedDate}
+                  mode="time"
+                  display="default"
+                  is24Hour
+                  onChange={(_, selected) => {
+                    setShowEditTimePicker(false);
+                    if (selected) setEditSelectedDate(selected);
+                  }}
+                />
+              )}
+            </View>
+          )}
+        </ConfirmModal>
       )}
     </View>
   );

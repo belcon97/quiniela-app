@@ -4,6 +4,7 @@ import {
   ImageBackground,
   type ImageSourcePropType,
 } from "react-native";
+import Feather from "@expo/vector-icons/Feather";
 // Hooks
 import { useStyles } from "@/shared/hooks/useStyles";
 // Components
@@ -28,7 +29,6 @@ interface ProfileHeaderProps {
 export function ProfileHeader({
   name,
   username,
-  role,
   favoriteTeam,
   flagUrl,
   banner,
@@ -51,6 +51,7 @@ export function ProfileHeader({
 
       {/* Content */}
       <View style={styles.content}>
+
         {/* User row */}
         <View style={styles.userRow}>
           {favoriteTeam && flagUrl ? (
@@ -66,6 +67,7 @@ export function ProfileHeader({
 
         {/* Badges row */}
         <View style={styles.badges}>
+
           {/* Wildcard */}
           <View
             style={[
@@ -73,8 +75,7 @@ export function ProfileHeader({
               wildcardAvailable ? styles.badge_active : styles.badge_inactive,
             ]}
           >
-            <Text style={styles.badgeIcon}>×2</Text>
-            <Text style={styles.badgeLabel}>COMODÍN</Text>
+            <Text style={styles.badgeLabel}>COMODÍN:</Text>
             <Text style={styles.badgeStatus}>
               {wildcardAvailable ? "ACTIVO" : "INACTIVO"}
             </Text>
@@ -87,12 +88,12 @@ export function ProfileHeader({
               topScorerName ? styles.badge_active : styles.badge_inactive,
             ]}
           >
-            <Text style={styles.badgeIcon}>⚽</Text>
-            <Text style={styles.badgeLabel}>GOLEADOR</Text>
+            <Text style={styles.badgeLabel}>GOLEADOR:</Text>
             <Text style={styles.badgeStatus} numberOfLines={1}>
               {topScorerName ?? "SIN ELEGIR"}
             </Text>
           </View>
+
         </View>
 
         {/* Stats row */}
@@ -108,6 +109,7 @@ export function ProfileHeader({
             </Text>
           </View>
         </View>
+
       </View>
     </ImageBackground>
   );

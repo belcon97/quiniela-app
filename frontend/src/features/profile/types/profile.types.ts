@@ -9,7 +9,6 @@ export interface Prediction {
   awayScore: number;
   points: number | null;
   isWildcard: boolean;
-  penaltyWinner: string | null;
   createdAt: string;
   match: Match;
 }

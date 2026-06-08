@@ -22,7 +22,7 @@ interface AuthActions {
 
   hydrateStore: () => Promise<void>;
   clearNewUser: () => void;
-  setFavoriteTeam: (team: string | null) => void;
+  setFavoriteTeam: (team: string | null) => Promise<void>;
 }
 
 // Storage
@@ -92,8 +92,15 @@ export const useAuthStore = create<AuthState & AuthActions>((set) => ({
 
   clearNewUser: () => set({ isNewUser: false }),
 
-  setFavoriteTeam: (team) =>
+  setFavoriteTeam: async (team) => {
     set((state) => ({
       user: state.user ? { ...state.user, favoriteTeam: team } : null,
-    })),
+    }));
+    // Persistir el usuario actualizado en storage
+    const currentUser = useAuthStore.getState().user;
+    if (currentUser) {
+      const updatedUser = { ...currentUser, favoriteTeam: team };
+      await storage.setItem(STORAGE_KEYS.user, JSON.stringify(updatedUser));
+    }
+  },
 }));

@@ -1,4 +1,4 @@
-import { MatchStatus, PenaltyWinner } from "@prisma/client";
+import { MatchStatus } from "@prisma/client";
 import prisma from "../../lib/prisma";
 
 // Crear uno o varios partidos
@@ -53,14 +53,11 @@ export const updateMatchScoreRepository = async (
   data: {
     homeScore: number;
     awayScore: number;
-    penaltyWinner?: PenaltyWinner;
   },
 ) => {
-  const { penaltyWinner, ...matchData } = data;
-
   return prisma.match.update({
     where: { id },
-    data: { ...matchData, status: MatchStatus.completed },
+    data: { ...data, status: MatchStatus.completed },
   });
 };
 

@@ -16,7 +16,7 @@ export function makeStyles(t: Theme) {
     },
     title: {
       fontFamily:    font.archiveBlack,
-      fontSize:      fontSize.h2,
+      fontSize:      fontSize.h3,
       color:         t.textPrimary,
       textTransform: 'uppercase',
       letterSpacing: -0.56,

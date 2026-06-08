@@ -14,7 +14,11 @@ interface StandingGroupProps {
   qualifiers?: number;
 }
 
-export function StandingGroup({ group, favoriteTeam, qualifiers = 2 }: StandingGroupProps) {
+export function StandingGroup({
+  group,
+  favoriteTeam,
+  qualifiers = 2,
+}: StandingGroupProps) {
   const styles = useStyles(makeStyles);
 
   return (
@@ -24,9 +28,7 @@ export function StandingGroup({ group, favoriteTeam, qualifiers = 2 }: StandingG
         <Text style={styles.groupName}>{group.group}</Text>
         <View style={styles.classify}>
           <View style={styles.classifyDot} />
-          <Text style={styles.classifyText}>
-  CLASIFICAN {qualifiers}
-</Text>
+          <Text style={styles.classifyText}>CLASIFICAN {qualifiers}</Text>
         </View>
       </View>
 

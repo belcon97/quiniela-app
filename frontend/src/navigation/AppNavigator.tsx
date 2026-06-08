@@ -79,6 +79,9 @@ export default function AppNavigator() {
   const setPendingMatches = usePredictionStore(
     (state) => state.setPendingMatches,
   );
+  const setMyPredictions = usePredictionStore(
+    (state) => state.setMyPredictions,
+  );
 
   useEffect(() => {
     if (!isAuthenticated || !token || user?.role === "admin") return;
@@ -87,6 +90,10 @@ export default function AppNavigator() {
       try {
         const profile = await profileService.getPrivateProfile(token);
         setPendingMatches(profile.matchesWithoutPredictions);
+        setMyPredictions([
+          ...profile.predictionsHistory,
+          ...profile.predictionsPending,
+        ]);
       } catch (error) {
         console.error("Error al inicializar store:", error);
       }

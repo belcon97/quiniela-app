@@ -73,7 +73,7 @@ export function makeStyles(t: Theme) {
       color:         t.textSecondary,
       width:         16,
       textAlign:     'center',
-      letterSpacing: 0.5,
+      letterSpacing: -0.5,
     },
     col_pts: {
       width: 20,

@@ -1,4 +1,3 @@
-// Types
 import type { Match } from "@/shared/types";
 
 export interface TeamStanding {
@@ -8,7 +7,7 @@ export interface TeamStanding {
   won: number;
   drawn: number;
   lost: number;
-  gd: number; // diferencia de goles
+  gd: number;
   points: number;
 }
 
@@ -32,12 +31,15 @@ export function calculateStandings(matches: Match[]): TeamStanding[] {
   };
 
   matches.forEach((match) => {
+    // Inicializa los equipos siempre, aunque no haya resultado
+    getOrCreate(match.homeTeam, match.homeFlag);
+    getOrCreate(match.awayTeam, match.awayFlag);
+
     if (
       match.status !== "completed" ||
       match.homeScore === null ||
       match.awayScore === null
-    )
-      return;
+    ) return;
 
     const home = getOrCreate(match.homeTeam, match.homeFlag);
     const away = getOrCreate(match.awayTeam, match.awayFlag);
@@ -63,7 +65,6 @@ export function calculateStandings(matches: Match[]): TeamStanding[] {
     }
   });
 
-  // Ordena por puntos desc, luego por DG desc
   return Object.values(standings).sort((teamA, teamB) =>
     teamB.points !== teamA.points
       ? teamB.points - teamA.points
