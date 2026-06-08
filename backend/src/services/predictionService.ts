@@ -1,4 +1,3 @@
-import { PenaltyWinner } from "@prisma/client";
 import {
   findPredictionsByUserAndMatches,
   findMatchesByIds,
@@ -9,8 +8,6 @@ import {
 } from "../repositories/predictionRepository";
 import { getUserRankingService } from "./rankingService";
 
-const isGroupStage = (group: string) => group.toLowerCase().startsWith("grupo");
-
 // Crear predicciones
 export const createPredictionService = async (
   userId: string,
@@ -19,28 +16,39 @@ export const createPredictionService = async (
     homeScore: number;
     awayScore: number;
     isWildcard?: boolean;
-    penaltyWinner?: PenaltyWinner;
-  }[]
+  }[],
 ) => {
   const matchIds = predictions.map((p) => p.matchId);
 
   // Verificar que no existan predicciones previas para estos partidos
-  const existingPredictions = await findPredictionsByUserAndMatches(userId, matchIds);
+  const existingPredictions = await findPredictionsByUserAndMatches(
+    userId,
+    matchIds,
+  );
   if (existingPredictions.length > 0) {
-    throw { status: 400, message: "Ya existe una prediccion para uno de los partidos" };
+    throw {
+      status: 400,
+      message: "Ya existe una prediccion para uno de los partidos",
+    };
   }
 
   // Verificar que los partidos existan y no hayan comenzado
   const matches = await findMatchesByIds(matchIds);
   const matchStarted = matches.some(
-    (match) => match.status === "completed" || new Date(match.date) <= new Date()
+    (match) =>
+      match.status === "completed" || new Date(match.date) <= new Date(),
   );
   if (matchStarted) {
-    throw { status: 400, message: "No podes predecir partidos que ya comenzaron" };
+    throw {
+      status: 400,
+      message: "No podes predecir partidos que ya comenzaron",
+    };
   }
 
   // Validar comodin
-  const wildcardPredictions = predictions.filter((prediction) => prediction.isWildcard);
+  const wildcardPredictions = predictions.filter(
+    (prediction) => prediction.isWildcard,
+  );
   if (wildcardPredictions.length > 1) {
     throw { status: 400, message: "Solo podes usar el comodin en un partido" };
   }
@@ -53,22 +61,6 @@ export const createPredictionService = async (
     }
   }
 
-  // Validar penales en fase eliminatoria
-  for (const prediction of predictions) {
-    const match = matches.find((m) => m.id === prediction.matchId);
-    if (!match) continue;
-
-    if (!isGroupStage(match.group)) {
-      const isDraw = prediction.homeScore === prediction.awayScore;
-      if (isDraw && !prediction.penaltyWinner) {
-        throw {
-          status: 400,
-          message: `Debes indicar el ganador en penales para ${match.homeTeam} vs ${match.awayTeam}`,
-        };
-      }
-    }
-  }
-
   // Crear predicciones
   await createPredictionRepository(
     predictions.map((prediction) => ({
@@ -77,8 +69,7 @@ export const createPredictionService = async (
       homeScore: prediction.homeScore,
       awayScore: prediction.awayScore,
       isWildcard: prediction.isWildcard ?? false,
-      penaltyWinner: prediction.penaltyWinner ?? null,
-    }))
+    })),
   );
 
   return { message: "Prediccion creada correctamente" };

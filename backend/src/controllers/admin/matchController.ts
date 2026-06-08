@@ -65,7 +65,7 @@ export const updateMatch = async (req: Request, res: Response) => {
 export const updateMatchScore = async (req: Request, res: Response) => {
   try {
     const id = req.params.id as string;
-    const { homeScore, awayScore, penaltyWinner } = req.body;
+    const { homeScore, awayScore } = req.body;
 
     if (!id || homeScore === undefined || awayScore === undefined) {
       return res
@@ -76,7 +76,6 @@ export const updateMatchScore = async (req: Request, res: Response) => {
     const result = await updateMatchScoreService(id, {
       homeScore: Number(homeScore),
       awayScore: Number(awayScore),
-      penaltyWinner,
     });
     res.status(200).json(result);
   } catch (error: any) {

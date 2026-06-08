@@ -1,10 +1,9 @@
-import { PenaltyWinner } from "@prisma/client";
 import prisma from "../lib/prisma";
 
 // Verificar predicciones previas para evitar duplicados
 export const findPredictionsByUserAndMatches = async (
   userId: string,
-  matchIds: string[]
+  matchIds: string[],
 ) => {
   return prisma.prediction.findMany({
     where: { userId, matchId: { in: matchIds } },
@@ -26,8 +25,7 @@ export const createPredictionRepository = async (
     homeScore: number;
     awayScore: number;
     isWildcard: boolean;
-    penaltyWinner: PenaltyWinner | null;
-  }[]
+  }[],
 ) => {
   return prisma.prediction.createMany({ data: predictions });
 };
