@@ -1,12 +1,11 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import type { ComponentProps } from "react";
-// Types
-import type { AppStackParams } from "./navigation.types";
+import type { MainStackParams } from "./navigation.types";
 
 type IconName = ComponentProps<typeof MaterialIcons>["name"];
 
 type RouteConfig = {
-  [key in keyof AppStackParams]: {
+  [key in keyof MainStackParams]: {
     label: string;
     icon: IconName;
   };
@@ -18,9 +17,10 @@ export const ROUTE_CONFIG: RouteConfig = {
   Rules: { label: "Reglas", icon: "menu-book" },
   Ranking: { label: "Ranking", icon: "leaderboard" },
   Standings: { label: "Tabla", icon: "table-chart" },
+  Matches: { label: "Partidos", icon: "sports-soccer" },
 };
 
 export const NAV_GROUPS = {
   bottomTabs: ["Home", "Standings", "Ranking", "Profile", "Rules"],
-  drawerWeb: ["Home", "Standings", "Ranking", "Rules", "Profile"],
-} satisfies Record<string, (keyof AppStackParams)[]>;
+  drawerWeb: ["Home", "Matches", "Standings", "Ranking", "Rules", "Profile"],
+} satisfies Record<string, (keyof MainStackParams)[]>;

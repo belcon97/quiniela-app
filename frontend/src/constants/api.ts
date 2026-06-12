@@ -9,8 +9,9 @@ export const API_ROUTES = {
   // Home
   home: `${BASE_URL}/home`,
 
-  // Standings
+  // Matches
   matches: `${BASE_URL}/matches`,
+  matchPredictions: (id: string) => `${BASE_URL}/matches/${id}/predictions`,
 
   // Profile
   profile: `${BASE_URL}/profile`,

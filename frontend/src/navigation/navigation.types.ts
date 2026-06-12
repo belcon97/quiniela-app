@@ -3,12 +3,18 @@ export type AuthStackParams = {
   Register: undefined;
 };
 
-export type AppStackParams = {
+export type MainStackParams = {
   Home: undefined;
-  Profile: { username: string } | undefined;
+  Profile: undefined;
   Rules: undefined;
   Ranking: undefined;
   Standings: undefined;
+  Matches: undefined;
+};
+
+export type AppStackParams = {
+  Main: undefined;
+  ProfileDetail: { username: string };
 };
 
 export type AdminStackParams = {

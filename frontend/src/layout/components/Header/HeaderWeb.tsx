@@ -19,12 +19,10 @@ export function HeaderWeb({ onMenuPress }: HeaderWebProps) {
 
   return (
     <View style={styles.container}>
-      {/* Menu */}
       <Pressable onPress={onMenuPress}>
         <Feather name="menu" size={28} color={theme.textPrimary} />
       </Pressable>
 
-      {/* Title */}
       <Text style={styles.title} numberOfLines={1}>
         Hola, {user?.username}
       </Text>

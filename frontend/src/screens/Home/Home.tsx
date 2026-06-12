@@ -19,11 +19,15 @@ import { getTeamBanner, WORLD_CUP_COUNTRIES } from "@/data/worldCup2026";
 // Styles
 import { makeStyles } from "./Home.styles";
 // Types
-import type { AppStackParams } from "@/navigation/navigation.types";
+import type {
+  AppStackParams,
+  MainStackParams,
+} from "@/navigation/navigation.types";
 
 export function Home() {
   const styles = useStyles(makeStyles);
-  const navigation = useNavigation<NativeStackNavigationProp<AppStackParams>>();
+  const mainNav = useNavigation<NativeStackNavigationProp<MainStackParams>>();
+  const appNav = useNavigation<NativeStackNavigationProp<AppStackParams>>();
   const user = useAuthStore((state) => state.user);
   const { data, loading, error } = useHome();
 
@@ -42,7 +46,6 @@ export function Home() {
       : data.favoriteTeamMatch.homeTeam
     : null;
 
-    console.log(user?.favoriteTeam)
   return (
     <Layout>
       {/* Loading */}
@@ -60,32 +63,32 @@ export function Home() {
           contentContainerStyle={styles.content}
           showsVerticalScrollIndicator={false}
         >
+        {/* Favorite Team Card */}
+        {favoriteTeam && data.favoriteTeamMatch && rival && (
+          <FavoriteTeamCard
+            favoriteTeam={favoriteTeam}
+            flagUrl={country?.icon ?? ""}
+            banner={banner}
+            rival={rival}
+            matchDate={data.favoriteTeamMatch.date}
+          />
+        )}
           {/* Upcoming Matches */}
           {data.upcomingMatches.length > 0 && (
             <UpcomingMatches matches={data.upcomingMatches} />
           )}
 
-          {/* Favorite Team Card */}
-          {favoriteTeam && data.favoriteTeamMatch && rival && (
-            <FavoriteTeamCard
-              favoriteTeam={favoriteTeam}
-              flagUrl={country?.icon ?? ""}
-              banner={banner}
-              rival={rival}
-              matchDate={data.favoriteTeamMatch.date}
-            />
-          )}
 
           {/* Ranking */}
           <RankingList
             ranking={data.fullRanking}
             myUsername={user?.username}
-            onViewMore={() => navigation.navigate("Ranking")}
+            onViewMore={() => mainNav.navigate("Ranking")}
             onRowPress={(username) => {
               if (username === user?.username) {
-                navigation.navigate("Profile", undefined);
+                mainNav.navigate("Profile");
               } else {
-                navigation.navigate("Profile", { username });
+                appNav.navigate("ProfileDetail", { username });
               }
             }}
           />

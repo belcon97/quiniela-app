@@ -95,11 +95,11 @@ export default function Login({
           style={styles.header}
           resizeMode="cover"
         >
-          <View style={styles.headerOverlay} />
           <View style={styles.headerContent}>
             <Text style={styles.headerTitle}>INGRESÁ</Text>
             <Text style={styles.headerSubtitle}>
-            Bienvenidos al Prode del Mundial 2026. Pronostica, suma puntos y gana.
+              Bienvenidos al Prode del Mundial 2026. Pronostica, suma puntos y
+              gana.
             </Text>
           </View>
         </ImageBackground>
@@ -126,7 +126,6 @@ export default function Login({
               icon={<Feather name="lock" size={18} color="gray" />}
             />
           </View>
-
 
           {error ? <Text style={styles.errorText}>{error}</Text> : null}
 

@@ -35,7 +35,7 @@ export function PodiumCard({ entry, flagUrl }: PodiumCardProps) {
     <Pressable
       style={[styles.card, isFirst && styles.card_first]}
       onPress={() =>
-        navigation.navigate("Profile", { username: entry.username })
+        navigation.navigate("ProfileDetail", { username: entry.username })
       }
     >
       {/* Medalla */}

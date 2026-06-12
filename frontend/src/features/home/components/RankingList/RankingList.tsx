@@ -43,7 +43,7 @@ export function RankingList({
     <View style={styles.container}>
       {/* Header */}
       <SectionHeader
-        title="RANKING GENERAL"
+        title="TOP 5 DEL RANKING"
         icon="bar-chart-2"
         onViewMore={onViewMore}
       />

@@ -65,7 +65,7 @@ export function RankingRow({ entry, flagUrl, movement }: RankingRowProps) {
     <Pressable
       style={styles.row}
       onPress={() =>
-        navigation.navigate("Profile", { username: entry.username })
+        navigation.navigate("ProfileDetail", { username: entry.username })
       }
     >
       {/* Position */}

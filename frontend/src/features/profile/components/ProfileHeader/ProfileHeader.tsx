@@ -51,7 +51,6 @@ export function ProfileHeader({
 
       {/* Content */}
       <View style={styles.content}>
-
         {/* User row */}
         <View style={styles.userRow}>
           {favoriteTeam && flagUrl ? (
@@ -67,7 +66,6 @@ export function ProfileHeader({
 
         {/* Badges row */}
         <View style={styles.badges}>
-
           {/* Wildcard */}
           <View
             style={[
@@ -93,7 +91,6 @@ export function ProfileHeader({
               {topScorerName ?? "SIN ELEGIR"}
             </Text>
           </View>
-
         </View>
 
         {/* Stats row */}
@@ -109,7 +106,6 @@ export function ProfileHeader({
             </Text>
           </View>
         </View>
-
       </View>
     </ImageBackground>
   );

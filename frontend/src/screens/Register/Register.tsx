@@ -116,7 +116,7 @@ export default function Register({
           style={styles.header}
           resizeMode="cover"
         >
-          <View style={styles.headerOverlay} />
+          {/* <View style={styles.headerOverlay} /> */}
           <View style={styles.headerContent}>
             <Text style={styles.headerTitle}>CREÁ TU{"\n"}CUENTA</Text>
             <Text style={styles.headerSubtitle}>
@@ -147,7 +147,7 @@ export default function Register({
             />
             <Input
               label="CONTRASEÑA"
-              placeholder="••••••"
+              placeholder="minimo 6 caracteres"
               value={form.password}
               onChangeText={handleChange("password")}
               error={errors.password}
@@ -156,7 +156,7 @@ export default function Register({
             />
             <Input
               label="REPETIR CONTRASEÑA"
-              placeholder="••••••"
+              placeholder="minimo 6 caracteres"
               value={form.confirmPassword}
               onChangeText={handleChange("confirmPassword")}
               error={errors.confirmPassword}

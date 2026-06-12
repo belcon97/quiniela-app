@@ -22,7 +22,7 @@ export function TopScorersList({ scorers }: TopScorersListProps) {
 
       {/* Header */}
       <SectionHeader
-        title="TOP GOLEADORES"
+        title="TOP 3 GOLEADORES"
         icon="award"
       />
 

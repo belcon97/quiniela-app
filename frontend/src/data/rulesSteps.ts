@@ -1,3 +1,5 @@
+// Styles
+import { palette } from '@/theme'
 // Types
 import type { RuleStep } from "@/features/rules/types/rules.types";
 
@@ -5,8 +7,8 @@ export const RULES_STEPS: RuleStep[] = [
   {
     id: 1,
     badge: "+1\nPT",
-    badgeColor: "#FEF9C3",
-    badgeTextColor: "#854D0E",
+    badgeColor: 'rgba(255, 194, 14, 0.18)',
+    badgeTextColor: palette.gold,
     title: "PUNTUACIÓN BÁSICA",
     description:
       "Ganás +1 PT por acertar el ganador del partido o el empate, sin necesidad de acertar el marcador exacto.",
@@ -14,16 +16,16 @@ export const RULES_STEPS: RuleStep[] = [
   {
     id: 2,
     badge: "+3\nPTS",
-    badgeColor: "#DCFCE7",
-    badgeTextColor: "#166534",
+    badgeColor: "rgba(74, 222, 128, 0.16)",
+    badgeTextColor: "#4ade80",
     title: "RESULTADO EXACTO",
     description: "Ganás +3 PTS por acertar el marcador exacto del partido.",
   },
   {
     id: 3,
     badge: "×2",
-    badgeColor: "#001F5B",
-    badgeTextColor: "#FFFFFF",
+    badgeColor: "rgba(123, 47, 181, 0.15)",
+    badgeTextColor: palette.purple,
     title: "COMODÍN",
     description:
       "Podés usar el comodín una sola vez durante todo el torneo. Duplica los puntos obtenidos en ese partido.",
@@ -40,7 +42,7 @@ export const RULES_STEPS: RuleStep[] = [
   {
     id: 5,
     badge: "⚖️",
-    badgeColor: "rgba(229, 229, 229, 0.1)",
+    badgeColor: "rgba(177, 170, 170, 0.1)",
     badgeTextColor: "#9AA1AD",
     title: "EMPATES Y FASE ELIMINATORIA",
     description:

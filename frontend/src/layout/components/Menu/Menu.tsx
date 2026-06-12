@@ -5,7 +5,11 @@ import { MaterialIcons } from "@expo/vector-icons";
 // Hooks
 import { useTheme } from "@/theme";
 import { useStyles } from "@/shared/hooks/useStyles";
-import { useNavigationState, useNavigation } from "@react-navigation/native";
+import {
+  useNavigationState,
+  useNavigation,
+  CommonActions,
+} from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 // Store
 import { useAuthStore } from "@/store/authStore";
@@ -14,8 +18,7 @@ import { ROUTE_CONFIG, NAV_GROUPS } from "@/navigation/navigation.config";
 // Styles
 import { makeStyles, MENU_WIDTH } from "./Menu.styles";
 // Types
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import type { AppStackParams } from "@/navigation/navigation.types";
+import type { MainStackParams } from "@/navigation/navigation.types";
 
 interface MenuProps {
   isOpen: boolean;
@@ -26,17 +29,25 @@ export function Menu({ isOpen, onClose }: MenuProps) {
   const theme = useTheme();
   const styles = useStyles(makeStyles);
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation<NativeStackNavigationProp<AppStackParams>>();
+  const navigation = useNavigation();
   const logout = useAuthStore((state) => state.logout);
 
-  // Ruta activa
-  const currentRoute = useNavigationState((state) => state.routes[state.index]);
-  const currentScreen = currentRoute.name;
+  // Ruta activa — busca la pantalla real dentro de Main si está anidada
+  const currentRoute = useNavigationState((state) => {
+    const mainRoute = state.routes.find((r) => r.name === "Main");
+    if (mainRoute?.state) {
+      const nested = mainRoute.state;
+      return nested.routes[nested.index ?? 0];
+    }
+    return state.routes[state.index];
+  });
+
+  const currentScreen = currentRoute?.name ?? "";
   const isOwnProfile =
     currentScreen === "Profile" &&
-    !(currentRoute.params as { username?: string })?.username;
+    !(currentRoute?.params as { username?: string })?.username;
 
-  const isRouteActive = (routeName: keyof AppStackParams): boolean => {
+  const isRouteActive = (routeName: keyof MainStackParams): boolean => {
     if (routeName === "Profile") return isOwnProfile;
     return currentScreen === routeName;
   };
@@ -97,7 +108,12 @@ export function Menu({ isOpen, onClose }: MenuProps) {
               key={routeName}
               style={[styles.navItem, isActive && styles.navItem_active]}
               onPress={() => {
-                navigation.navigate(routeName);
+                navigation.dispatch(
+                  CommonActions.navigate({
+                    name: "Main",
+                    params: { screen: routeName },
+                  }),
+                );
                 onClose();
               }}
             >

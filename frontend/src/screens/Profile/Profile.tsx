@@ -4,16 +4,13 @@ import { useAuthStore } from "@/store/authStore";
 import { Layout } from "@/layout/Layout";
 import { PrivateProfile } from "./PrivateProfile";
 import { PublicProfile } from "./PublicProfile";
-// Types
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import type { AppStackParams } from "@/navigation/navigation.types";
 
-type ProfileScreenProps = NativeStackScreenProps<AppStackParams, "Profile">;
+interface ProfileProps {
+  username?: string;
+}
 
-export function Profile({ route }: ProfileScreenProps) {
+export function Profile({ username }: ProfileProps) {
   const myUsername = useAuthStore((state) => state.user?.username);
-  const username = route.params?.username;
-
   const isOwn = !username || username === myUsername;
 
   return (

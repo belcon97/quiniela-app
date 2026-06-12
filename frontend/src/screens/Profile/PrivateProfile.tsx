@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { View, Text, ScrollView } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 // Hooks
@@ -17,6 +17,7 @@ import { Chip } from "@/shared/ui/Chip/Chip";
 import { ProfileHeader } from "@/features/profile/components/ProfileHeader/ProfileHeader";
 import { RulesModal } from "@/features/profile/components/RulesModal/RulesModal";
 import { PendingMatchCard } from "@/features/profile/components/PendingMatchCard/PendingMatchCard";
+import { DateGroupLabel } from "@/features/profile/components/DateGroupLabel/DateGroupLabel";
 import { TopScorerPicker } from "@/features/profile/components/TopScorerPicker/TopScorerPicker";
 import { FavoriteTeamPicker } from "@/features/profile/components/FavoriteTeamPicker/FavoriteTeamPicker";
 import { ChangePasswordModal } from "@/features/profile/components/ChangePasswordModal/ChangePasswordModal";
@@ -26,6 +27,7 @@ import { profileService } from "@/features/profile/services/profileService";
 import { getTeamBanner, WORLD_CUP_COUNTRIES } from "@/data/worldCup2026";
 import { getBadgeFromPoints } from "@/shared/utils/getBadgeFromPoints";
 import { groupByKey } from "@/shared/utils/groupByKey";
+import { groupByDate } from "@/shared/utils/groupByDate";
 import { sortGroups } from "@/shared/utils/sortGroups";
 // Styles
 import { makeStyles } from "./Profile.styles";
@@ -33,6 +35,8 @@ import { makeStyles } from "./Profile.styles";
 import type { Match } from "@/shared/types";
 
 type OnboardingStep = "rules" | "topScorer" | "favoriteTeam" | "done";
+
+const ALL_GROUPS = "TODOS";
 
 interface PendingPrediction {
   matchId: string;
@@ -50,10 +54,9 @@ export function PrivateProfile() {
 
   const [onboardingStep, setOnboardingStep] = useState<OnboardingStep>("done");
   const [activeTab, setActiveTab] = useState(0);
-  const [predictions, setPredictions] = useState<
-    Record<string, PendingPrediction>
-  >({});
-  const [selectedGroup, setSelectedGroup] = useState("");
+  const [predictions, setPredictions] =
+    useState<Record<string, PendingPrediction>>({});
+  const [selectedGroup, setSelectedGroup] = useState<string>(ALL_GROUPS);
   const [saving, setSaving] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
 
@@ -84,13 +87,20 @@ export function PrivateProfile() {
     setPredictions(initial);
   }, [privateData?.matchesWithoutPredictions]);
 
-  const grouped = groupByKey(
-    privateData?.matchesWithoutPredictions ?? [],
-    "group",
-  );
+  const allMatches: Match[] = privateData?.matchesWithoutPredictions ?? [];
+
+  // Chips: TODOS + cada grupo disponible
+  const grouped = groupByKey(allMatches, "group");
   const groups = sortGroups(Object.keys(grouped));
-  const activeGroup = selectedGroup || groups[0] || "";
-  const groupMatches = grouped[activeGroup] ?? [];
+  const chips = [ALL_GROUPS, ...groups];
+
+  // Filtrado por chip
+  const filteredMatches =
+    selectedGroup === ALL_GROUPS ? allMatches : (grouped[selectedGroup] ?? []);
+
+  // Agrupado por fecha para el render
+  const matchesByDate = groupByDate(filteredMatches);
+
   const wildcardUsed = Object.values(predictions).some((p) => p.isWildcard);
 
   const favoriteTeam =
@@ -142,10 +152,7 @@ export function PrivateProfile() {
           isWildcard: p.isWildcard,
         })),
       );
-      const currentIndex = groups.indexOf(activeGroup);
-      const nextGroup = groups[currentIndex + 1];
       setTimeout(() => {
-        if (nextGroup) setSelectedGroup(nextGroup);
         refetch();
       }, 1500);
     } catch (err) {
@@ -268,39 +275,37 @@ export function PrivateProfile() {
         )}
 
         {/* Matches sin predicción */}
-        {privateData.matchesWithoutPredictions.length > 0 && (
+        {allMatches.length > 0 && (
           <View style={styles.padded}>
             <Text style={styles.sectionLabel}>PREDICCIONES PENDIENTES</Text>
-            {groups.length === 0 ? (
-              <StateView
-                icon="check-circle"
-                title="¡LISTO!"
-                message="Ya cargaste todos los partidos disponibles."
-              />
-            ) : (
-              <>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                  <View style={styles.chips}>
-                    {groups.map((g) => (
-                      <Chip
-                        key={g}
-                        isActive={activeGroup === g}
-                        onPress={() => setSelectedGroup(g)}
-                      >
-                        {g}
-                      </Chip>
-                    ))}
-                  </View>
-                </ScrollView>
 
-                {groupMatches.map((match: Match) => {
+            {/* Filtro por grupo */}
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <View style={styles.chips}>
+                {chips.map((g) => (
+                  <Chip
+                    key={g}
+                    isActive={selectedGroup === g}
+                    onPress={() => setSelectedGroup(g)}
+                  >
+                    {g}
+                  </Chip>
+                ))}
+              </View>
+            </ScrollView>
+
+            {/* Lista por fecha */}
+            {matchesByDate.map(({ date, matches }) => (
+              <Fragment key={date}>
+                <DateGroupLabel date={date} count={matches.length} />
+                {matches.map((match) => {
                   const pred = predictions[match.id];
                   if (!pred) return null;
                   return (
                     <PendingMatchCard
                       key={match.id}
                       match={match}
-                      group={activeGroup}
+                      group={match.group}
                       homeScore={pred.homeScore}
                       awayScore={pred.awayScore}
                       isWildcard={pred.isWildcard}
@@ -316,17 +321,17 @@ export function PrivateProfile() {
                     />
                   );
                 })}
+              </Fragment>
+            ))}
 
-                <Button
-                  onPress={handleSavePredictions}
-                  disabled={saving}
-                  icon={<Feather name="check" size={16} color="#fff" />}
-                  iconPosition="right"
-                >
-                  {saving ? "GUARDANDO..." : "GUARDAR PREDICCIONES"}
-                </Button>
-              </>
-            )}
+            <Button
+              onPress={handleSavePredictions}
+              disabled={saving}
+              icon={<Feather name="check" size={16} color="#fff" />}
+              iconPosition="right"
+            >
+              {saving ? "GUARDANDO..." : "GUARDAR PREDICCIONES"}
+            </Button>
           </View>
         )}
 
