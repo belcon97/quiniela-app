@@ -3,6 +3,13 @@ import { registerService, loginService } from "../services/authService";
 
 export const register = async (req: Request, res: Response) => {
   try {
+    // Registro deshabilitado
+    if (process.env.ALLOW_REGISTRATIONS !== "true") {
+      return res
+        .status(403)
+        .json({ message: "El registro de nuevos usuarios está deshabilitado" });
+    }
+
     // Validar que lleguen todos los campos
     const { name, password, username } = req.body;
     if (!name || !password || !username) {
