@@ -26,7 +26,8 @@ export const requireAuth = (
     next();
   } catch {
     return res.status(401).json({
-      message: "Token inválido",
+      // message: "Token inválido",
+      message: "Tu sesión expiró, volvé a iniciar sesión",
     });
   }
 };
