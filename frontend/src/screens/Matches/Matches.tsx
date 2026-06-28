@@ -104,7 +104,8 @@ export function Matches() {
                   const isLoadingPredictions = predictionsLoading[match.id];
                   const userPrediction =
                     myPredictions.find((p) => p.matchId === match.id) ?? null;
-
+                  const matchStarted =
+                    new Date(match.date).getTime() <= Date.now();
                   return (
                     <MatchCard
                       key={match.id}
@@ -115,30 +116,30 @@ export function Matches() {
                     >
                       {isLoadingPredictions && <LoadingState />}
 
-                      {!isLoadingPredictions &&
-                        matchData &&
-                        !matchData.userHasPredicted && (
-                          <View style={styles.locked}>
-                            <Feather name="lock" size={20} color="#9AA1AD" />
-                            <Text style={styles.lockedText}>
-                              Tenés que predecir este partido para ver las
-                              predicciones de los demás.
-                            </Text>
-                          </View>
-                        )}
+                      {!isLoadingPredictions && matchData && !matchStarted && (
+                        <View style={styles.locked}>
+                          <Feather name="lock" size={20} color="#9AA1AD" />
+                          <Text style={styles.lockedText}>
+                            Vas a poder ver las predicciones de los demás cuando
+                            empiece el partido.
+                          </Text>
+                        </View>
+                      )}
 
                       {!isLoadingPredictions &&
-                        matchData?.userHasPredicted &&
+                        matchData &&
+                        matchStarted &&
                         matchData.predictions.length === 0 && (
                           <View style={styles.locked}>
                             <Text style={styles.lockedText}>
-                              Nadie predijo este partido todavía.
+                              Nadie predijo este partido.
                             </Text>
                           </View>
                         )}
 
                       {!isLoadingPredictions &&
-                        matchData?.userHasPredicted &&
+                        matchData &&
+                        matchStarted &&
                         matchData.predictions.map((entry) => (
                           <MatchPredictionRow
                             key={entry.username}

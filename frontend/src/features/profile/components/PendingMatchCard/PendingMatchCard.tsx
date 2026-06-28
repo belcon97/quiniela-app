@@ -50,7 +50,7 @@ export function PendingMatchCard({
             onChangeText={(v) => onHomeChange(v.replace(/[^0-9]/g, ""))}
             keyboardType="numeric"
             maxLength={2}
-            placeholder="0"
+            placeholder="-"
             placeholderTextColor={theme.textDisabled}
             textAlign="center"
             {...(Platform.OS === "web"
@@ -64,7 +64,7 @@ export function PendingMatchCard({
             onChangeText={(v) => onAwayChange(v.replace(/[^0-9]/g, ""))}
             keyboardType="numeric"
             maxLength={2}
-            placeholder="0"
+            placeholder="-"
             placeholderTextColor={theme.textDisabled}
             textAlign="center"
             {...(Platform.OS === "web"

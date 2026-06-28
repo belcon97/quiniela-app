@@ -4,7 +4,6 @@ import Feather from "@expo/vector-icons/Feather";
 import { useStyles } from "@/shared/hooks/useStyles";
 import { useTheme } from "@/theme";
 import { usePublicProfile } from "@/features/profile/hooks/usePublicProfile";
-import { usePredictionStore } from "@/store/predictionStore";
 import { TabSwitch } from "@/shared/ui/TabSwitch/TabSwitch";
 import { MatchHistoryCard } from "@/shared/components/MatchHistoryCard/MatchHistoryCard";
 import { LoadingState } from "@/shared/ui/LoadingState/LoadingState";
@@ -23,10 +22,6 @@ export function PublicProfile({ username }: PublicProfileProps) {
   const styles = useStyles(makeStyles);
 
   const { publicData, loading, error } = usePublicProfile(username);
-  const hasPendingMatches = usePredictionStore(
-    (state) => state.hasPendingMatches,
-  );
-  const myPredictions = usePredictionStore((state) => state.myPredictions);
 
   const [activeTab, setActiveTab] = useState(0);
 
@@ -43,10 +38,9 @@ export function PublicProfile({ username }: PublicProfileProps) {
   if (error) return <StateView icon="wifi-off" title="ERROR" message={error} />;
   if (!publicData) return null;
 
-  // Predicciones compartidas
-  const myMatchIds = new Set(myPredictions.map((p) => p.matchId));
-  const sharedPredictions = publicData.predictionsPending.filter((p) =>
-    myMatchIds.has(p.matchId),
+  // Predicciones visibles: solo las de partidos que ya empezaron
+  const visiblePredictions = publicData.predictionsPending.filter(
+    (p) => new Date(p.match.date).getTime() <= Date.now(),
   );
 
   return (
@@ -105,25 +99,24 @@ export function PublicProfile({ username }: PublicProfileProps) {
         {/* Predicciones */}
         {activeTab === 1 && (
           <View style={styles.padded}>
-            {sharedPredictions.length === 0 ? (
-              hasPendingMatches ? (
+            {visiblePredictions.length === 0 ? (
+              publicData.predictionsPending.length > 0 ? (
                 <View style={styles.overlay}>
                   <Feather name="lock" size={32} color={theme.textSecondary} />
                   <Text style={styles.overlayTitle}>PREDICCIONES OCULTAS</Text>
                   <Text style={styles.overlayText}>
-                    Todavía tenés partidos sin predecir. Las predicciones de
-                    otros usuarios se revelan cuando completás las tuyas.
+                    Las predicciones de cada partido se revelan cuando empieza.
                   </Text>
                 </View>
               ) : (
                 <StateView
                   icon="check-circle"
-                  title="SIN PREDICCIONES EN COMÚN"
-                  message="No tienen partidos predichos en común todavía."
+                  title="SIN PREDICCIONES"
+                  message="Este usuario todavía no tiene predicciones pendientes."
                 />
               )
             ) : (
-              sharedPredictions.map((prediction) => (
+              visiblePredictions.map((prediction) => (
                 <MatchHistoryCard
                   key={prediction.id}
                   prediction={prediction}

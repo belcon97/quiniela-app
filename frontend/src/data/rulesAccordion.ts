@@ -7,14 +7,14 @@ export const RULES_ACCORDION: RuleAccordionItem[] = [
     icon: "sliders",
     title: "EMPATES EN EL RANKING",
     description:
-      "En caso de empate entre dos o más participantes, los premios se suman y se dividen en partes iguales entre los empatados.",
+      "En caso de empate entre dos o más participantes, los premios se suman y se dividen en partes iguales entre los empatados. \n\n Ejemplo: Si quedan dos empatados en el primer lugar se suma el premio del primero y segundo y se divide entre ellos dos y el premio del tercer lugar quedaría para el 2do en la lista.",
   },
   {
     id: "2",
     icon: "shield",
     title: "FASE ELIMINATORIA",
     description:
-      "A partir de cuartos de final, el resultado válido incluye el tiempo extra. Si el partido continúa empatado, se considera empate — los penales no cuentan.",
+      "A partir de dieciseisavos, el resultado válido incluye el tiempo extra. Si el partido continúa empatado, se considera empate — los penales no cuentan.",
   },
   {
     id: "3",

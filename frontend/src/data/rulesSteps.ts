@@ -46,6 +46,6 @@ export const RULES_STEPS: RuleStep[] = [
     badgeTextColor: "#9AA1AD",
     title: "EMPATES Y FASE ELIMINATORIA",
     description:
-      "En caso de empate en el ranking, los premios se dividen en partes iguales.\n\nA partir de cuartos de final, el resultado válido incluye el tiempo extra. Si el partido continúa empatado, se considera empate — los penales no cuentan.",
+      "En caso de empate en el ranking, los premios se dividen en partes iguales.\n\nA partir de dieciseisavos, el resultado válido incluye el tiempo extra. Si el partido continúa empatado, se considera empate — los penales no cuentan.",
   },
 ];
